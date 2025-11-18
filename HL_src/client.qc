@@ -677,8 +677,8 @@ void() PutClientInServer =
 	}
 	spawn_tdeath (self.origin, self);
 	
-	self.weaponstate = WS_DEPLOY;
 	W_ResetClipFields();
+	W_ChangeWeapon(self.weapon);
 }
 
 /*

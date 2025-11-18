@@ -10,7 +10,7 @@
 //	11.15.25: Finished Gauss gun,
 //	starting on MP5.
 //	11.16.25: mp5 finished.
-//	11.17.25: finished glock
+//	11.17.25: finished glock AND shotgun!!
 //
 //======================================
 
@@ -43,6 +43,7 @@ void(float frame_start, float frame_end, float frame_reset, float framerate) HL_
 	self.attack_finished = time + 0.5;
 	self.nextidle = time + 1.0;
 	self.fuser1 = self.fuser2 = self.fuser3 = self.fuser4 = self.fuser5 = self.fuser6 = 0.0;
+	self.attack_phase = 0;
 	W_SetWeaponAnim2(frame_start, frame_end, frame_reset, framerate);
 };
 
@@ -309,17 +310,17 @@ void() W_GlockIdle =
 		float r = random();
 		if (r < 0.3)
 		{
-			W_SetWeaponAnim2(124, 154, 124, 8);
+			W_SetWeaponAnim2(124, 154, -1, 8);
 			self.nextidle = time + 49.0 / 16.0;
 		}
 		else if (r < 0.6)
 		{
-			W_SetWeaponAnim2(155, 175, 155, 8);
+			W_SetWeaponAnim2(155, 175, -1, 8);
 			self.nextidle = time + 60.0 / 16.0;
 		}
 		else
 		{
-			W_SetWeaponAnim2(176, 201, 176, 8);
+			W_SetWeaponAnim2(176, 201, -1, 8);
 			self.nextidle = time + 40.0 / 16.0;
 		}
 	}
@@ -337,6 +338,288 @@ void() W_GlockEvents =
 		sound(self, CHAN_WEAPON, "hl_items/9mmclip2.wav", 1.0, ATTN_NORM);
 	if (self.weaponframe == 62 || self.weaponframe == 104)
 		sound(self, CHAN_WEAPON, "hl_items/9mmclip1.wav", 1.0, ATTN_NORM);
+}
+
+/*
+============
+Shotgun
+
+// 0 - 10 : draw 20 fps
+// 11 - 31 : shoot 20 fps
+// 32 - 52 : big shoot 13 fps
+// 53 - 61 : reload start 12 fps
+// 62 - 71 : insert shell 16 fps
+// 72 - 82 : finish reloading 13 fps
+// 83 - 103 : idle1 fps 9
+// 104 - 124 : idle2 fps 9
+// 125 - 185 : idle3 fps 12
+// 186 - 193 : holster 20 fps
+
+============
+*/
+
+/*
+============
+W_ShotgunPrecache
+============
+*/
+
+void() W_ShotgunPrecache =
+{
+	precache_model("progs/v_shotgun.mdl");
+	//PRECACHE_MODEL("models/w_shotgun.mdl");
+	precache_sound("hl_items/9mmclip1.wav");              
+	precache_sound ("hl_weapons/dbarrel1.wav");
+	precache_sound ("hl_weapons/sbarrel1.wav");
+	precache_sound ("hl_weapons/reload1.wav");
+	precache_sound ("hl_weapons/reload3.wav");
+	precache_sound ("hl_weapons/357_cock1.wav");
+	precache_sound ("hl_weapons/scock1.wav");
+}
+
+/*
+============
+W_ShotgunDeploy
+============
+*/
+
+void() W_ShotgunDeploy = 
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+};
+
+/*
+============
+W_ShotgunPrimAttack
+============
+*/
+
+float() W_ShotgunPrimAttack =
+{
+	if (self.waterlevel == 3)
+	{
+		HL_PlayEmptySound();
+		self.attack_finished = time + 0.15;
+		return FALSE;
+	}
+	
+	if (self.currentammo <= 0)
+	{
+		W_ShotgunReload();
+		if (self.currentammo == 0)
+			HL_PlayEmptySound();
+		return FALSE;
+	}
+	
+	self.currentammo = self.clip_shotgun -= 1;
+	self.effects |= EF_MUZZLEFLASH;
+	
+	W_SetWeaponAnim2(11, 31, 31, 20);
+	
+	makevectors(self.v_angle + self.punchangle);
+	
+	vector shellvel = self.velocity + (v_right * random (50,70)) + (v_up * random(100,150)) + (v_forward * 25);
+	EjectBrass("progs/shotgunshell.mdl", self.origin + self.view_ofs + (v_up * -12) + (v_forward * 20) + (v_right * 4), shellvel);
+
+	sound(self, CHAN_WEAPON, "hl_weapons/sbarrel1.wav", random(0.95, 1.0), ATTN_NORM);
+	
+	vector src = self.origin + self.view_ofs;
+	vector dir = aim (self, AUTOAIM_DIST);
+	
+	if (deathmatch)
+		HL_FireBullets(4, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+	else
+		HL_FireBullets(6, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		
+	if (self.currentammo != 0)
+	{
+		self.fuser1 = time + 0.5;
+		self.nextidle = time + 5.0;
+	}
+	
+	self.attack_finished = time + 0.75;
+	self.attack2_finished = time + 0.75;
+	self.punchangle_x -= 5;
+	return TRUE;
+}
+
+/*
+============
+W_ShotgunSecAttack
+============
+*/
+
+float() W_ShotgunSecAttack =
+{
+	if (self.waterlevel == 3)
+	{
+		HL_PlayEmptySound();
+		self.attack_finished = time + 0.15;
+		return FALSE;
+	}
+	
+	if (self.currentammo <= 1)
+	{
+		W_ShotgunReload();
+		HL_PlayEmptySound();
+		return FALSE;
+	}
+	
+	self.currentammo = self.clip_shotgun -= 2;
+	self.effects |= EF_MUZZLEFLASH;
+	
+	W_SetWeaponAnim2(32, 52, 31, 13);
+	
+	makevectors(self.v_angle + self.punchangle);
+	
+	for (float i = 0; i < 2; i++)
+	{
+		vector shellvel = self.velocity + (v_right * random (50,70)) + (v_up * random(100,150)) + (v_forward * 25);
+		EjectBrass("progs/shotgunshell.mdl", self.origin + self.view_ofs + (v_up * -12) + (v_forward * 20) + (v_right * 4), shellvel);
+	}
+
+	sound(self, CHAN_WEAPON, "hl_weapons/dbarrel1.wav", random(0.98, 1.0), ATTN_NORM);
+	
+	vector src = self.origin + self.view_ofs;
+	vector dir = aim (self, AUTOAIM_DIST);
+	
+	if (deathmatch)
+		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+	else
+		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		
+	if (self.currentammo != 0)
+	{
+		self.fuser1 = time + 0.95;
+		self.nextidle = time + 6.0;
+	}
+	
+	self.attack_finished = time + 1.5;
+	self.attack2_finished = time + 1.5;
+	self.punchangle_x -= 10;
+	return TRUE;
+}
+
+/*
+============
+W_ShotgunReload
+============
+*/
+
+float() W_ShotgunReload =
+{
+	if (self.ammo_shells > 0 && self.clip_shotgun != 8)
+	{
+		self.attack_phase = 1;
+		self.weaponstate = WS_SPECIAL_RELOAD;
+		W_SetWeaponAnim2(53, 61, 61, 12); // set reload start from here..
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/*
+============
+W_ShotgunIdle
+============
+*/
+
+void() W_ShotgunIdle =
+{
+	HL_ResetEmptySound();
+	
+	if (self.weaponstate != WS_READY)
+		return;
+	
+	if (self.fuser1 && self.fuser1 < time)
+	{
+		sound(self, CHAN_WEAPON, "hl_weapons/scock1.wav", 1.0, ATTN_NORM);
+		self.fuser1 = 0;
+	}
+	
+	if (self.nextidle > time)
+		return;
+		
+	float r = random();
+	
+	if (r <= 0.8)
+	{
+		W_SetWeaponAnim2(125, 185, -1, 12);
+		self.nextidle = time + (60.0/12.0);
+	}
+	else if (r <= 0.95)
+	{
+		W_SetWeaponAnim2(83, 103, -1, 9);
+		self.nextidle = time + (20.0/9.0);
+	}
+	else
+	{
+		W_SetWeaponAnim2(104, 124, -1, 9);
+		self.nextidle = time + (20.0/9.0);
+	}
+}
+
+/*
+============
+W_ShotgunPostThink
+============
+*/
+
+void() W_ShotgunPostThink =
+{
+	// Code reused from my old CSWEAPONS mod...
+	// - serecky 11.17.25
+	if (self.weaponstate == WS_SPECIAL_RELOAD)
+	{
+		switch (self.attack_phase) 
+		{
+			case 1:
+			{
+				if (self.weaponframe == 61)
+					self.attack_phase = 2;
+			}
+			break;
+			
+			case 2:
+			{
+				if ((self.button0) && (self.clip_shotgun >= 1)) // If we want to shoot..
+				{
+					self.attack_phase = 0;
+					self.weaponstate = WS_READY;
+				}
+				else if (self.attack_finished <= time) 
+				{
+					if ((self.clip_shotgun < 8) && (self.ammo_shells >= 1)) // Refill our clip!!!
+					{
+						W_SetWeaponAnim2(62, 71, 62, 16);
+						
+						if (random() < 0.5)
+							sound(self, CHAN_WEAPON, "hl_weapons/reload1.wav", 1.0, ATTN_NORM);
+						else
+							sound(self, CHAN_WEAPON, "hl_weapons/reload3.wav", 1.0, ATTN_NORM);
+						
+						self.ammo_shells -= 1;
+						self.currentammo = self.clip_shotgun += 1;
+						self.attack_finished = time + 0.5;
+						
+					}
+					else // We're done with our reload!
+					{
+						W_SetWeaponAnim2(72, 82, 82, 13);
+
+						sound(self, CHAN_WEAPON, "hl_weapons/scock1.wav", 1.0, ATTN_NORM);
+						
+						self.currentammo = self.clip_shotgun;
+						self.nextidle = time + 1.5;
+						
+						self.attack_phase = 0;
+						self.weaponstate = WS_READY;
+					}
+				}
+			}
+			break;
+		}
+	}
 }
 
 /*
@@ -431,9 +714,7 @@ float() W_MP5PrimAttack =
 	
 	makevectors(self.v_angle + self.punchangle);
 	
-	vector shellvel = self.velocity + (v_right * random (50,70)) + (v_up * random(100,150))
-					+ (v_forward * 25);
-	
+	vector shellvel = self.velocity + (v_right * random (50,70)) + (v_up * random(100,150)) + (v_forward * 25);
 	EjectBrass("progs/shell.mdl", self.origin + self.view_ofs + (v_up * -12) + (v_forward * 20)
 				+ (v_right * 4), shellvel);
 	
@@ -993,17 +1274,17 @@ void() W_GaussIdle =
 		local float rand = random();
 		if (rand <= 0.5)
 		{
-			W_SetWeaponAnim2(73, 93, 73, 10);
+			W_SetWeaponAnim2(73, 93, -1, 10);
 			self.nextidle = time + random( 10, 15 );
 		}
 		else if (rand <= 0.75)
 		{
-			W_SetWeaponAnim2(94, 114, 94, 10);
+			W_SetWeaponAnim2(94, 114, -1, 10);
 			self.nextidle = time + random( 10, 15 );
 		}
 		else
 		{
-			W_SetWeaponAnim2(115, 175, 115, 20);
+			W_SetWeaponAnim2(115, 175, -1, 20);
 			self.nextidle = time + 3;
 		}
 	}

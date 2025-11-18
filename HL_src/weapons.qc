@@ -43,3 +43,6 @@
 // 104 - 124 : idle2 fps 9
 // 125 - 185 : idle3 fps 12
 // 186 - 193 : holster 20 fps
+
+// Finished SHOTGUN
+// finished GLOCK

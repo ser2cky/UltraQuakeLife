@@ -11,6 +11,8 @@
 //	, idles, and deploys working.
 //	11.15.25: Got Sec. fire, reloading
 //	working!!
+//	11.17.25: added check for special
+//	reloads in weaponframe
 //
 //======================================
 
@@ -42,10 +44,11 @@ typedef struct {
 	ammo_cells
 };
 
-.float clip_fields[3] = {
+.float clip_fields[4] = {
 	currentammo,
 	clip_mp5,
-	clip_glock
+	clip_glock,
+	clip_shotgun
 };
 
 float() W_NullFunc = {return FALSE;};
@@ -120,19 +123,19 @@ weaponclass_t wpc_super_shot =
 	0, // Slot pos.
 	"shells", // Ammo1
 	"", // Ammo2
-	2, // Ammo usage.
-	0, // Clip size.
-	"progs/v_shot2.mdl", // V_Model
+	1, // Ammo usage.
+	8, // Clip size.
+	"progs/v_shotgun.mdl", // V_Model
 	"Shotgun", // Weapon name.
 	WPN_SUPER_SHOTGUN, // Weapon I.D
 	0, // Weapon flags
-	W_FireSuperShotgun, // Attack1
-	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
-	SUB_Null, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
+	W_ShotgunPrimAttack, // Attack1
+	W_ShotgunSecAttack, // Attack2
+	W_ShotgunReload, // Reload
+	W_ShotgunPostThink, // Post-Think function.
+	W_ShotgunDeploy, // Deploy.
 	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	W_ShotgunIdle // Idle.
 };
 
 weaponclass_t wpc_nailgun =
@@ -141,19 +144,19 @@ weaponclass_t wpc_nailgun =
 	0, // Slot pos.
 	"nails", // Ammo1
 	"", // Ammo2
-	2, // Ammo usage.
-	0, // Clip size.
-	"progs/v_nail.mdl", // V_Model
-	"Shotgun", // Weapon name.
+	1, // Ammo usage.
+	50, // Clip size.
+	"progs/v_9mmAR.mdl", // V_Model
+	"MP5", // Weapon name.
 	WPN_NAILGUN, // Weapon I.D
-	0, // Weapon flags
-	W_FireRealSpikes, // Attack1
-	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
-	W_SpikePostFrame, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
+	WFL_HAS_CLIP, // Weapon flags
+	W_MP5PrimAttack, // Attack1
+	W_MP5SecAttack, // Attack2
+	W_MP5Reload, // Reload
+	W_MP5Events, // Post-Think function.
+	W_MP5Deploy, // Deploy.
 	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	W_MP5Idle // Idle.
 };
 
 weaponclass_t wpc_supernail =
@@ -165,7 +168,7 @@ weaponclass_t wpc_supernail =
 	2, // Ammo usage.
 	0, // Clip size.
 	"progs/v_nail2.mdl", // V_Model
-	"Shotgun", // Weapon name.
+	"Super Nailgun", // Weapon name.
 	WPN_SUPER_NAILGUN, // Weapon I.D
 	0, // Weapon flags
 	W_FireRealSpikes, // Attack1
@@ -186,7 +189,7 @@ weaponclass_t wpc_grenade =
 	2, // Ammo usage.
 	0, // Clip size.
 	"progs/v_rock.mdl", // V_Model
-	"Shotgun", // Weapon name.
+	"Grenade Launcher", // Weapon name.
 	WPN_GRENADE_LAUNCHER, // Weapon I.D
 	0, // Weapon flags
 	W_FireGrenade, // Attack1
@@ -207,7 +210,7 @@ weaponclass_t wpc_rocket =
 	2, // Ammo usage.
 	0, // Clip size.
 	"progs/v_rock2.mdl", // V_Model
-	"Shotgun", // Weapon name.
+	"Rocket Launcher", // Weapon name.
 	WPN_ROCKET_LAUNCHER, // Weapon I.D
 	0, // Weapon flags
 	W_FireRocket, // Attack1
@@ -227,30 +230,9 @@ weaponclass_t wpc_lightning =
 	"", // Ammo2
 	1, // Ammo usage.
 	0, // Clip size.
-	"progs/v_light.mdl", // V_Model
-	"Shotgun", // Weapon name.
-	WPN_LIGHTNING, // Weapon I.D
-	0, // Weapon flags
-	W_FireRealLightning, // Attack1
-	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
-	W_LightningPostFrame, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
-	SUB_Null, // Holster.
-	SUB_Null // Idle.
-};
-
-weaponclass_t wpc_gauss =
-{
-	8, // Slot
-	1, // Slot pos.
-	"cells", // Ammo1
-	"", // Ammo2
-	1, // Ammo usage.
-	0, // Clip size.
 	"progs/v_gauss.mdl", // V_Model
 	"Tau-Canon", // Weapon name.
-	WPN_GAUSS, // Weapon I.D
+	WPN_LIGHTNING, // Weapon I.D
 	0, // Weapon flags
 	W_GaussPrimFire, // Attack1
 	W_GaussSecFire, // Attack2
@@ -261,28 +243,7 @@ weaponclass_t wpc_gauss =
 	W_GaussIdle // Idle.
 };
 
-weaponclass_t wpc_mp5 =
-{
-	2, // Slot
-	1, // Slot pos.
-	"nails", // Ammo1
-	"", // Ammo2
-	1, // Ammo usage.
-	50, // Clip size.
-	"progs/v_9mmAR.mdl", // V_Model
-	"MP5", // Weapon name.
-	WPN_MP5, // Weapon I.D
-	WFL_HAS_CLIP, // Weapon flags
-	W_MP5PrimAttack, // Attack1
-	W_MP5SecAttack, // Attack2
-	W_MP5Reload, // Reload
-	W_MP5Events, // Post-Think function.
-	W_MP5Deploy, // Deploy.
-	SUB_Null, // Holster.
-	W_MP5Idle // Idle.
-};
-
-weaponclass_t weaponsclass[11] = {
+weaponclass_t weaponsclass[9] = {
 	wpc_none,
 	wpc_axe,
 	wpc_shotgun,
@@ -292,8 +253,6 @@ weaponclass_t weaponsclass[11] = {
 	wpc_grenade,
 	wpc_rocket,
 	wpc_lightning,
-	wpc_gauss,
-	wpc_mp5
 };
 
 typedef struct {
@@ -304,13 +263,13 @@ typedef struct {
 weaponslot_t weaponslots[9] = {
 	{{wpc_none}, 1},
 	{{wpc_axe}, 1}, // axe
-	{{wpc_shotgun, wpc_mp5}, 2}, // sgun
+	{{wpc_shotgun}, 1}, // sgun
 	{{wpc_super_shot}, 1}, // ssgun
 	{{wpc_nailgun}, 1}, // nailg
 	{{wpc_supernail}, 1}, // snailg
 	{{wpc_grenade}, 1}, // gl
 	{{wpc_rocket}, 1}, // rl
-	{{wpc_lightning, wpc_gauss}, 2} // bolt
+	{{wpc_lightning}, 1} // bolt
 };
 
 enum {
@@ -337,8 +296,6 @@ float(float weap) W_GetWeapon =
 		case WPN_GRENADE_LAUNCHER:	return 6;
 		case WPN_ROCKET_LAUNCHER:	return 7;
 		case WPN_LIGHTNING:			return 8;
-		case WPN_GAUSS:				return 9;
-		case WPN_MP5:				return 10;
 		default:					return 0;
 	}
 }
@@ -411,6 +368,7 @@ float(string gun_name) W_GetClipField =
 	{
 		case "MP5":			return 1;
 		case "Glock":		return 2;
+		case "Shotgun":		return 3;
 		default:			return 0;
 	}
 }
@@ -425,6 +383,7 @@ void() W_ResetClipFields =
 {
 	self.clip_mp5 = 50;
 	self.clip_glock = 18;
+	self.clip_shotgun = 8;
 }
 
 /*
@@ -847,7 +806,7 @@ void() W_WeaponFrame =
 		}
 		else
 		{
-			if ((ammo > 0) && (clip <= 0) && (self.attack_finished < time))
+			if ((ammo > 0) && (clip <= 0) && (self.attack_finished < time) && (self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
 			{
 				weap.reload();
 				sprint(self, "reloading\n");
@@ -931,6 +890,7 @@ void() W_Precache =
 	precache_model ("progs/shell.mdl");
 	precache_model ("progs/hl_grenade.mdl");
 	precache_model ("progs/hl_explode.spr");
+	precache_model ("progs/shotgunshell.mdl");
 
 	precache_model ("progs/v_axe.mdl");
 	precache_model ("progs/v_nail.mdl");
@@ -943,6 +903,7 @@ void() W_Precache =
 	W_GaussPrecache();
 	W_MP5Precache();
 	W_GlockPrecache();
+	W_ShotgunPrecache();
 }
 
 /*

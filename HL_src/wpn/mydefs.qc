@@ -29,6 +29,7 @@ float WS_DEPLOY = 0;
 float WS_READY = 1;
 float WS_RELOAD = 2;
 float WS_HOLSTER = 3;
+float WS_SPECIAL_RELOAD = 4;
 
 // animation stuff
 .float fps;
@@ -39,6 +40,7 @@ float WS_HOLSTER = 3;
 
 .float clip_mp5;
 .float clip_glock;
+.float clip_shotgun;
 
 float MAX_WEAPON_NUM = 8;
 
@@ -51,15 +53,13 @@ const float	WPN_SUPER_NAILGUN		= 8;
 const float	WPN_GRENADE_LAUNCHER	= 16;
 const float	WPN_ROCKET_LAUNCHER		= 32;
 const float	WPN_LIGHTNING			= 64;
-const float WPN_GAUSS				= 128;
-const float WPN_MP5					= 256;
 const float	WPN_WEAPONS				= 127 + 4096;
 
 const float HUD_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
 					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
 					
 const float ALL_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
-					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING + WPN_MP5 + WPN_GAUSS;
+					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
 
 float WFL_HAS_CLIP = 1;
 

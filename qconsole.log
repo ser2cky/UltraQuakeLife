@@ -6,12 +6,6 @@ Invalid joysticknum value
 No joysticks found
 7662k surface cache
 Detected video mode 2
-
-Sound Initialization
-SDL audio spec: 11025 Hz, 256 samples, 2 channels
-SDL audio driver: wasapi - (UNKNOWN), 8192 bytes buffer
-Audio: 8 bit, stereo, 11025 Hz
-SDL Mixer initialized
 Couldn't load 'localization/loc_english.txt'
 execing quake.rc
 execing default.cfg
@@ -28,47 +22,6 @@ FITZQUAKE 0.85 SERVER(15868 CRC)
 Introduction
 Using protocol 666
 file for music/track04.wv not found
-]fov
-"fov" is "110"
-]fov 90
-]map e1m1
-
-FITZQUAKE 0.85 SERVER(15868 CRC)
-the Slipgate Complex
-Using protocol 666
-file for music/track06.wv not found
-godmode ON
-]god
-godmode OFF
-]god
-godmode ON
-]skill 2
-]map e1m1
-
-FITZQUAKE 0.85 SERVER(15868 CRC)
-the Slipgate Complex
-Using protocol 666
-file for music/track06.wv not found
-godmode ON
-noclip ON
-noclip OFF
-You got 5 shells
 reloading
-You got 5 shells
-You got 5 shells
-You got 5 shells
-You got 5 shells
-You got 5 shells
-trace endpos 1:'-391.4 2816.0 -69.9'
-beam endpos 1:'-2032.6 10302.6 611.6'
-trace endpos 1:'-186.5 3008.0 -68.1'
-beam endpos 1:'615.3 10399.5 392.3'
-trace endpos 1:'-128.0 2443.9  58.9'
-beam endpos 1:' 40.7 2412.4 160.0'
-beam endpos 2:'-112.0 2440.9  68.5'
- 19.0
-You got 5 shells
-trace endpos 1:'540.9 2717.0 -27.7'
-beam endpos 1:'8146.2 2428.8  54.0'
+reloading
 Wrote ./HalfLife/config.cfg
-Shutting down SDL sound

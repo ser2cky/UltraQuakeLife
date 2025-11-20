@@ -234,23 +234,23 @@ void(entity attacker, float damage) dog_pain =
 
 void() dog_die1		=[	$death1,	dog_die2	] {}
 void() dog_die2		=[	$death2,	dog_die3	] {}
-void() dog_die3		=[	$death3,	dog_die4	] {self.solid = SOLID_NOT; }
+void() dog_die3		=[	$death3,	dog_die4	] {}
 void() dog_die4		=[	$death4,	dog_die5	] {}
 void() dog_die5		=[	$death5,	dog_die6	] {}
 void() dog_die6		=[	$death6,	dog_die7	] {}
 void() dog_die7		=[	$death7,	dog_die8	] {}
 void() dog_die8		=[	$death8,	dog_die9	] {}
-void() dog_die9		=[	$death9,	SUB_Null	] {}
+void() dog_die9		=[	$death9,	SUB_Null	] {BecomeCorpse("progs/h_dog.mdl");}
 
 void() dog_dieb1	=[	$deathb1,	dog_dieb2	] {}
 void() dog_dieb2	=[	$deathb2,	dog_dieb3	] {}
-void() dog_dieb3	=[	$deathb3,	dog_dieb4	] {self.solid = SOLID_NOT;}
+void() dog_dieb3	=[	$deathb3,	dog_dieb4	] {}
 void() dog_dieb4	=[	$deathb4,	dog_dieb5	] {}
 void() dog_dieb5	=[	$deathb5,	dog_dieb6	] {}
 void() dog_dieb6	=[	$deathb6,	dog_dieb7	] {}
 void() dog_dieb7	=[	$deathb7,	dog_dieb8	] {}
 void() dog_dieb8	=[	$deathb8,	dog_dieb9	] {}
-void() dog_dieb9	=[	$deathb9,	SUB_Null	] {}
+void() dog_dieb9	=[	$deathb9,	SUB_Null	] {BecomeCorpse("progs/h_dog.mdl");}
 
 
 void() dog_die =

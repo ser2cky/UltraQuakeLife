@@ -264,7 +264,7 @@ void(entity attacker, float damage)	enf_pain =
 void()	enf_die1	=[	$death1,	enf_die2	] {}
 void()	enf_die2	=[	$death2,	enf_die3	] {}
 void()	enf_die3	=[	$death3,	enf_die4	] {
-	self.solid = SOLID_NOT;
+	//self.solid = SOLID_NOT;
 	//self.ammo_cells = 5;
 	//DropBackpack();
 }
@@ -278,12 +278,12 @@ void()	enf_die10	=[	$death10,	enf_die11	] {ai_forward(5);}
 void()	enf_die11	=[	$death11,	enf_die12	] {ai_forward(5);}
 void()	enf_die12	=[	$death12,	enf_die13	] {ai_forward(5);}
 void()	enf_die13	=[	$death13,	enf_die14	] {}
-void()	enf_die14	=[	$death14,	SUB_Null	] {}
+void()	enf_die14	=[	$death14,	SUB_Null	] {BecomeCorpse("progs/h_mega.mdl");}
 
 void()	enf_fdie1	=[	$fdeath1,	enf_fdie2	] {}
 void()	enf_fdie2	=[	$fdeath2,	enf_fdie3	] {}
 void()	enf_fdie3	=[	$fdeath3,	enf_fdie4	] {
-	self.solid = SOLID_NOT;
+	//self.solid = SOLID_NOT;
 	//self.ammo_cells = 5;
 	//DropBackpack();
 }
@@ -294,7 +294,7 @@ void()	enf_fdie7	=[	$fdeath7,	enf_fdie8	] {}
 void()	enf_fdie8	=[	$fdeath8,	enf_fdie9	] {}
 void()	enf_fdie9	=[	$fdeath9,	enf_fdie10	] {}
 void()	enf_fdie10	=[	$fdeath10,	enf_fdie11	] {}
-void()	enf_fdie11	=[	$fdeath11,	SUB_Null	] {}
+void()	enf_fdie11	=[	$fdeath11,	SUB_Null	] {BecomeCorpse("progs/h_mega.mdl");}
 
 
 void() enf_die =

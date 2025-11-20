@@ -11,6 +11,8 @@
 //	starting on MP5.
 //	11.16.25: mp5 finished.
 //	11.17.25: finished glock AND shotgun!!
+//	11.19.25: corpse stuff, starting
+//	on crowbar.
 //
 //======================================
 
@@ -75,11 +77,44 @@ float(float frame_start, float frame_end, float frame_reset, float framerate, fl
 
 /*
 ============
+HL_CorpseChecker
+============
+*/
+
+entity(vector endpos) HL_CorpseChecker =
+{
+	for (float i = 0; i < 3; i++)
+	{
+		entity ent = world;
+		ent = findradius(endpos, 48);
+		
+		// Increase endpos height ever iteration
+		// to account for diff. between endpos and
+		// actual corpse BBOX.
+		endpos_z += 4;
+		
+		while (ent)
+		{
+			if (ent.deadflag == DEAD_DEAD)
+			{
+				trace_ent = ent;
+				sprint(self, "Hit something!\n");
+				return ent;
+			}
+			ent = ent.chain;
+		}
+	}
+	
+	return world;
+}
+
+/*
+============
 HL_FireBullets
 ============
 */
 
-void(float shots, vector src, vector dir, vector spread, float distance, float damage) HL_FireBullets =
+void(float shots, vector src, vector dir, vector spread, float distance, float damage, float can_gib = FALSE) HL_FireBullets =
 {
 	ClearMultiDamage();
 	for (float shot = 1; shot <= shots; shot++)
@@ -98,11 +133,45 @@ void(float shots, vector src, vector dir, vector spread, float distance, float d
 		
 		if (trace_fraction != 1.0)
 		{
-			TraceAttack (damage, newdir);
+			// TraceAttack if enemy is dead, we have a quad, or we can gib.
+			if (HasBeenShotToDeath(trace_ent) || trace_ent.deadflag == DEAD_NO || has_quad(self) || can_gib)
+			{
+				TraceAttack (damage, dir);
+			}
+			else
+			{
+				ClearMultiDamage();
+				TraceAttack (damage, dir);
+			}
+		}
+		
+		// Corpse checker!
+		// Do this check on the final pellet so
+		// things don't get to computationally intense!
+		// - serecky 11.19.25
+		if (shot == shots)
+		{
+			traceline(src, src + dir * distance, 0, self);
+			
+			if (HL_CorpseChecker(trace_endpos) != world)
+			{
+				trace_ent = HL_CorpseChecker(trace_endpos);
+				TraceAttack (damage, dir);
+			}
 		}
 		// Put bubble trail here...
 	}
-	ApplyMultiDamage();
+	
+	// Check to prevent gibbing from bullet based weapons.
+	if (can_gib)
+	{
+		ApplyMultiDamage();
+	}
+	else
+	{
+		if (trace_ent.deadflag == DEAD_NO || (has_quad(self)))
+			ApplyMultiDamage();
+	}
 }
 
 /*
@@ -167,6 +236,171 @@ void(string shellmodel, vector org, vector vel) EjectBrass =
 	new.frame = 0;
 	new.flags = 0;
 };
+
+/*
+============
+Crowbar
+
+// 0 - 10 : deploy 20 fps
+// 11 - 20 : attack 1 20 fps
+// 21 - 30 : attack 1 strike 20 fps
+// 31 - 43 : attack 2 20 fps
+// 44 - 56 : attack 2 strike 20 fps
+// 57 - 73 : attack 3 20 fps
+// 74 - 89 : attack 3 strike 20 fps
+// 90 - 105 : idle1 8 fps
+// 106 - 149 : idle2 8 fps
+// 150 - 193 : idle3 8 fps
+// 194 - 204 : holster 20 fps
+
+============
+*/
+
+/*
+============
+W_CrowbarPrecache
+============
+*/
+
+void() W_CrowbarPrecache =
+{
+	precache_model("progs/v_crowbar.mdl");
+	//precache_model("progs/w_crowbar.mdl");
+	precache_sound("hl_weapons/cbar_hit1.wav");
+	precache_sound("hl_weapons/cbar_hit2.wav");
+	precache_sound("hl_weapons/cbar_hitbod1.wav");
+	precache_sound("hl_weapons/cbar_hitbod2.wav");
+	precache_sound("hl_weapons/cbar_hitbod3.wav");
+	precache_sound("hl_weapons/cbar_miss1.wav");
+}
+
+/*
+============
+W_CrowbarDeploy
+============
+*/
+
+void() W_CrowbarDeploy =
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+}
+
+/*
+============
+W_CrowbarPrimAttack
+============
+*/
+
+float() W_CrowbarPrimAttack =
+{
+	if (!W_CrowbarSwing(1))
+	{
+		self.fuser1 = time + 0.1;
+	}
+	return TRUE;
+}
+
+/*
+============
+W_CrowbarSwing
+============
+*/
+
+float(float first) W_CrowbarSwing =
+{
+	makevectors(self.v_angle);
+	vector src = self.origin + self.view_ofs;
+	vector end = src + v_forward * 64;
+	float hit = FALSE;
+	float r;
+	
+	traceline(src, end, 0, self);
+	
+	if (HL_CorpseChecker(trace_endpos) != world)
+	{
+		trace_ent = HL_CorpseChecker(trace_endpos);
+		trace_fraction = 0.0;
+	}
+	
+	if (trace_fraction >= 1.0)
+	{
+		if (first)
+		{
+			r = random();
+			
+			if (r < 0.33)
+				W_SetWeaponAnim2(11, 20, 10, 20);
+			else if (r < 0.66)
+				W_SetWeaponAnim2(31, 43, 10, 20);
+			else
+				W_SetWeaponAnim2(57, 73, 10, 20);
+				
+			self.attack_finished = time + 0.5;
+			sound(self, CHAN_WEAPON, "hl_weapons/cbar_miss1.wav", 1, ATTN_NORM);
+		}
+	}
+	else
+	{
+		hit = TRUE;
+		
+		r = random();
+		
+		if (r < 0.33)
+			W_SetWeaponAnim2(21, 30, 10, 20);
+		else if (r < 0.66)
+			W_SetWeaponAnim2(44, 56, 10, 20);
+		else
+			W_SetWeaponAnim2(74, 89, 10, 20);
+			
+		ClearMultiDamage();
+		if ( self.attack_finished + 1 < time || deathmatch )
+		{
+			TraceAttack(10, v_forward);
+		}
+		else
+		{
+			TraceAttack(5, v_forward);
+		}
+		ApplyMultiDamage();
+		self.attack_finished = time + 0.25;
+		
+		if (trace_ent)
+		{
+			r = random();
+		
+			if (r < 0.33)
+				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod1.wav", 1, ATTN_NORM);
+			else if (r < 0.66)
+				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod2.wav", 1, ATTN_NORM);
+			else
+				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod3.wav", 1, ATTN_NORM);
+		}
+		else
+		{
+			if (r < 0.5)
+				sound(self, CHAN_ITEM, "hl_weapons/cbar_hit1.wav", 1, ATTN_NORM);
+			else
+				sound(self, CHAN_ITEM, "hl_weapons/cbar_hit2.wav", 1, ATTN_NORM);
+		}
+	}
+	
+	return hit;
+}
+
+/*
+============
+W_CrowbarPostFrame
+============
+*/
+
+void() W_CrowbarPostFrame =
+{
+	if (self.fuser1 < time && self.fuser1)
+	{
+		W_CrowbarSwing(0);
+		self.fuser1 = 0.0;
+	}
+}
 
 /*
 ============
@@ -265,7 +499,7 @@ float(vector spread, float nextattack, float dist_autoaim) W_GlockFire =
 	sound(self, CHAN_WEAPON, "hl_weapons/pl_gun3.wav", random(0.92, 1.0), ATTN_NORM);
 	
 	vector dir = aim (self, AUTOAIM_DIST);
-	HL_FireBullets(1, self.origin + self.view_ofs, dir, spread, 8192, 8);
+	HL_FireBullets(1, self.origin + self.view_ofs, dir, spread, 8192, 16, FALSE);
 	
 	self.attack_finished = self.attack2_finished = time + nextattack;
 	self.nextidle = time + random(10,15);
@@ -427,9 +661,9 @@ float() W_ShotgunPrimAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(4, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		HL_FireBullets(4, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, FALSE);
 	else
-		HL_FireBullets(6, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		HL_FireBullets(6, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, FALSE);
 		
 	if (self.currentammo != 0)
 	{
@@ -484,9 +718,9 @@ float() W_ShotgunSecAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, FALSE);
 	else
-		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 5);
+		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, FALSE);
 		
 	if (self.currentammo != 0)
 	{
@@ -722,9 +956,9 @@ float() W_MP5PrimAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(1, src, dir, VECTOR_CONE_6DEGREES, 8192, 5);
+		HL_FireBullets(1, src, dir, VECTOR_CONE_6DEGREES, 8192, 10, FALSE);
 	else
-		HL_FireBullets(1, src, dir, VECTOR_CONE_3DEGREES, 8192, 10);
+		HL_FireBullets(1, src, dir, VECTOR_CONE_3DEGREES, 8192, 10, FALSE);
 	// Buffed damage for single-player..
 	
 	if (!(self.items & IT_NAILS))

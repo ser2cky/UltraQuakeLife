@@ -77,6 +77,7 @@ void(entity targ, entity attacker, float dmgtype) Killed =
 		if (self.flags & FL_SWIM)
 			self.flags = self.flags - FL_SWIM;
 
+		BecomeDead();
 		killed_monster();	// bump the monster counter
 		monster_death_use();
 	}
@@ -631,9 +632,9 @@ void(vector src, entity inflictor, entity attacker, float damage, float radius, 
 	
 	while (ent)
 	{
-		if (ent->takedamage != DAMAGE_NO)
+		if (ent.takedamage != DAMAGE_NO)
 		{
-			if (ent->classname == ignore)
+			if (ent.classname == ignore)
 			{
 				ent = ent.chain;
 				continue;
@@ -690,7 +691,7 @@ void(vector src, entity inflictor, entity attacker, float damage, float radius, 
 
 void(vector src, entity inflictor, entity attacker, float damage, string ignore, float dmgtype = DMGTYPE_EXPLOSION) HL_RadiusDamage =
 {
-	T_RadiusDamage2(src, inflictor, attacker, damage, damage * 1.5, ignore, dmgtype);
+	T_RadiusDamage2(src, inflictor, attacker, damage, damage * 2.5, ignore, dmgtype);
 }
 
 /*

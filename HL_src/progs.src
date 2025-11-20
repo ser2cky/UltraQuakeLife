@@ -13,6 +13,7 @@ subs_move.qc
 subs_tgt.qc
 ai.qc
 meat.qc		// gibs and gore
+gibby_corpses.qc
 combat.qc	// fight.qc decrufted away
 
 items.qc

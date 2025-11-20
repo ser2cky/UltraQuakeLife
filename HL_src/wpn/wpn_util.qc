@@ -83,15 +83,15 @@ weaponclass_t wpc_axe =
 	"", // Ammo2
 	0, // Ammo usage.
 	0, // Clip size.
-	"progs/v_axe.mdl", // V_Model
-	"Axe", // Weapon name.
+	"progs/v_crowbar.mdl", // V_Model
+	"Crowbar", // Weapon name.
 	WPN_AXE, // Weapon I.D
 	0, // Weapon flags
-	W_FireAnimatedAxe, // Attack1
+	W_CrowbarPrimAttack, // Attack1
 	W_NullFunc, // Attack2
 	W_NullFunc, // Reload
-	SUB_Null, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
+	W_CrowbarPostFrame, // Post-Think function.
+	W_CrowbarDeploy, // Deploy.
 	SUB_Null, // Holster.
 	SUB_Null // Idle.
 };
@@ -630,6 +630,17 @@ vector(float damage, vector dir) TraceAttack =
 
 	if (trace_ent.takedamage)
 	{
+		if (trace_ent.multi_dmg >= trace_ent.health)
+		{
+			trace_ent.gravity = 0.5;
+			trace_ent.flags &= ~FL_ONGROUND;
+			
+			trace_ent.origin_z += 1.0;
+			trace_ent.velocity_x += dir_x * (trace_ent.multi_dmg * 2.5);
+			trace_ent.velocity_y += dir_y * (trace_ent.multi_dmg * 2.5);
+			trace_ent.velocity_z += trace_ent.multi_dmg / 2;
+		}
+	
 		SpawnBlood (org, vel*40, damage);
 		AddMultiDamage (trace_ent, damage);
 	}
@@ -904,6 +915,7 @@ void() W_Precache =
 	W_MP5Precache();
 	W_GlockPrecache();
 	W_ShotgunPrecache();
+	W_CrowbarPrecache();
 }
 
 /*

@@ -308,14 +308,14 @@ void()	wiz_death1	=[	$death1,		wiz_death2	] {
 	sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
 }
 void()	wiz_death2	=[	$death2,		wiz_death3	] {}
-void()	wiz_death3	=[	$death3,		wiz_death4	] {self.solid = SOLID_NOT; self.flags = not(self.flags, FL_ONGROUND);}
+void()	wiz_death3	=[	$death3,		wiz_death4	] {self.flags = not(self.flags, FL_ONGROUND);}
 void()	wiz_death4	=[	$death4,		wiz_death5	] {}
 void()	wiz_death5	=[	$death5,		wiz_death6	] {}
 // would be nice to hold on frame 6 until the plunk, but SOLID_NOT things don't generate touch events
 // if they did it would be a lot easier to remove dead scrags and heads in func_voids
 void()	wiz_death6	=[	$death6,		wiz_death7	] {}
 void()	wiz_death7	=[	$death7,		wiz_death8	] {}
-void()	wiz_death8	=[	$death8,		SUB_Null	] {}// deathvoidcheck(); }
+void()	wiz_death8	=[	$death8,		SUB_Null	] {BecomeCorpse("progs/h_wizard.mdl");}// deathvoidcheck(); }
 
 void() wiz_die =
 {

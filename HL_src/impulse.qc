@@ -201,6 +201,20 @@ void() ImpulseCommands =
 	case 18:
 		self.firemode = 1;
 		break;
+	case 19:
+		{
+			weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
+			float clip = self.(clip_fields[W_GetClipField(weap.name)]);
+			float ammo = self.(ammo_fields[W_GetAmmoField(weap.ammo1)]);
+			
+			if ((ammo > 0) && (clip < weap.clip_size) && (self.attack_finished < time) && 
+			(self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
+			{
+				weap.reload();
+				sprint(self, "reloading\n");
+			}
+		}
+		break;
 
 	case 40:
 		dev_impulse_list();

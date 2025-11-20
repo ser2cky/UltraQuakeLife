@@ -7,6 +7,8 @@
 */
 
 void() SUB_Null = {}
+float() SUB_NullFloat = {return FALSE;}
+void(entity attacker, float damage) SUB_NullPain = {};
 
 /*
 =============

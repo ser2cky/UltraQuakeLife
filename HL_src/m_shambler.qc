@@ -411,14 +411,14 @@ float() ShamCheckAttack =
 void() sham_death1      =[      $death1,       sham_death2     ] {}
 void() sham_death2      =[      $death2,       sham_death3     ] {}
 void() sham_death3      =[      $death3,       sham_death4     ] {}
-void() sham_death4      =[      $death4,       sham_death5     ] {self.solid = SOLID_NOT;}
+void() sham_death4      =[      $death4,       sham_death5     ] {}
 void() sham_death5      =[      $death5,       sham_death6     ] {}
 void() sham_death6      =[      $death6,       sham_death7     ] {}
 void() sham_death7      =[      $death7,       sham_death8     ] {}
 void() sham_death8      =[      $death8,       sham_death9     ] {}
 void() sham_death9      =[      $death9,       sham_death10    ] {}
 void() sham_death10     =[      $death10,      sham_death11    ] {}
-void() sham_death11     =[      $death11,      SUB_Null    ] {}
+void() sham_death11     =[      $death11,      SUB_Null    ] {BecomeCorpse("progs/h_shams.mdl");}
 
 void() sham_die =
 {

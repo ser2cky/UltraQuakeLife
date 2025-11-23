@@ -13,6 +13,9 @@
 //	working!!
 //	11.17.25: added check for special
 //	reloads in weaponframe
+//	11.22.25: fixed door traceattack bug,
+//	changing weapons now properly
+//	calls holster function !!!
 //
 //======================================
 
@@ -36,19 +39,21 @@ typedef struct {
 	void() idle;
 } weaponclass_t;
 
-.float ammo_fields[5] = {
+.float ammo_fields[6] = {
 	currentammo,
 	ammo_shells,
 	ammo_nails, 
 	ammo_rockets,
-	ammo_cells
+	ammo_cells,
+	ammo_hornets
 };
 
-.float clip_fields[4] = {
+.float clip_fields[5] = {
 	currentammo,
 	clip_mp5,
 	clip_glock,
-	clip_shotgun
+	clip_shotgun,
+	clip_crossbow
 };
 
 float() W_NullFunc = {return FALSE;};
@@ -166,18 +171,18 @@ weaponclass_t wpc_supernail =
 	"nails", // Ammo1
 	"", // Ammo2
 	2, // Ammo usage.
-	0, // Clip size.
-	"progs/v_nail2.mdl", // V_Model
-	"Super Nailgun", // Weapon name.
+	5, // Clip size.
+	"progs/v_crossbow.mdl", // V_Model
+	"Crossbow", // Weapon name.
 	WPN_SUPER_NAILGUN, // Weapon I.D
 	0, // Weapon flags
-	W_FireRealSpikes, // Attack1
-	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
-	W_SpikePostFrame, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
-	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	W_CrossbowPrimAttack, // Attack1
+	W_CrossbowSecAttack, // Attack2
+	W_CrossbowReload, // Reload
+	SUB_Null, // Post-Think function.
+	W_CrossbowDeploy, // Deploy.
+	W_CrossbowHolster, // Holster.
+	W_CrossbowIdle // Idle.
 };
 
 weaponclass_t wpc_grenade =
@@ -205,21 +210,21 @@ weaponclass_t wpc_rocket =
 {
 	7, // Slot
 	0, // Slot pos.
-	"rockets", // Ammo1
+	"hornets", // Ammo1
 	"", // Ammo2
-	2, // Ammo usage.
+	1, // Ammo usage.
 	0, // Clip size.
-	"progs/v_rock2.mdl", // V_Model
-	"Rocket Launcher", // Weapon name.
+	"progs/v_hgun.mdl", // V_Model
+	"Hornetgun", // Weapon name.
 	WPN_ROCKET_LAUNCHER, // Weapon I.D
 	0, // Weapon flags
-	W_FireRocket, // Attack1
-	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
+	W_HGunPrimAttack, // Attack1
+	W_HGunSecAttack, // Attack2
+	W_HGunReload, // Reload
 	SUB_Null, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
-	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	W_HGunDeploy, // Deploy.
+	W_HGunHolster, // Holster.
+	W_HGunIdle // Idle.
 };
 
 weaponclass_t wpc_lightning =
@@ -334,6 +339,7 @@ float(string ammo_name) W_GetAmmoField =
 		case "nails":		return 2;
 		case "rockets":		return 3;
 		case "cells":		return 4;
+		case "hornets":		return 5;
 		default:			return 0;
 	}
 }
@@ -369,6 +375,7 @@ float(string gun_name) W_GetClipField =
 		case "MP5":			return 1;
 		case "Glock":		return 2;
 		case "Shotgun":		return 3;
+		case "Crossbow":	return 4;
 		default:			return 0;
 	}
 }
@@ -384,6 +391,8 @@ void() W_ResetClipFields =
 	self.clip_mp5 = 50;
 	self.clip_glock = 18;
 	self.clip_shotgun = 8;
+	self.clip_crossbow = 5;
+	self.ammo_hornets = 8;
 }
 
 /*
@@ -494,7 +503,9 @@ float(float imp) W_ChangeSlot =
 	{
 		weaponstat = W_CheckWeapon(newSlot.weaps[startSlotPos].id, self);
 		if (i == 0 || weaponstat == WEAPONSTAT_NOAMMO) firstweaponstat = weaponstat;
-		if (weaponstat == WEAPONSTAT_AVAILABLE){
+		if (weaponstat == WEAPONSTAT_AVAILABLE)
+		{
+			currentWeapon.holster(); // Call deploy function here..
 			W_ChangeWeapon(newSlot.weaps[startSlotPos].id);
 			return weaponstat;
 		}
@@ -630,7 +641,7 @@ vector(float damage, vector dir) TraceAttack =
 
 	if (trace_ent.takedamage)
 	{
-		if (trace_ent.multi_dmg >= trace_ent.health)
+		if (trace_ent.multi_dmg >= trace_ent.health && (trace_ent.flags & FL_MONSTER || trace_ent.flags & FL_CORPSE))
 		{
 			trace_ent.gravity = 0.5;
 			trace_ent.flags &= ~FL_ONGROUND;
@@ -916,6 +927,8 @@ void() W_Precache =
 	W_GlockPrecache();
 	W_ShotgunPrecache();
 	W_CrowbarPrecache();
+	W_CrossbowPrecache();
+	W_HGunPrecache();
 }
 
 /*

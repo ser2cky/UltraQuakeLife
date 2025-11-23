@@ -38,9 +38,11 @@ float WS_SPECIAL_RELOAD = 4;
 .float startframe;
 .float endframe;
 
+.float ammo_hornets;
 .float clip_mp5;
 .float clip_glock;
 .float clip_shotgun;
+.float clip_crossbow;
 
 float MAX_WEAPON_NUM = 8;
 
@@ -75,5 +77,7 @@ vector VECTOR_CONE_9DEGREES = '0.07846 0.07846 0.07846';
 vector VECTOR_CONE_10DEGREES = '0.08716 0.08716 0.08716';
 vector VECTOR_CONE_15DEGREES = '0.13053 0.13053 0.13053';
 vector VECTOR_CONE_20DEGREES = '0.17365 0.17365 0.17365';
+
+const float FL_CORPSE = 16384;
 
 #pragma noref 0

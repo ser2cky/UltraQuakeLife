@@ -18,259 +18,945 @@ execing default.cfg
 execing config.cfg
 execing autoexec.cfg
 Unknown command "bidd"
+execing halflife.cfg
 3 demo(s) in loop
 Playing demo from demo1.dem.
 the Necropolis
 Using protocol 15
 file for music/track02.wv not found
 
-FITZQUAKE 0.85 SERVER(50425 CRC)
+FITZQUAKE 0.85 SERVER(42122 CRC)
 Introduction
 Using protocol 666
 file for music/track04.wv not found
-]skill 2
-]map e1m2
 
-FITZQUAKE 0.85 SERVER(50425 CRC)
-Castle of the Damned
+FITZQUAKE 0.85 SERVER(42122 CRC)
+the Slipgate Complex
 Using protocol 666
-file for music/track08.wv not found
-]hud_style
-Unknown command "hud_style"
+file for music/track06.wv not found
+]god
 godmode ON
-You got 5 shells
-Hit something!
-Hit something!
-You got 5 shells
-You got 5 shells
-You got 1 rocket
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-trace endpos 1:'1020.4 480.0 330.2'
-beam endpos 1:'1079.4 142.8 311.3'
-beam endpos 2:'1026.0 448.0 328.4'
- 32.6
-reflect
-reflect
-reflect
-trace endpos 1:'1070.5 -232.0 307.3'
-beam endpos 1:'1768.3 -8053.7  64.8'
-You got 1 rocket
+noclip ON
+]map e3m1
+
+FITZQUAKE 0.85 SERVER(42122 CRC)
+Termination Central
+Using protocol 666
+file for music/track06.wv not found
+noclip ON
+noclip OFF
+noclip ON
+noclip OFF
 You got the Double-barreled Shotgun
-trace endpos 1:'1474.1 448.0 326.0'
-beam endpos 1:'2327.9 8333.5 -196.4'
+monster_enforcer
+monster_dog
+monster_army
+monster_army
+monster_enforcer
+monster_dog
+monster_army
+monster_army
+monster_enforcer
+monster_army
+monster_enforcer
+monster_army
+monster_enforcer
+monster_army
+monster_enforcer
+monster_enforcer
+monster_army
 You got 5 shells
-trace endpos 1:'1464.0 311.8 349.7'
-beam endpos 1:'1517.5 315.4 355.7'
-beam endpos 2:'1496.0 314.0 353.3'
- 32.3
-Hit something!
-Hit something!
-You got 1 rocket
-]map e1m2
-
-FITZQUAKE 0.85 SERVER(50425 CRC)
-Castle of the Damned
-Using protocol 666
-file for music/track08.wv not found
-godmode ON
-You got 5 shells
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-trace endpos 1:'1034.3 480.0 334.6'
-beam endpos 1:'1038.0 360.0 335.5'
-beam endpos 2:'1035.3 448.0 334.8'
- 32.1
-You got 5 shells
-trace endpos 1:'1464.0 211.3 372.7'
-beam endpos 1:'1984.0 136.9 438.0'
-beam endpos 2:'1496.0 206.7 376.7'
- 32.6
-You got 5 shells
-]map e1m2
-
-FITZQUAKE 0.85 SERVER(50425 CRC)
-Castle of the Damned
-Using protocol 666
-file for music/track08.wv not found
-No weapon.
-No weapon.
-No weapon.
-godmode ON
-godmode OFF
-No weapon.
-]map e1m2
-
-FITZQUAKE 0.85 SERVER(50425 CRC)
-Castle of the Damned
-Using protocol 666
-file for music/track08.wv not found
-noclip ON
-No weapon.
-No weapon.
-noclip OFF
-noclip ON
-noclip OFF
-Hit something!
-Hit something!
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-You are healed by 25
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_enforcer
 reloading
-You got the shells
-You got 5 shells
-You got 1 rocket
-You got the Double-barreled Shotgun
-You got 5 shells
-trace endpos 1:'1464.0 326.1 356.6'
-beam endpos 1:'1500.1 334.3 363.9'
-beam endpos 2:'1496.0 333.4 363.1'
- 33.5
-You got the shells
-You got 1 rocket
-You got 5 shells
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+test
 player was shot by a Grunt
 
-FITZQUAKE 0.85 SERVER(50425 CRC)
-Castle of the Damned
+FITZQUAKE 0.85 SERVER(42122 CRC)
+Termination Central
 Using protocol 666
-file for music/track08.wv not found
-You got 5 shells
-Hit something!
-Hit something!
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 1 rocket
-You got 5 shells
-You are healed by 12
-reloading
+file for music/track06.wv not found
+]bind [
+"[" = "impulse 10"
+]bind mwheelup
+"mwheelup" = "+jump"
+]bind mwheelup "impulse 10"
+]bind mwheeldown
+"mwheeldown" = "+jump"
+]bind ]
+"]" = "impulse 12"
+]bind mwheeldown "impulse 12"
 You got the Double-barreled Shotgun
-You got the shells
-reflect
-trace endpos 1:'1040.0 117.8 338.5'
-beam endpos 1:'744.0 241.3 335.5'
-beam endpos 2:'1000.0 134.5 338.1'
- 43.4
-SV_StartSound:  not precached
-You are healed by 2
-reflect
-trace endpos 1:'1040.0 113.4 401.4'
-beam endpos 1:'886.5 339.1 506.3'
-beam endpos 2:'1024.6 136.0 411.9'
- 29.4
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-reflect
-You got 1 rocket
+monster_enforcer
+monster_dog
+monster_army
+monster_army
+monster_enforcer
+monster_dog
+monster_army
+monster_army
+monster_enforcer
+monster_army
 You got 5 shells
-trace endpos 1:'1464.0 309.7 348.4'
-beam endpos 1:'1559.9 294.6 361.7'
-beam endpos 2:'1496.0 304.6 352.9'
- 32.8
-trace endpos 1:'1464.0 292.9 337.4'
-beam endpos 1:'1661.8 357.3 319.7'
-beam endpos 2:'1496.0 303.3 334.5'
- 33.8
+monster_enforcer
+monster_army
+monster_enforcer
+monster_army
 You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
+reloading
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
 You got 5 shells
-You are healed by 8
-player was destroyed by an Ogre
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+filling
+reloading
+monster_enforcer
+monster_army
+monster_enforcer
+monster_army
+monster_enforcer
+monster_enforcer
+monster_enforcer
+monster_army
+monster_army
+monster_army
+You got 5 shells
+You got 5 shells
+monster_dog
+monster_army
+monster_enforcer
+monster_army
+monster_army
+monster_army
+monster_enforcer
+monster_enforcer
+monster_army
+monster_army
+monster_army
+monster_army
+monster_army
+monster_army
+monster_army
+reloading
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+weapon state:reload
+filling
+reloading
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+monster_enforcer
+You got the nails
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+reloading
 Wrote ./HalfLife/config.cfg
 Shutting down SDL sound

@@ -69,3 +69,29 @@
 // 106 - 149 : idle2 8 fps
 // 150 - 193 : idle3 8 fps
 // 194 - 204 : holster 20 fps
+
+// 11.22.25
+// crossbow. fixes
+
+// CROSSBOW
+// uses up all possible
+// frames for mdl
+// 0 - 10 : deploy 20 fps
+// 11- 21 : deploy empty 20 fps
+// 22 - 59 : fire 20 fps
+// 60 - 70 : fire empty 20 fps
+// 71 - 139 : reload 15 fps
+// 140 - 170 : idle1 8 fps
+// 171 - 191 : idle2  8 fps
+// 192 - 212 : fidget 1 8 fps 
+// 213 - 233 : fidget 2 8 fps
+// 234 - 244 : holster 20 fps
+// 245 - 254 : empty holster 20 fps
+
+// hornet gun
+// 0 - 20 : deploy 20 fps
+// 21 - 29 : fire 20 fps
+// 30 - 60 : idle 1 loop 16 fps
+// 61 - 101 : idle 2 16 fps
+// 102 - 137 : idle 3 16 fps
+// 138 - 156 : Holster 16 fps

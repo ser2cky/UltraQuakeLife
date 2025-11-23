@@ -679,6 +679,7 @@ void() PutClientInServer =
 	
 	W_ResetClipFields();
 	W_ChangeWeapon(self.weapon);
+	stuffcmd(self, "unzoom\n"); // Unzoom
 }
 
 /*

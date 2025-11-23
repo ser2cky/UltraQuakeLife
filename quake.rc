@@ -13,23 +13,8 @@ exec autoexec.cfg
 //
 stuffcmds
 
-// Aliases for new weapon features
-// - serecky 11.14.25
-alias +primary "impulse 17;+attack"
-alias -primary "-attack"
-
-alias +secondary "impulse 18;+attack"
-alias -secondary "-attack"
-
-alias +reload "impulse 19"
-alias -reload ""
-
-bind mouse1 "+primary"
-bind mouse2 "+secondary"
-bind r "+reload"
-
-cl_bob "0.01"
-cl_bobcycle "0.8"
+// exec half-life script
+exec halflife.cfg
 
 // start demos if not allready running a server
 startdemos demo1 demo2 demo3

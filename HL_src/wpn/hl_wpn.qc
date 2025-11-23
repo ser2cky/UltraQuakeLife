@@ -13,6 +13,7 @@
 //	11.17.25: finished glock AND shotgun!!
 //	11.19.25: corpse stuff, starting
 //	on crowbar.
+//	11.22.25: crossbow, HORNET!!
 //
 //======================================
 
@@ -133,16 +134,7 @@ void(float shots, vector src, vector dir, vector spread, float distance, float d
 		
 		if (trace_fraction != 1.0)
 		{
-			// TraceAttack if enemy is dead, we have a quad, or we can gib.
-			if (HasBeenShotToDeath(trace_ent) || trace_ent.deadflag == DEAD_NO || has_quad(self) || can_gib)
-			{
-				TraceAttack (damage, dir);
-			}
-			else
-			{
-				ClearMultiDamage();
-				TraceAttack (damage, dir);
-			}
+			TraceAttack (damage, dir);
 		}
 		
 		// Corpse checker!
@@ -152,26 +144,25 @@ void(float shots, vector src, vector dir, vector spread, float distance, float d
 		if (shot == shots)
 		{
 			traceline(src, src + dir * distance, 0, self);
+			entity corpse = HL_CorpseChecker(trace_endpos);
 			
-			if (HL_CorpseChecker(trace_endpos) != world)
+			if (corpse != world)
 			{
-				trace_ent = HL_CorpseChecker(trace_endpos);
+				trace_ent = corpse;
 				TraceAttack (damage, dir);
 			}
 		}
 		// Put bubble trail here...
 	}
-	
-	// Check to prevent gibbing from bullet based weapons.
-	if (can_gib)
+
+	// Basic gib check!
+	if (!can_gib && (trace_ent.deadflag != DEAD_NO) && (trace_ent.multi_dmg > trace_ent.health))
 	{
-		ApplyMultiDamage();
+		trace_ent.multi_dmg = 0;
+		trace_ent.health = 0;
 	}
-	else
-	{
-		if (trace_ent.deadflag == DEAD_NO || (has_quad(self)))
-			ApplyMultiDamage();
-	}
+		
+	ApplyMultiDamage();
 }
 
 /*
@@ -718,9 +709,9 @@ float() W_ShotgunSecAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, FALSE);
+		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, TRUE);
 	else
-		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, FALSE);
+		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, TRUE);
 		
 	if (self.currentammo != 0)
 	{
@@ -1067,6 +1058,919 @@ void() W_MP5Events =
 		sound(self, CHAN_WEAPON, "hl_items/cliprelease1.wav", 1.0, ATTN_NORM);
 	if (self.weaponframe == 69)
 		sound(self, CHAN_WEAPON, "hl_items/clipinsert1.wav", 1.0, ATTN_NORM);
+}
+
+/*
+============
+// CROSSBOW
+// uses up all possible
+// frames for mdl
+// 0 - 10 : deploy 20 fps
+// 11- 21 : deploy empty 20 fps
+// 22 - 59 : fire 20 fps
+// 60 - 70 : fire empty 20 fps
+// 71 - 139 : reload 15 fps
+// 140 - 170 : idle1 8 fps
+// 171 - 191 : idle2  8 fps
+// 192 - 212 : fidget 1 8 fps 
+// 213 - 233 : fidget 2 8 fps
+// 234 - 244 : holster 20 fps
+// 245 - 254 : empty holster 20 fps
+============
+*/
+
+/*
+============
+W_BoltSpawn
+============
+*/
+
+entity() W_BoltSpawn =
+{
+	entity bolt;
+	bolt = spawn();
+	
+	bolt.classname = "bolt";
+	bolt.movetype = MOVETYPE_FLYMISSILE;
+	bolt.solid = SOLID_BBOX;
+	bolt.touch = W_BoltTouch;
+	
+	setmodel(bolt, "progs/xbolt.mdl");
+	setorigin(bolt, bolt.origin);
+	setsize(bolt, VEC_ORIGIN, VEC_ORIGIN);
+	return bolt;
+}
+
+/*
+============
+W_BoltTouch
+============
+*/
+
+void() W_BoltTouch =
+{
+	self.touch = SUB_Null;
+	
+	if (other && other.takedamage)
+	{
+		vector dir1 = self.angles; // change if we have an owmer
+	
+		if (self.owner)
+		{
+			makevectors(self.owner.v_angle);
+			dir1 = v_forward;
+		}
+		
+		ClearMultiDamage();
+		
+		trace_ent = other;
+		trace_endpos = self.origin;
+		TraceAttack(50, dir1);
+		
+		ApplyMultiDamage();
+		
+		self.velocity = '0 0 0';
+		
+		if (random() < 0.5)
+			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
+		else
+			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
+		
+		if (!deathmatch)
+			remove(self);
+	}
+	else
+	{
+		sound(self, CHAN_WEAPON, "hl_weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
+		particle(self.origin, '0 0 -0.5', 111, 20);
+	
+		self.think = SUB_Remove;
+		self.nextthink = time;
+		
+		if (other == world)
+		{
+			vector dir = normalize(self.velocity);
+			
+			self.angles = vectoangles(dir);
+			self.solid = SOLID_NOT;
+			self.movetype = MOVETYPE_NONE;
+			self.velocity = '0 0 0';
+			self.avelocity_z = 0;
+			self.angles_z = random(0, 360);
+			self.nextthink = time + 10;
+			
+			setorigin(self, self.origin - dir * 12);
+		}
+	}
+	
+	if (deathmatch)
+	{
+		self.think = W_BoltExplode;
+		self.nextthink = time + 0.1;
+	}
+}
+
+/*
+============
+W_BoltExplode
+============
+*/
+
+void() W_BoltExplode =
+{
+	entity myowner;
+	
+	if (!self.owner)
+		myowner = world;
+	else
+		myowner = self.owner;
+	self.owner = world;
+	
+	HL_RadiusDamage(self.origin, self, myowner, 40, "", DMGTYPE_EXPLOSION);
+	
+	float r;
+	r = random();
+	
+	if (r < 0.333)
+	{
+		sound (self, CHAN_BODY, "hl_weapons/explode3.wav", 1.0, ATTN_NONE);
+	}
+	else if (r < 0.666)
+	{
+		sound (self, CHAN_BODY, "hl_weapons/explode4.wav", 1.0, ATTN_NONE);
+	}
+	else
+	{
+		sound (self, CHAN_BODY, "hl_weapons/explode5.wav", 1.0, ATTN_NONE);
+	}
+	
+	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_NOT;
+	self.origin_z += 24;
+	setorigin(self, self.origin);
+	setmodel(self, "progs/hl_explode.spr");
+	self.think = HL_ExplosionThink;
+	self.touch = SUB_Null;
+	self.frame = 0;
+	self.effects |= EF_MUZZLEFLASH;
+	self.nextthink = time;
+}
+
+/*
+============
+W_CrossbowPrecache
+============
+*/
+
+void() W_CrossbowPrecache = 
+{
+	//precache_model("progs/w_crossbow.mdl");
+	precache_model("progs/v_crossbow.mdl");
+	precache_model("progs/xbolt.mdl");
+	precache_sound("hl_weapons/xbow_fire1.wav");
+	precache_sound("hl_weapons/xbow_reload1.wav");
+	precache_sound("hl_weapons/xbow_hitbod1.wav");
+	precache_sound("hl_weapons/xbow_hitbod2.wav");
+	precache_sound("hl_weapons/xbow_hit1.wav");
+}
+
+/*
+============
+W_CrossbowDeploy
+============
+*/
+
+void() W_CrossbowDeploy =
+{
+	if (self.clip_crossbow)
+		HL_DefaultDeploy(0, 10, 10, 20);
+	else
+		HL_DefaultDeploy(11, 21, 21, 20);
+}
+
+/*
+============
+W_CrossbowHolster
+============
+*/
+
+void() W_CrossbowHolster =
+{
+	if (self.fuser1)
+	{
+		sprint(self, "test\n");
+		W_CrossbowSecAttack();
+	}
+}
+
+/*
+============
+W_CrossbowPrimAttack
+============
+*/
+
+float() W_CrossbowPrimAttack =
+{
+	if (self.fuser1)
+	{
+		return W_CrossbowFireSniperBolt();
+	}
+
+	return W_CrossbowFireBolt();
+}
+
+/*
+============
+W_CrossbowFireBolt
+============
+*/
+
+float() W_CrossbowFireSniperBolt =
+{
+	self.attack_finished = time + 0.75;
+
+	if (self.currentammo == 0)
+	{
+		HL_PlayEmptySound();
+		return FALSE;
+	}
+	
+	self.currentammo = self.clip_crossbow -= 1;
+	
+	sound(self, CHAN_WEAPON, "hl_weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
+	
+	if (self.clip_crossbow)
+	{
+		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		W_SetWeaponAnim2(22, 59, 10, 20);
+	}
+	else
+	{
+		W_SetWeaponAnim2(60, 70, 70, 20);
+	}
+	
+	vector myaim = self.v_angle + self.punchangle;
+	
+	makevectors(myaim);
+	myaim_x *= -1;
+	
+	vector src = (self.origin + self.view_ofs) - v_up * 2;
+	vector dir = v_forward;
+	
+	traceline(src, src + dir * 8192, 0, self);
+	
+	if (trace_ent.takedamage)
+	{
+		if (random() < 0.5)
+			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
+		else
+			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
+			
+		ClearMultiDamage();
+		TraceAttack(120, dir);
+		ApplyMultiDamage();
+	}
+	else
+	{
+		entity mybolt = W_BoltSpawn();
+		mybolt.origin = trace_endpos - dir * 10;
+		mybolt.angles = vectoangles(dir);
+		mybolt.solid = SOLID_NOT;
+		mybolt.touch = SUB_Null;
+		mybolt.think = SUB_Remove;
+
+		sound(mybolt, CHAN_WEAPON, "hl_weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
+		particle(mybolt.origin, '0 0 -0.5', 111, 20);
+
+		if (trace_ent == world)
+			mybolt.nextthink = time + 5.0;
+		else
+			mybolt.nextthink = time;
+	}
+	
+	return TRUE;
+}
+
+/*
+============
+W_CrossbowFireBolt
+============
+*/
+
+float() W_CrossbowFireBolt =
+{
+	if (self.currentammo == 0)
+	{
+		HL_PlayEmptySound();
+		return FALSE;
+	}
+	
+	self.currentammo = self.clip_crossbow -= 1;
+	
+	sound(self, CHAN_WEAPON, "hl_weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
+	
+	if (self.clip_crossbow)
+	{
+		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		W_SetWeaponAnim2(22, 59, 10, 20);
+	}
+	else
+	{
+		W_SetWeaponAnim2(60, 70, 70, 20);
+	}
+	
+	vector myaim = self.v_angle + self.punchangle;
+	
+	makevectors(myaim);
+	myaim_x *= -1;
+	
+	vector src = (self.origin + self.view_ofs) - v_up * 2;
+	vector dir = v_forward;
+	
+	entity mybolt = W_BoltSpawn();
+	mybolt.origin = src;
+	mybolt.angles = myaim;
+	mybolt.owner = self;
+	
+	if (self.waterlevel == 3)
+		mybolt.velocity = dir * 1000;
+	else
+		mybolt.velocity = dir * 2000;
+		
+	mybolt.avelocity_z = 10;
+	
+	self.punchangle_x -= 2;
+	
+	self.attack_finished = time + 0.75;
+	self.attack2_finished = time + 0.75;
+	
+	if (self.clip_crossbow != 0)
+		self.nextidle = time + 5.0;
+	else
+		self.nextidle = 0.75;
+		
+	return TRUE;
+}
+
+/*
+============
+W_CrossbowReload
+============
+*/
+
+float() W_CrossbowReload = 
+{
+	float result = HL_DefaultReload(71, 139, 139, 15, 5, 4.5);
+	
+	if (result)
+	{
+		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		return result;
+	}
+	
+	return FALSE;
+}
+
+/*
+============
+W_CrossbowSecAttack
+============
+*/
+
+float() W_CrossbowSecAttack =
+{
+	if (self.fuser1)
+	{
+		stuffcmd(self, "unzoom\n");
+		self.fuser1 = 0;
+	}
+	else
+	{
+		stuffcmd(self, "zoom_crossbow\n");
+		self.fuser1 = 1;
+	}
+	
+	self.attack2_finished = time + 1.0;
+	return TRUE;
+}
+
+/*
+============
+W_CrossbowIdle
+============
+*/
+
+void() W_CrossbowIdle =
+{
+	HL_ResetEmptySound();
+	
+	if (self.nextidle < time)
+	{
+		if (random() < 0.75)
+		{
+			if (self.clip_crossbow)
+			{
+				W_SetWeaponAnim2(140, 170, -1, 8);
+			}
+			else
+			{
+				W_SetWeaponAnim2(171, 191, -1, 8);
+			}
+			self.nextidle = time + random(10,15);
+		}
+		else
+		{
+			if (self.clip_crossbow)
+			{
+				W_SetWeaponAnim2(192, 212, 212, 8);
+				self.nextidle = time + (20.0/8.0);
+			}
+			else
+			{
+				W_SetWeaponAnim2(213, 233, 233, 8);
+				self.nextidle = time + (20.0/8.0);
+			}
+		}
+	}
+}
+
+/*
+============
+// hornet gun
+// 0 - 20 : deploy 20 fps
+// 21 - 29 : fire 20 fps
+// 30 - 60 : idle 1 loop 16 fps
+// 61 - 101 : idle 2 16 fps
+// 102 - 137 : idle 3 16 fps
+// 138 - 156 : Holster 16 fps
+============
+*/
+
+/*
+============
+W_CreateHornet
+============
+*/
+
+entity() W_CreateHornet =
+{
+	entity hornet;
+	hornet = spawn();
+	
+	hornet.movetype = MOVETYPE_FLYMISSILE;
+	hornet.solid = SOLID_BBOX;
+	hornet.takedamage = DAMAGE_YES;
+	hornet.health = 1;
+	
+	if (deathmatch)
+	{
+		hornet.ltime = time + 3.5;
+	}
+	else
+	{
+		hornet.ltime = time + 5.0;
+	}
+	
+	if (random(1, 5) <= 2)
+	{
+		// RED HORNET
+		hornet.fuser2 = TRUE;
+		hornet.fuser1 = 600;
+	}
+	else
+	{
+		// ORANGE HORNET
+		hornet.fuser2 = FALSE;
+		hornet.fuser1 = 800;
+	}
+	
+	entity soundent = self.trueowner;
+	
+	if (!soundent)
+		soundent = self;
+	
+	float r = random();
+	
+	if (r < 0.33)
+		sound(self, CHAN_WEAPON, "agrunt/ag_fire1.wav", 1.0, ATTN_NORM);
+	else if (r < 0.66)
+		sound(self, CHAN_WEAPON, "agrunt/ag_fire2.wav", 1.0, ATTN_NORM);
+	else
+		sound(self, CHAN_WEAPON, "agrunt/ag_fire3.wav", 1.0, ATTN_NORM);
+	
+	setmodel(hornet, "progs/hornet.mdl");
+	setsize(hornet, '-4 -4 -4', '4 4 4');
+	
+	hornet.touch = W_HornetTouch;
+	hornet.think = W_HornetTrack;
+	
+	hornet.frame = 0;
+	hornet.nextthink = time + 0.1;
+	return hornet;
+}
+
+/*
+============
+W_HornetTrack
+============
+*/
+
+void() W_HornetTrack =
+{
+	vector enemy_lastpos;
+	vector dir_to_enemy, flight_dir;
+	float delta, r;
+	entity ent;
+	
+	self.frame = (self.frame + 1) % 4;
+	
+	if (time > self.ltime)
+	{
+		self.touch = SUB_Null;
+		self.think = SUB_Remove;
+		self.nextthink = time + 0.1;
+		return;
+	}
+	
+	if (!self.enemy)
+	{
+		ent = findradius(self.origin, 8192);
+		
+		while (ent)
+		{
+			if (ent.takedamage != DAMAGE_NO && ent != self.trueowner && ent != world && (ent.flags & FL_MONSTER))
+			{
+				if (visible(ent))
+				{	
+					sprint(self.trueowner, ent.classname);
+					sprint(self.trueowner, "\n");
+					self.enemy = ent;
+				}
+			}
+			ent = ent.chain;
+		}
+	}
+	
+	if (self.enemy && visible(self.enemy))
+	{
+		enemy_lastpos = self.enemy.origin;
+	}
+	else
+	{
+		enemy_lastpos = enemy_lastpos + self.velocity * self.fuser1 * 0.1;
+	}
+	
+	dir_to_enemy = normalize(enemy_lastpos - self.origin);
+	
+	if (vlen(self.velocity) < 0.1)
+		flight_dir = dir_to_enemy;
+	else
+		flight_dir = normalize(self.velocity);
+		
+	delta = DotProduct(flight_dir, dir_to_enemy);
+	
+	if (delta < 0.5)
+	{
+		r = random();
+		
+		if (r < 0.33)
+			sound(self, CHAN_WEAPON, "hornet/ag_buzz1.wav", 1.0, ATTN_NORM);
+		else if (r < 0.66)
+			sound(self, CHAN_WEAPON, "hornet/ag_buzz2.wav", 1.0, ATTN_NORM);
+		else
+			sound(self, CHAN_WEAPON, "hornet/ag_buzz3.wav", 1.0, ATTN_NORM);
+	}
+	
+	// self.fuser2 == am a red hornet or not????
+	// self.fuser1 == fly speed
+	
+	if (delta <= 0 && self.fuser2)
+		delta = 0.25;
+		
+	self.velocity = normalize(flight_dir + dir_to_enemy);
+		
+	if (self.trueowner && (self.trueowner.flags & FL_MONSTER))
+	{
+		self.velocity_x += random( -0.10, 0.10);
+		self.velocity_y += random( -0.10, 0.10);
+		self.velocity_z += random( -0.10, 0.10);
+	}
+	
+	if (self.fuser2)
+	{
+		self.velocity = self.velocity * (self.fuser1 * delta);
+		self.nextthink = time + random(0.1, 0.3);
+		particle(self.origin, '0 0 0', 228, 5);
+	}
+	else
+	{
+		self.velocity = self.velocity * self.fuser1;
+		self.nextthink = time + 0.1;
+		particle(self.origin, '0 0 0', 108, 5);
+	}
+	
+	self.angles = vectoangles(self.velocity);
+	
+	if (self.enemy && !deathmatch)
+	{
+		if (delta >= 0.4 && vlen(self.origin - enemy_lastpos) <= 300)
+		{
+			r = random();
+			
+			if (r < 0.33)
+				sound(self, CHAN_VOICE, "hornet/ag_buzz1.wav", 1.0, ATTN_NORM);
+			else if (r < 0.66)
+				sound(self, CHAN_VOICE, "hornet/ag_buzz2.wav", 1.0, ATTN_NORM);
+			else
+				sound(self, CHAN_VOICE, "hornet/ag_buzz3.wav", 1.0, ATTN_NORM);
+				
+			self.velocity = self.velocity * 2;
+			self.nextthink = time + 1.0;
+			self.ltime = time;
+		}
+	}
+}
+
+/*
+============
+W_HornetTrailThink
+============
+*/
+
+void() W_HornetTrailThink =
+{
+	if (self.ltime < time)
+		remove(self);
+
+	self.frame = (self.frame + 1) % 4;
+
+	if (self.fuser2)
+	{
+		particle(self.origin, '0 0 0', 228, 5);
+	}
+	else
+	{
+		particle(self.origin, '0 0 0', 108, 5);
+	}
+	self.nextthink = time + 0.01;
+}
+
+/*
+============
+W_HornetTouch
+============
+*/
+
+void() W_HornetTouch =
+{
+	if (other == self.trueowner)
+		return;
+
+	if (other.takedamage)
+	{
+		float r = random();
+		
+		if (r < 0.33)
+			sound(self, CHAN_VOICE, "hornet/ag_hornethit1.wav", 1.0, ATTN_NORM);
+		else if (r < 0.66)
+			sound(self, CHAN_VOICE, "hornet/ag_hornethit2.wav", 1.0, ATTN_NORM);
+		else
+			sound(self, CHAN_VOICE, "hornet/ag_hornethit3.wav", 1.0, ATTN_NORM);
+		
+		if (deathmatch)
+			T_Damage (other, self, self.trueowner, 20, DMGTYPE_MELEE);
+		else
+			T_Damage (other, self, self.trueowner, 16, DMGTYPE_MELEE);
+	}
+	
+	if (self.fuser2)
+	{
+		particle(self.origin, '0 0 0', 228, 20);
+	}
+	else
+	{
+		particle(self.origin, '0 0 0', 108, 20);
+	}
+	
+	setmodel(self, "");
+	self.solid = SOLID_NOT;
+	
+	self.think = SUB_Remove;
+	self.nextthink = time + 1.0;
+}
+
+/*
+============
+W_HGunPrecache
+============
+*/
+
+void() W_HGunPrecache =
+{
+	precache_model("progs/v_hgun.mdl");
+	precache_model("progs/hornet.mdl");
+
+	precache_sound( "agrunt/ag_fire1.wav" );
+	precache_sound( "agrunt/ag_fire2.wav" );
+	precache_sound( "agrunt/ag_fire3.wav" );
+
+	precache_sound( "hornet/ag_buzz1.wav" );
+	precache_sound( "hornet/ag_buzz2.wav" );
+	precache_sound( "hornet/ag_buzz3.wav" );
+
+	precache_sound( "hornet/ag_hornethit1.wav" );
+	precache_sound( "hornet/ag_hornethit2.wav" );
+	precache_sound( "hornet/ag_hornethit3.wav" );
+}
+
+/*
+============
+W_HGunDeploy
+============
+*/
+
+void() W_HGunDeploy =
+{
+	W_SetWeaponAnim2(0, 20, 20, 20);
+}
+
+/*
+============
+W_HGunHolster
+============
+*/
+
+void() W_HGunHolster = 
+{
+	if (!self.ammo_hornets)
+		self.ammo_hornets = 1;
+}
+
+/*
+============
+W_HGunPrimAttack
+============
+*/
+
+float() W_HGunPrimAttack = 
+{
+	W_HGunReload();
+	
+	if (self.ammo_hornets <= 0)
+	{
+		return FALSE;
+	}
+
+	makevectors(self.v_angle);
+	
+	entity hornet = W_CreateHornet();
+	hornet.owner = hornet.trueowner = self;
+	hornet.origin = self.origin + self.view_ofs + v_forward * 16 + v_right * 16 + v_up * -12;
+	hornet.velocity = v_forward * 300;
+	hornet.angles = vectoangles(hornet.velocity);
+	
+	self.currentammo = self.ammo_hornets -= 1;
+	self.fuser1 = time + 0.5;
+	
+	W_SetWeaponAnim2(21, 29, 29, 20);
+	
+	self.attack_finished = time + 0.25;
+	if (self.attack_finished < time)
+	{
+		self.attack_finished = time + 0.25;
+	}
+	self.nextidle = time + random(10,15);
+	return TRUE;
+}
+
+/*
+============
+W_HGunSecAttack
+============
+*/
+
+float() W_HGunSecAttack = 
+{
+	W_HGunReload();
+	
+	if (self.ammo_hornets <= 0)
+	{
+		return FALSE;
+	}
+
+	vector src;
+	float firephase;
+
+	makevectors(self.v_angle);
+	
+	src = self.origin + self.view_ofs + v_forward * 16 + v_right * 16 + v_up * -12;
+	
+	firephase++;
+	switch (firephase)
+	{
+		case 1: 
+			src = src + v_up * 8; 	
+			break;
+		case 2: 
+			src = src + v_up * 8; 	
+			src = src + v_right * 8;
+			break;
+		case 3: 
+			src = src + v_right * 8; 	
+			break;
+		case 4: 
+			src = src + v_up * -8; 	
+			src = src + v_right * 8;
+			break;
+		case 5: 
+			src = src + v_up * -8;
+			break;
+		case 6: 
+			src = src + v_up * -8; 	
+			src = src + v_right * -8;
+			break;
+		case 7: 
+			src = src + v_right * -8;
+			break;
+		case 8: 
+			src = src + v_up * 8; 	
+			src = src + v_right * -8;
+			firephase = 0;
+			break;
+		default: 
+			firephase = 0;
+			break;
+	}
+	
+	entity hornet = W_CreateHornet();
+	hornet.owner = hornet.trueowner = self;
+	hornet.velocity = v_forward * 1200;
+	hornet.angles = vectoangles(hornet.velocity);
+	hornet.origin = src;
+	hornet.think = W_HornetTrailThink;
+	hornet.ltime = time + 4;
+	
+	W_SetWeaponAnim2(21, 29, 29, 20);
+	
+	self.currentammo = self.ammo_hornets -= 1;
+	self.fuser1 = time + 0.5;
+	
+	self.attack_finished = self.attack2_finished = time + 0.1;
+	self.nextidle = time + random(10, 15);
+	self.punchangle_x = random(0, 2);
+	return TRUE;
+}
+
+/*
+============
+W_HGunReload
+============
+*/
+
+float() W_HGunReload =
+{
+	if (self.ammo_hornets >= 8)
+		return FALSE;
+	
+	while ((self.ammo_hornets < 8) && (self.fuser1 < time))
+	{
+		self.currentammo = self.ammo_hornets += 1;
+		self.fuser1 += 0.5;
+	}
+	
+	return TRUE;
+}
+
+/*
+============
+W_HGunIdle
+============
+*/
+
+void() W_HGunIdle = 
+{
+	W_HGunReload();
+	
+	if (self.nextidle > time)
+		return;
+		
+	float r = random();
+	
+	if (r <= 0.75)
+	{
+		W_SetWeaponAnim2(30, 60, -1, 16);
+		self.nextidle = time + 3.75;
+	}
+	else if (r <= 0.875)
+	{
+		W_SetWeaponAnim2(61, 101, 101, 16);
+		self.nextidle = time + (40.0/16.0);
+	}
+	else
+	{
+		W_SetWeaponAnim2(102, 137, 137, 16);
+		self.nextidle = time + (35.0/16.0);
+	}
 }
 
 /*

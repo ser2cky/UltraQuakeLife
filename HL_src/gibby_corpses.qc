@@ -131,6 +131,7 @@ void(string gibname) BecomeCorpse =
 
 	self.deadflag = DEAD_DEAD;
 	self.flags &= ~FL_MONSTER;
+	self.flags |= FL_CORPSE;
 	self.solid = SOLID_TRIGGER;
 	setorigin(self, self.origin);
 	

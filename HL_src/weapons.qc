@@ -95,3 +95,21 @@
 // 61 - 101 : idle 2 16 fps
 // 102 - 137 : idle 3 16 fps
 // 138 - 156 : Holster 16 fps
+
+// 11.23.25
+// rpg
+// anims 20 fps 'less stated otherwise
+// 0 - 10 : draw loaded
+// 11 - 21 : draw un loaded
+// 22 - 38 : fire
+// 39 - 79 : reload
+// 80 - 128 : idle loaded  8fps
+// 129 - 177 : idle unloaded 8fps
+// 178 - 202 : fidget loaded 8fps
+// 203 - 227 : fidget unloaded 8fps
+// 228 - 238 : holster loaded 8fps
+// 239 - 249 : holster unloaded 8fps
+
+// Did :
+// rpg
+// gfx

@@ -58,7 +58,7 @@ void() HL_ExplosionThink =
 	}
 }
 
-void(vector normal) HL_GrenadeExplode =
+void() HL_GrenadeExplode =
 {
 	entity myowner;
 	
@@ -88,20 +88,19 @@ void(vector normal) HL_GrenadeExplode =
 		sound (self, CHAN_VOICE, "hl_weapons/debris3.wav", 0.55, ATTN_NORM);
 		sound (self, CHAN_BODY, "hl_weapons/explode5.wav", 1.0, ATTN_NONE);
 	}
-
-	if (pointcontents(self.origin) != CONTENT_WATER)
-	{
-		// float count = rint(random(0,3) + 1);
-		// HL_CreateSparks(count, normal, self.origin + '0 0 64');
-	}
+	
+	// Turn into an explosion.
 	
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
 	self.origin_z += 24;
+	
 	setorigin(self, self.origin);
 	setmodel(self, "progs/hl_explode.spr");
+	
 	self.think = HL_ExplosionThink;
 	self.touch = SUB_Null;
+	
 	self.frame = 0;
 	self.effects |= EF_MUZZLEFLASH;
 	self.nextthink = time;
@@ -112,7 +111,15 @@ void() HL_GrenadeExplodeTouch =
 	vector spot = self.origin - normalize(self.velocity) * 32;
 	traceline(spot, spot + normalize(self.velocity) * 64, 1, self);
 	
-	HL_GrenadeExplode(trace_plane_normal);
+	HL_GrenadeExplode();
+}
+
+void() HL_GrenadeDetonate =
+{
+	vector spot = self.origin + '0 0 8';
+	traceline(spot, spot + '0 0 -40', 1, self);
+	
+	HL_GrenadeExplode();
 }
 
 entity(vector start, vector vel) W_CreateContactGren =

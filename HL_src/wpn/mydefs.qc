@@ -8,22 +8,21 @@
 //
 //======================================
 
+const float FL_CORPSE = 16384;
+
+/*
+============
+Basic weapon fields.
+============
+*/
+
 .float weapons;
 .float attack_phase;
 .float firemode;
-
-// extra timers for ents.
-.float nextstep;
 .float nextidle;
 .float attack2_finished;
-.float fuser1;
-.float fuser2;
-.float fuser3;
-.float fuser4;
-.float fuser5;
-.float fuser6;
 
-// weapon state defs
+// Weapon state stuff.
 .float weaponstate;
 float WS_DEPLOY = 0;
 float WS_READY = 1;
@@ -31,18 +30,60 @@ float WS_RELOAD = 2;
 float WS_HOLSTER = 3;
 float WS_SPECIAL_RELOAD = 4;
 
-// animation stuff
+// Weapon flags.
+float WFL_HAS_CLIP = 1;
+
+/*
+============
+Extra floats available
+to ents.
+============
+*/
+
+.float nextstep;
+.float fuser1;
+.float fuser2;
+.float fuser3;
+.float fuser4;
+.float fuser5;
+.float fuser6;
+
+// Used for controlling ents
+// attached to the player and
+// others.
+.entity ent1;
+.entity ent2;
+
+/*
+============
+Animation defs.
+============
+*/
+
 .float fps;
 .float nextanim;
 .float targetframe;
 .float startframe;
 .float endframe;
 
+/*
+============
+New ammo defs.
+============
+*/
+
 .float ammo_hornets;
 .float clip_mp5;
 .float clip_glock;
 .float clip_shotgun;
 .float clip_crossbow;
+.float clip_rpg;
+
+/*
+============
+Weapon bit stuff
+============
+*/
 
 float MAX_WEAPON_NUM = 8;
 
@@ -63,7 +104,12 @@ const float HUD_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN +
 const float ALL_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
 					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
 
-float WFL_HAS_CLIP = 1;
+/*
+============
+Stupid Vector_CONE
+stuff.
+============
+*/
 
 vector VECTOR_CONE_1DEGREES = '0.00873 0.00873 0.00873';
 vector VECTOR_CONE_2DEGREES = '0.01745 0.01745 0.01745';
@@ -77,7 +123,5 @@ vector VECTOR_CONE_9DEGREES = '0.07846 0.07846 0.07846';
 vector VECTOR_CONE_10DEGREES = '0.08716 0.08716 0.08716';
 vector VECTOR_CONE_15DEGREES = '0.13053 0.13053 0.13053';
 vector VECTOR_CONE_20DEGREES = '0.17365 0.17365 0.17365';
-
-const float FL_CORPSE = 16384;
 
 #pragma noref 0

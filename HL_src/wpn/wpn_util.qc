@@ -48,12 +48,13 @@ typedef struct {
 	ammo_hornets
 };
 
-.float clip_fields[5] = {
+.float clip_fields[6] = {
 	currentammo,
 	clip_mp5,
 	clip_glock,
 	clip_shotgun,
-	clip_crossbow
+	clip_crossbow,
+	clip_rpg
 };
 
 float() W_NullFunc = {return FALSE;};
@@ -191,19 +192,19 @@ weaponclass_t wpc_grenade =
 	0, // Slot pos.
 	"rockets", // Ammo1
 	"", // Ammo2
-	2, // Ammo usage.
-	0, // Clip size.
-	"progs/v_rock.mdl", // V_Model
-	"Grenade Launcher", // Weapon name.
+	1, // Ammo usage.
+	1, // Clip size.
+	"progs/v_rpg.mdl", // V_Model
+	"RPG", // Weapon name.
 	WPN_GRENADE_LAUNCHER, // Weapon I.D
 	0, // Weapon flags
-	W_FireGrenade, // Attack1
+	W_RPGPrimAttack, // Attack1
 	W_NullFunc, // Attack2
-	W_NullFunc, // Reload
+	W_RPGReload, // Reload
 	SUB_Null, // Post-Think function.
-	W_DefaultDeploy, // Deploy.
+	W_RPGDeploy, // Deploy.
 	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	W_RPGIdle // Idle.
 };
 
 weaponclass_t wpc_rocket =
@@ -376,6 +377,7 @@ float(string gun_name) W_GetClipField =
 		case "Glock":		return 2;
 		case "Shotgun":		return 3;
 		case "Crossbow":	return 4;
+		case "RPG":			return 5;
 		default:			return 0;
 	}
 }
@@ -393,6 +395,7 @@ void() W_ResetClipFields =
 	self.clip_shotgun = 8;
 	self.clip_crossbow = 5;
 	self.ammo_hornets = 8;
+	self.clip_rpg = 1;
 }
 
 /*
@@ -929,6 +932,7 @@ void() W_Precache =
 	W_CrowbarPrecache();
 	W_CrossbowPrecache();
 	W_HGunPrecache();
+	W_PrecacheRPG();
 }
 
 /*

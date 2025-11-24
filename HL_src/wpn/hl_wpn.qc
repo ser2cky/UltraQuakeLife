@@ -14,6 +14,7 @@
 //	11.19.25: corpse stuff, starting
 //	on crowbar.
 //	11.22.25: crossbow, HORNET!!
+//	11.23.25 : rpg.
 //
 //======================================
 
@@ -1496,6 +1497,386 @@ void() W_CrossbowIdle =
 
 /*
 ============
+// rpg
+// anims 20 fps 'less stated otherwise
+// 0 - 10 : draw loaded
+// 11 - 21 : draw un loaded
+// 22 - 38 : fire
+// 39 - 79 : reload
+// 80 - 104 : idle loaded  8fps
+// 105 - 129 : idle unloaded 8fps
+// 130 - 154 : fidget loaded 8fps
+// 155 - 179 : fidget unloaded 8fps
+// 180 - 190 : holster unloaded 8fps
+// 191 - 201 : holster loaded 8 fps
+============
+*/
+
+/*
+============
+W_CreateLaser
+============
+*/
+
+entity() W_CreateLaser =
+{
+	entity spot;
+	spot = spawn();
+	spot.classname = "laser_spot";
+	spot.movetype = MOVETYPE_NONE;
+	spot.movetype = SOLID_NOT;
+	setmodel(spot, "progs/s_bubble.spr");
+	setorigin(spot, spot.origin);
+	return spot;
+}
+
+/*
+============
+W_SuspendLaser
+============
+*/
+
+void(entity spot, float next_revive) W_SuspendLaser =
+{
+	setmodel(spot, "");
+	spot.think = W_LaserRevive;
+	spot.nextthink = time + next_revive;
+}
+
+/*
+============
+W_LaserRevive
+============
+*/
+
+void() W_LaserRevive =
+{
+	setmodel(self, "progs/s_bubble.spr");
+	self.think = SUB_Null;
+}
+
+entity(vector org, vector myangles, entity myowner, entity launcher) W_CreateRocket =
+{
+	entity rocket;
+	rocket = spawn();
+	
+	rocket.classname = "rpg_rocket";
+	rocket.angles = myangles;
+	rocket.movetype = MOVETYPE_BOUNCE;
+	rocket.solid = SOLID_BBOX;
+	
+	setmodel(rocket, "progs/rpgrocket.mdl");
+	setsize(rocket, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin(rocket, org);
+	
+	rocket.angles_x -= 30;
+	makevectors(rocket.angles);
+	rocket.angles_x = -(rocket.angles_x + 30);
+	
+	rocket.velocity = v_forward * 250;
+	rocket.gravity = 0.5;
+	
+	rocket.think = W_RocketIgnite;
+	rocket.touch = W_RocketTouch;
+	
+	rocket.ent1 = launcher;
+	rocket.ent1.fuser2 += 1;
+	rocket.owner = rocket.trueowner = myowner;
+	
+	rocket.nextthink = time + 0.4;
+	return rocket;
+}
+
+void() W_RocketTouch =
+{
+	if (other == self.owner)
+		return;
+
+	if (self.ent1)
+	{
+		self.ent1.fuser2 -= 1;
+		sound(self, CHAN_VOICE, "misc/null.wav", 1, 0.5);
+	}
+	
+	self.touch = SUB_Null;
+	self.think = SUB_Null;
+	self.effects = 0;
+	
+	HL_GrenadeExplodeTouch();
+}
+
+void() W_RocketIgnite =
+{
+	self.movetype = MOVETYPE_FLYMISSILE;
+	self.effects |= EF_DIMLIGHT;
+	
+	sound(self, CHAN_VOICE, "hl_weapons/rocket1.wav", 1, 0.5);
+	setmodel(self, "progs/rpgrocket1.mdl");
+	
+	self.fuser1 = time;
+	self.think = W_RocketFollowLaser;
+	self.nextthink = time + 0.1;
+}
+
+void() W_RocketFollowLaser =
+{
+	entity ent = world;
+	vector dir, mytarget;
+	float dist, max, dot;
+
+	makevectors(self.angles);
+
+	mytarget = v_forward;
+	max = 4096;
+	
+	ent = find(ent, classname, "laser_spot");
+		
+	while (ent)
+	{
+		traceline(self.origin, ent.origin, 0, self);
+		if (trace_fraction >= 0.90)
+		{
+			dir = ent.origin - self.origin;
+			dist = vlen(dir);
+			dir = normalize(dir);
+			dot = DotProduct(v_forward, dir);
+			if ((dot > 0) && (dist * (1 - dot) < max))
+			{
+				max = dist * (1 - dot);
+				mytarget = dir;
+			}
+		}
+		ent = ent.chain;
+	}
+	
+	self.angles = vectoangles(mytarget);
+	
+	float speed = vlen(self.velocity);
+	if ((time - self.fuser1) < 1.0)
+	{
+		self.velocity = self.velocity * 0.2 + mytarget * (speed * 0.8 + 400);
+		if (self.waterlevel == 3)
+		{
+			if (vlen(self.velocity) > 300)
+			{
+				self.velocity = normalize(self.velocity) * 300;
+			}
+		}
+		else
+		{
+			if (vlen(self.velocity) > 2000)
+			{
+				self.velocity = normalize(self.velocity) * 2000;
+			}
+		}
+	}
+	else
+	{
+		if (self.effects & EF_DIMLIGHT)
+		{
+			self.effects = 0;
+			sound(self, CHAN_VOICE, "misc/null.wav", 1, 0.5);
+		}
+		self.velocity = self.velocity * 0.2 + mytarget * speed * 0.798;
+		if (self.waterlevel == 0 && vlen(self.velocity) < 1500)
+		{
+			if (self.ent1)
+			{
+				self.ent1.fuser2 -= 1;
+			}
+			HL_GrenadeDetonate();
+		}
+	}
+	
+	self.nextthink = time + 0.1;
+}
+
+/*
+============
+W_PrecacheRPG
+============
+*/
+
+// fuser1 == Is my laser spot active?
+// fuser2 == active rocket counter.
+
+void() W_PrecacheRPG =
+{
+	//precache_model("models/w_rpg.mdl");
+	precache_model("progs/v_rpg.mdl");
+	precache_model("progs/rpgrocket.mdl");
+	precache_model("progs/rpgrocket1.mdl");
+	precache_sound("items/9mmclip1.wav");
+	precache_sound("hl_weapons/rocketfire1.wav");
+	precache_sound("hl_weapons/rocket1.wav");
+	precache_sound("hl_weapons/glauncher.wav");
+}
+
+/*
+============
+W_RPGUpdateSpot
+============
+*/
+
+void() W_RPGUpdateSpot =
+{
+	if (self.fuser1)
+	{
+		if (!self.ent1 || self.ent1 == world)
+		{
+			self.ent1 = W_CreateLaser();
+		}
+		
+		makevectors(self.v_angle);
+		
+		vector src = self.origin + self.view_ofs;
+		vector dir = v_forward;
+		
+		traceline(src, src + dir * 8192, 0, self);
+		setorigin(self.ent1, trace_endpos);
+		
+		//sprint(self, vtos(self.ent1.origin));
+		//sprint(self, "\n");
+	}
+}
+
+/*
+============
+W_RPGDeploy
+============
+*/
+
+void() W_RPGDeploy =
+{
+	if (self.clip_rpg)
+		HL_DefaultDeploy(0, 10, 10, 20);
+	else
+		HL_DefaultDeploy(11, 21, 21, 20);
+	self.fuser1 = TRUE;
+}
+
+/*
+============
+W_RPGPrimAttack
+============
+*/
+
+float() W_RPGPrimAttack =
+{
+	if (self.clip_rpg)
+	{
+		W_SetWeaponAnim2(22, 38, 38, 20);
+		
+		makevectors(self.v_angle);
+		vector src = self.origin + self.view_ofs + v_forward * 16 + v_right * 8 + v_up * -8;
+		
+		entity rocket = W_CreateRocket(src, self.v_angle, self, self);
+		
+		makevectors(self.v_angle); // Remake makevectors again.
+		rocket.velocity = rocket.velocity + v_forward * DotProduct(self.velocity, v_forward);
+		
+		sound(self, CHAN_WEAPON, "hl_weapons/rocketfire1.wav", 0.9, ATTN_NORM);
+		sound(self, CHAN_ITEM, "hl_weapons/glauncher.wav", 0.7, ATTN_NORM);
+		
+		self.currentammo = self.clip_rpg -= 1;
+		
+		self.attack_finished = time + 1.5;
+		self.nextidle = time + 1.5;
+		self.punchangle_x -= 5;
+	}
+	else
+	{
+		HL_PlayEmptySound();
+	}
+	
+	W_RPGUpdateSpot();
+	
+	return TRUE;
+}
+
+/*
+============
+W_RPGReload
+============
+*/
+
+float() W_RPGReload =
+{
+	float result;
+	
+	if (self.clip_rpg == 1)
+	{
+		return FALSE;
+	}
+	
+	self.attack_finished = time + 0.5;
+	
+	if ( self.fuser2 && self.fuser1 )
+	{
+		return FALSE;
+	}	
+		
+	if (self.ent1 && self.fuser1)
+	{
+		W_SuspendLaser(self.ent1, 2.1);
+		self.attack2_finished = time + 2.1;
+	}
+	
+	if (self.clip_rpg == 0)
+	{
+		result = HL_DefaultReload(39, 79, 79, 20, 1, 2.0);
+	}
+	
+	if (result)
+	{
+		self.nextidle = time + random(10, 15);
+	}
+
+	return result;
+}
+
+/*
+============
+W_RPGIdle
+============
+*/
+
+void() W_RPGIdle =
+{
+	W_RPGUpdateSpot();
+
+	HL_ResetEmptySound();
+	
+	if (self.nextidle < time)
+	{
+		if (random() < 0.75)
+		{
+			if (self.clip_rpg)
+			{
+				W_SetWeaponAnim2(80, 104, -1, 8);
+			}
+			else
+			{
+				W_SetWeaponAnim2(105, 129, -1, 8);
+			}
+		}
+		else
+		{
+			if (self.clip_rpg)
+			{
+				W_SetWeaponAnim2(130, 154, -1, 8);
+			}
+			else
+			{
+				W_SetWeaponAnim2(155, 179, -1, 8);
+			}
+		}
+		self.nextidle = time + (25.0/8.0);
+	}
+}
+
+/*
+============
 // hornet gun
 // 0 - 20 : deploy 20 fps
 // 21 - 29 : fire 20 fps
@@ -1559,7 +1940,7 @@ entity() W_CreateHornet =
 		sound(self, CHAN_WEAPON, "agrunt/ag_fire3.wav", 1.0, ATTN_NORM);
 	
 	setmodel(hornet, "progs/hornet.mdl");
-	setsize(hornet, '-4 -4 -4', '4 4 4');
+	setsize(hornet, VEC_ORIGIN, VEC_ORIGIN);
 	
 	hornet.touch = W_HornetTouch;
 	hornet.think = W_HornetTrack;
@@ -1791,7 +2172,7 @@ W_HGunDeploy
 
 void() W_HGunDeploy =
 {
-	W_SetWeaponAnim2(0, 20, 20, 20);
+	HL_DefaultDeploy(0, 20, 20, 20);
 }
 
 /*

@@ -16,6 +16,8 @@
 //	11.22.25: fixed door traceattack bug,
 //	changing weapons now properly
 //	calls holster function !!!
+//	11.24.25: Added check for firing
+//	on empty.
 //
 //======================================
 
@@ -37,6 +39,7 @@ typedef struct {
 	void() deploy;
 	void() holster;
 	void() idle;
+	void() precache;
 } weaponclass_t;
 
 .float ammo_fields[6] = {
@@ -48,13 +51,14 @@ typedef struct {
 	ammo_hornets
 };
 
-.float clip_fields[6] = {
+.float clip_fields[7] = {
 	currentammo,
 	clip_mp5,
 	clip_glock,
 	clip_shotgun,
 	clip_crossbow,
-	clip_rpg
+	clip_rpg,
+	clip_python
 };
 
 float() W_NullFunc = {return FALSE;};
@@ -78,10 +82,11 @@ weaponclass_t wpc_none =
 	SUB_Null, // Post-Think function.
 	W_DefaultDeploy, // Deploy.
 	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	SUB_Null, // Idle.
+	SUB_Null // Precache.
 };
 
-weaponclass_t wpc_axe =
+weaponclass_t wpc_crowbar =
 {
 	1, // Slot
 	0, // Slot pos.
@@ -99,10 +104,11 @@ weaponclass_t wpc_axe =
 	W_CrowbarPostFrame, // Post-Think function.
 	W_CrowbarDeploy, // Deploy.
 	SUB_Null, // Holster.
-	SUB_Null // Idle.
+	SUB_Null, // Idle.
+	W_CrowbarPrecache // Precache.
 };
 
-weaponclass_t wpc_shotgun =
+weaponclass_t wpc_glock =
 {
 	2, // Slot
 	0, // Slot pos.
@@ -120,10 +126,33 @@ weaponclass_t wpc_shotgun =
 	W_GlockEvents, // Post-Think function.
 	W_GlockDeploy, // Deploy.
 	SUB_Null, // Holster.
-	W_GlockIdle // Idle.
+	W_GlockIdle, // Idle.
+	W_GlockPrecache // Precache.
 };
 
-weaponclass_t wpc_super_shot =
+weaponclass_t wpc_python =
+{
+	2, // Slot
+	1, // Slot pos.
+	"nails", // Ammo1
+	"", // Ammo2
+	1, // Ammo usage.
+	6, // Clip size.
+	"progs/v_357.mdl", // V_Model
+	"Python", // Weapon name.
+	WPN_PYTHON, // Weapon I.D
+	0, // Weapon flags
+	W_PythonPrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_PythonReload, // Reload
+	SUB_Null, // Post-Think function.
+	W_PythonDeploy, // Deploy.
+	SUB_Null, // Holster.
+	W_PythonIdle, // Idle.
+	W_PythonPrecache // Precache.
+};
+
+weaponclass_t wpc_shotgun =
 {
 	3, // Slot
 	0, // Slot pos.
@@ -141,10 +170,11 @@ weaponclass_t wpc_super_shot =
 	W_ShotgunPostThink, // Post-Think function.
 	W_ShotgunDeploy, // Deploy.
 	SUB_Null, // Holster.
-	W_ShotgunIdle // Idle.
+	W_ShotgunIdle, // Idle.
+	W_ShotgunPrecache // Precache.
 };
 
-weaponclass_t wpc_nailgun =
+weaponclass_t wpc_mp5 =
 {
 	4, // Slot
 	0, // Slot pos.
@@ -162,16 +192,17 @@ weaponclass_t wpc_nailgun =
 	W_MP5Events, // Post-Think function.
 	W_MP5Deploy, // Deploy.
 	SUB_Null, // Holster.
-	W_MP5Idle // Idle.
+	W_MP5Idle, // Idle.
+	W_MP5Precache // Precache.
 };
 
-weaponclass_t wpc_supernail =
+weaponclass_t wpc_crossbow =
 {
 	5, // Slot
 	0, // Slot pos.
 	"nails", // Ammo1
 	"", // Ammo2
-	2, // Ammo usage.
+	1, // Ammo usage.
 	5, // Clip size.
 	"progs/v_crossbow.mdl", // V_Model
 	"Crossbow", // Weapon name.
@@ -183,10 +214,11 @@ weaponclass_t wpc_supernail =
 	SUB_Null, // Post-Think function.
 	W_CrossbowDeploy, // Deploy.
 	W_CrossbowHolster, // Holster.
-	W_CrossbowIdle // Idle.
+	W_CrossbowIdle, // Idle.
+	W_CrossbowPrecache // Precache.
 };
 
-weaponclass_t wpc_grenade =
+weaponclass_t wpc_rpg =
 {
 	6, // Slot
 	0, // Slot pos.
@@ -199,15 +231,16 @@ weaponclass_t wpc_grenade =
 	WPN_GRENADE_LAUNCHER, // Weapon I.D
 	0, // Weapon flags
 	W_RPGPrimAttack, // Attack1
-	W_NullFunc, // Attack2
+	W_RPGSecAttack, // Attack2
 	W_RPGReload, // Reload
 	SUB_Null, // Post-Think function.
 	W_RPGDeploy, // Deploy.
-	SUB_Null, // Holster.
-	W_RPGIdle // Idle.
+	W_RPGHolster, // Holster.
+	W_RPGIdle, // Idle.
+	W_PrecacheRPG // Precache.
 };
 
-weaponclass_t wpc_rocket =
+weaponclass_t wpc_hornetgun =
 {
 	7, // Slot
 	0, // Slot pos.
@@ -225,10 +258,11 @@ weaponclass_t wpc_rocket =
 	SUB_Null, // Post-Think function.
 	W_HGunDeploy, // Deploy.
 	W_HGunHolster, // Holster.
-	W_HGunIdle // Idle.
+	W_HGunIdle, // Idle.
+	W_HGunPrecache // Precache.
 };
 
-weaponclass_t wpc_lightning =
+weaponclass_t wpc_gauss =
 {
 	8, // Slot
 	0, // Slot pos.
@@ -246,19 +280,21 @@ weaponclass_t wpc_lightning =
 	SUB_Null, // Post-Think function.
 	W_GaussDeploy, // Deploy.
 	SUB_Null, // Holster.
-	W_GaussIdle // Idle.
+	W_GaussIdle, // Idle.
+	W_GaussPrecache // Precache.
 };
 
-weaponclass_t weaponsclass[9] = {
+weaponclass_t weaponsclass[10] = {
 	wpc_none,
-	wpc_axe,
+	wpc_crowbar,
+	wpc_glock,
 	wpc_shotgun,
-	wpc_super_shot,
-	wpc_nailgun,
-	wpc_supernail,
-	wpc_grenade,
-	wpc_rocket,
-	wpc_lightning,
+	wpc_mp5,
+	wpc_crossbow,
+	wpc_rpg,
+	wpc_hornetgun,
+	wpc_gauss,
+	wpc_python,
 };
 
 typedef struct {
@@ -268,14 +304,14 @@ typedef struct {
 
 weaponslot_t weaponslots[9] = {
 	{{wpc_none}, 1},
-	{{wpc_axe}, 1}, // axe
-	{{wpc_shotgun}, 1}, // sgun
-	{{wpc_super_shot}, 1}, // ssgun
-	{{wpc_nailgun}, 1}, // nailg
-	{{wpc_supernail}, 1}, // snailg
-	{{wpc_grenade}, 1}, // gl
-	{{wpc_rocket}, 1}, // rl
-	{{wpc_lightning}, 1} // bolt
+	{{wpc_crowbar}, 1}, // axe
+	{{wpc_glock, wpc_python}, 2}, // sgun
+	{{wpc_shotgun}, 1}, // ssgun
+	{{wpc_mp5}, 1}, // nailg
+	{{wpc_crossbow}, 1}, // snailg
+	{{wpc_rpg}, 1}, // gl
+	{{wpc_hornetgun}, 1}, // rl
+	{{wpc_gauss}, 1} // bolt
 };
 
 enum {
@@ -302,6 +338,7 @@ float(float weap) W_GetWeapon =
 		case WPN_GRENADE_LAUNCHER:	return 6;
 		case WPN_ROCKET_LAUNCHER:	return 7;
 		case WPN_LIGHTNING:			return 8;
+		case WPN_PYTHON:			return 9;
 		default:					return 0;
 	}
 }
@@ -378,6 +415,7 @@ float(string gun_name) W_GetClipField =
 		case "Shotgun":		return 3;
 		case "Crossbow":	return 4;
 		case "RPG":			return 5;
+		case "Python":		return 6;
 		default:			return 0;
 	}
 }
@@ -390,12 +428,16 @@ W_ResetClipFields
 
 void() W_ResetClipFields =
 {
-	self.clip_mp5 = 50;
-	self.clip_glock = 18;
-	self.clip_shotgun = 8;
-	self.clip_crossbow = 5;
 	self.ammo_hornets = 8;
-	self.clip_rpg = 1;
+	
+	for (float i = 0; i < 10; i++)
+	{
+		weaponclass_t weap = weaponsclass[i];
+		if (weap.clip_size != 0)
+		{
+			self.(clip_fields[W_GetClipField(weap.name)]) = weap.clip_size;
+		}
+	}
 }
 
 /*
@@ -506,7 +548,7 @@ float(float imp) W_ChangeSlot =
 	{
 		weaponstat = W_CheckWeapon(newSlot.weaps[startSlotPos].id, self);
 		if (i == 0 || weaponstat == WEAPONSTAT_NOAMMO) firstweaponstat = weaponstat;
-		if (weaponstat == WEAPONSTAT_AVAILABLE)
+		if (weaponstat == WEAPONSTAT_AVAILABLE && (newSlot.weaps[startSlotPos].id != currentWeapon.id))
 		{
 			currentWeapon.holster(); // Call deploy function here..
 			W_ChangeWeapon(newSlot.weaps[startSlotPos].id);
@@ -753,6 +795,35 @@ Called every frame so impulse events can be handled as well as possible
 ============
 */
 
+void() W_PrintWeaponState =
+{
+	sprint(self, "WeaponState: ");
+	switch (self.weaponstate)
+	{
+		case WS_RELOAD:
+		{
+			sprint(self, "Reload.\n");
+			break;
+		}
+		case WS_READY:
+		{
+			sprint(self, "Ready.\n");
+			break;
+		}
+		case WS_SPECIAL_RELOAD:
+		{
+			sprint(self, "Special reload.\n");
+			break;
+		}
+		case WS_DEPLOY:
+		{
+			sprint(self, "Deploy\n");
+			break;
+		}
+	}
+	
+}
+
 void() W_WeaponFrame =
 {
 	if (self.impulse)
@@ -790,7 +861,10 @@ void() W_WeaponFrame =
 	
 	// Set to ready once we're finished with our deploy.
 	if (self.weaponstate == WS_DEPLOY && self.weaponframe == self.targetframe)
+	{
+		//W_PrintWeaponState(); // dev thing..
 		self.weaponstate = WS_READY;
+	}
 	
 	// Finish our reload!!!
 	if ((self.attack_finished <= time) && (self.weaponstate == WS_RELOAD))
@@ -800,19 +874,8 @@ void() W_WeaponFrame =
 		self.(ammo_fields[W_GetAmmoField(weap.ammo1)]) = self.(ammo_fields[W_GetAmmoField(weap.ammo1)]) - result;
 		self.currentammo = self.(clip_fields[W_GetClipField(weap.name)]) += result;
 		
+		//W_PrintWeaponState(); // dev thing..
 		self.weaponstate = WS_READY;
-		sprint(self, "filling\n");
-	}
-	
-	// sprint(self, "weapon state:");
-	// if (self.weaponstate == WS_READY)
-		// sprint(self, "ready\n");
-	// if (self.weaponstate == WS_DEPLOY)
-		// sprint(self, "deploy\n");	
-	if (self.weaponstate == WS_RELOAD)
-	{
-		sprint(self, "weapon state:");
-		sprint(self, "reload\n");
 	}
 	
 	// check for attack
@@ -822,11 +885,21 @@ void() W_WeaponFrame =
 		{
 			if (self.firemode == 1 && self.attack2_finished <= time)
 			{
+				if ((weap.ammo_usage > 0) && (self.currentammo <= 0))
+				{
+					self.fuser6 = TRUE; // this is the fire on empty check!!
+				}
 				W_Attack ();
+				//W_PrintWeaponState(); // dev thing..
 			}
 			else if (self.firemode == 0 && self.attack_finished <= time)
 			{
+				if ((weap.ammo_usage > 0) && (self.currentammo <= 0))
+				{
+					self.fuser6 = TRUE; // this is the fire on empty check!!
+				}
 				W_Attack ();
+				//W_PrintWeaponState(); // dev thing..
 			}
 		}
 		else
@@ -834,7 +907,7 @@ void() W_WeaponFrame =
 			if ((ammo > 0) && (clip <= 0) && (self.attack_finished < time) && (self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
 			{
 				weap.reload();
-				sprint(self, "reloading\n");
+				//W_PrintWeaponState(); // dev thing..
 				return;
 			}
 			weap.idle();
@@ -925,14 +998,11 @@ void() W_Precache =
 	precache_model ("progs/v_rock2.mdl");
 	precache_model ("progs/v_light.mdl");
 	
-	W_GaussPrecache();
-	W_MP5Precache();
-	W_GlockPrecache();
-	W_ShotgunPrecache();
-	W_CrowbarPrecache();
-	W_CrossbowPrecache();
-	W_HGunPrecache();
-	W_PrecacheRPG();
+	for (float i = 0; i < 10; i++)
+	{
+		weaponclass_t weap = weaponsclass[i];
+		weap.precache();
+	}
 }
 
 /*

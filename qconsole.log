@@ -11,7 +11,6 @@ execing quake.rc
 execing default.cfg
 execing config.cfg
 execing autoexec.cfg
-Unknown command "bidd"
 execing halflife.cfg
 3 demo(s) in loop
 Playing demo from demo1.dem.
@@ -19,533 +18,195 @@ Playing demo from demo1.dem.
 Using protocol 15
 file for music/track02.wv not found
 You got the shells
+You got the Grenade Launcher
+]map e1m8
 
-FITZQUAKE 0.85 SERVER(29071 CRC)
-Introduction
+FITZQUAKE 0.85 SERVER(21744 CRC)
+Ziggurat Vertigo
 Using protocol 666
-file for music/track04.wv not found
-player turned into hot slag
-
-FITZQUAKE 0.85 SERVER(29071 CRC)
-Introduction
-Using protocol 666
-file for music/track04.wv not found
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-player turned into hot slag
-
-FITZQUAKE 0.85 SERVER(29071 CRC)
-Introduction
-Using protocol 666
-file for music/track04.wv not found
-reloading
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-weapon state:reload
-filling
-reloading
-
-FITZQUAKE 0.85 SERVER(29071 CRC)
-the Slipgate Complex
-Using protocol 666
-file for music/track06.wv not found
+file for music/track10.wv not found
 godmode ON
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 5 shells
+An unholy ward surrounds you ...
+No weapon.
 You got armor
-Hit something!
-Hit something!
-You got 5 shells
-Hit something!
-Hit something!
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-You got 5 shells
-You got 5 shells
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
-Hit something!
+You got the nails
+monster_wizard
+monster_ogre
+monster_ogre
 noclip ON
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+noclip OFF
+Protection is almost burned out ...
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+monster_wizard
+monster_ogre
+monster_ogre
+monster_ogre
+monster_ogre
+noclip ON
+noclip OFF
+noclip ON
+noclip OFF
+You got 1 rocket
+You got 1 rocket
+You got 1 rocket
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
+Hit something!
 Wrote ./HalfLife/config.cfg

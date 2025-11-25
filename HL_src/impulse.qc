@@ -211,7 +211,7 @@ void() ImpulseCommands =
 			(self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
 			{
 				weap.reload();
-				sprint(self, "reloading\n");
+				//W_PrintWeaponState(); // dev thing..
 			}
 		}
 		break;

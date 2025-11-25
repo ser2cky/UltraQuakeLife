@@ -568,6 +568,166 @@ void() W_GlockEvents =
 
 /*
 ============
+//python
+// 20 fps = regular
+// 8 fps = idle
+// 0-10 draw
+// 11 - 31 shoot
+// 32 - 77 fidget loop
+// 78 - 97 idle1 loop
+// 98 - 114 idle2 loop
+// 115 - 138 idle3 loop
+// 139 - 200 reload
+// 201 - 211 holster
+============
+*/
+
+/*
+============
+W_PythonPrecache
+============
+*/
+
+void() W_PythonPrecache =
+{
+	precache_model("progs/v_357.mdl");
+	//precache_model("progs/w_357.mdl");
+	//precache_model("progs/w_357ammobox.mdl");
+	precache_sound("hl_items/9mmclip1.wav");              
+	precache_sound ("hl_weapons/357_reload1.wav");
+	precache_sound ("hl_weapons/357_cock1.wav");
+	precache_sound ("hl_weapons/357_shot1.wav");
+	precache_sound ("hl_weapons/357_shot2.wav");
+}
+
+/*
+============
+W_PythonDeploy
+============
+*/
+
+void() W_PythonDeploy = 
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+};
+
+/*
+============
+W_PythonPrimAttack
+============
+*/
+
+float() W_PythonPrimAttack =
+{
+	if (self.waterlevel == 3)
+	{
+		HL_PlayEmptySound();
+		self.attack_finished = time + 0.15;
+		return FALSE;
+	}
+
+	if (self.currentammo <= 0)
+	{
+		if (!self.fuser6)
+		{
+			W_PythonReload();
+		}
+		else
+		{
+			sound(self, CHAN_WEAPON, "hl_weapons/357_cock1.wav", 0.8, ATTN_NORM);
+			self.attack_finished = time + 0.15;
+		}
+		return FALSE;
+	}
+
+	self.currentammo = self.clip_python -= 1;
+	W_SetWeaponAnim2(11, 31, 31, 20);
+	
+	self.effects |= EF_MUZZLEFLASH;
+	
+	if (random() < 0.5)
+	{
+		sound(self, CHAN_WEAPON, "hl_weapons/357_shot1.wav", random(0.8, 0.9), ATTN_NORM);
+	}
+	else
+	{
+		sound(self, CHAN_WEAPON, "hl_weapons/357_shot2.wav", random(0.8, 0.9), ATTN_NORM);
+	}
+	
+	makevectors(self.v_angle + self.punchangle);
+	vector src = self.origin + self.view_ofs;
+	vector myaim = aim(self, AUTOAIM_DIST);
+	
+	HL_FireBullets(1, src, myaim, VECTOR_CONE_1DEGREES, 8192, 36, FALSE);
+	
+	self.attack_finished = time + 0.75;
+	self.nextidle = time + random(10, 15);
+	self.punchangle_x -= 10;
+	return TRUE;
+}
+
+/*
+============
+W_PythonReload
+============
+*/
+
+float() W_PythonReload =
+{
+	float result = HL_DefaultReload(139, 200, 200, 20, 6, 2.0);
+	
+	if (result)
+	{
+		self.fuser1 = time + 1.5;
+	}
+	return result;
+}
+
+/*
+============
+W_PythonIdle
+============
+*/
+
+void() W_PythonIdle =
+{
+	HL_ResetEmptySound();
+	
+	if (self.fuser1 != 0 && self.fuser1 <= time)
+	{
+		sound(self, CHAN_WEAPON, "hl_weapons/357_reload1.wav", random(0.8, 0.9), ATTN_NORM);
+		self.fuser1 = 0;
+	}
+	
+	if (self.nextidle > time)
+		return;
+		
+	float r = random();
+	
+	if (r <= 0.5)
+	{
+		W_SetWeaponAnim2(78, 97, -1, 8);
+		self.nextidle = time + (20.0/8.0);
+	}
+	else if (r <= 0.7)
+	{
+		W_SetWeaponAnim2(98, 114, -1, 8);
+		self.nextidle = time + (16.0/8.0);
+	}
+	else if (r <= 0.9)
+	{
+		W_SetWeaponAnim2(115, 138, -1, 8);
+		self.nextidle = time + (23.0/8.0);
+	}
+	else
+	{
+		W_SetWeaponAnim2(32, 77, -1, 8);
+		self.nextidle = time + (45.0/8.0);
+	}
+}
+
+/*
+============
 Shotgun
 
 // 0 - 10 : draw 20 fps
@@ -1624,7 +1784,10 @@ void() W_RocketFollowLaser =
 	vector dir, mytarget;
 	float dist, max, dot;
 
-	makevectors(self.angles);
+	vector myangles = self.angles;
+	myangles_x = -myangles_x;
+
+	makevectors(myangles);
 
 	mytarget = v_forward;
 	max = 4096;
@@ -1757,6 +1920,22 @@ void() W_RPGDeploy =
 
 /*
 ============
+W_RPGHolster
+============
+*/
+
+//ENT1 = laser
+void() W_RPGHolster =
+{
+	if (self.ent1 != world || self.ent1)
+	{
+		remove(self.ent1);
+		self.ent1 = world;
+	}
+}
+
+/*
+============
 W_RPGPrimAttack
 ============
 */
@@ -1791,6 +1970,26 @@ float() W_RPGPrimAttack =
 	
 	W_RPGUpdateSpot();
 	
+	return TRUE;
+}
+
+/*
+============
+W_RPGSecAttack
+============
+*/
+
+float() W_RPGSecAttack =
+{
+	self.fuser1 = !self.fuser1;
+	
+	if (!self.fuser1 && (self.ent1 != world || self.ent1))
+	{
+		remove(self.ent1);
+		self.ent1 = world;
+	}
+	
+	self.attack2_finished = time + 0.2;
 	return TRUE;
 }
 

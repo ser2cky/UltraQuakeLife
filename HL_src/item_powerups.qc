@@ -98,7 +98,7 @@ PENTAGRAM
 */
 void() precache_invulnerability =
 {
-	precache_model_safe ("progs/invul.mdl");
+	precache_model_safe ("progs/invulner.mdl");
 	precache_sound_safe ("items/protect.wav");
 	precache_sound_safe ("items/protect2.wav");
 	precache_sound_safe ("items/protect3.wav");
@@ -123,7 +123,7 @@ void() item_artifact_invulnerability =
 	precache_invulnerability();
 	
 	self.noise = "items/protect.wav";
-	setmodel (self, "progs/invul.mdl");
+	setmodel (self, "progs/invulner.mdl");
 	self.netname = "Pentagram of Protection";
 	self.items = IT_INVULNERABILITY;
 	setsize (self, '-16 -16 -24', '16 16 32');
@@ -185,7 +185,7 @@ RING OF SHADOWS
 */
 void() precache_invisibility =
 {
-	precache_model_safe ("progs/invis.mdl");
+	precache_model_safe ("progs/invisibl.mdl");
 	precache_sound_safe ("items/inv1.wav");
 	precache_sound_safe ("items/inv2.wav");
 	precache_sound_safe ("items/inv3.wav");
@@ -212,7 +212,7 @@ void() item_artifact_invisibility =
 	self.touch = powerup_touch;
 	precache_invisibility();
 	self.noise = "items/inv1.wav";
-	setmodel (self, "progs/invis.mdl");
+	setmodel (self, "progs/invisibl.mdl");
 	self.netname = "Ring of Shadows";
 	self.items = IT_INVISIBILITY;
 	setsize (self, '-16 -16 -24', '16 16 32');

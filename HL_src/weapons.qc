@@ -113,3 +113,28 @@
 // Did :
 // rpg
 // gfx
+
+//11.24.25
+// fix to rpg
+// Removed being able to select
+// the same weapon over&over again.
+// added python
+
+//python
+// 20 fps = regular
+// 8 fps = idle
+// 0-10 draw
+// 11 - 31 shoot
+// 32 - 77 fidget loop
+// 78 - 97 idle1 loop
+// 98 - 114 idle2 loop
+// 115 - 138 idle3 loop
+// 139 - 200 reload
+// 201 - 211 holster
+
+// tfc nailgun
+// 0 - 10 draw
+// 11 - 18 shoot 1
+// 19 - 25 shoot 2
+// 26 - 31 shoot 3
+// 32 - 52 idle

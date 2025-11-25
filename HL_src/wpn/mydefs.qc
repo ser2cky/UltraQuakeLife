@@ -78,6 +78,7 @@ New ammo defs.
 .float clip_shotgun;
 .float clip_crossbow;
 .float clip_rpg;
+.float clip_python;
 
 /*
 ============
@@ -97,12 +98,13 @@ const float	WPN_GRENADE_LAUNCHER	= 16;
 const float	WPN_ROCKET_LAUNCHER		= 32;
 const float	WPN_LIGHTNING			= 64;
 const float	WPN_WEAPONS				= 127 + 4096;
+const float WPN_PYTHON				= 128;
 
 const float HUD_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
 					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
 					
 const float ALL_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
-					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
+					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING + WPN_PYTHON;
 
 /*
 ============

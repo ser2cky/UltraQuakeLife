@@ -36,7 +36,7 @@ void() Cheat_Items =
 	self.items = self.items | HUD_WPNS;
 	self.weapons = self.weapons | ALL_WPNS;
 
-	W_ChangeWeapon(WPN_ROCKET_LAUNCHER);
+	W_ChangeWeapon(WPN_HORNETGUN);
 
 	stuffcmd(self,"bf\n");
 	W_ResetWeaponState();

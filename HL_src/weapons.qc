@@ -1,13 +1,13 @@
 // 11.16.25
 // WEAPON NOTES
 // 1 - CROWBAR, SATCHEL, HANDGREN, TRIPMINE
-// 2 - HANDGUN, .357
-// 3 - SHOTGUN
-// 4 - MP5
-// 5 - CROSSBOW
-// 6 - HORNETGUN, SNARK
-// 7 - ROCKET LAUNCHER
-// 8 - TAU, GLUON
+// 2 - HANDGUN, .357, OP4 DEAGLE
+// 3 - SHOTGUN, 
+// 4 - MP5, TFCSNIPER AUTO, TFC NAILGUN
+// 5 - CROSSBOW, TFC SNIPER, OP4 SNIPER, TFC SUPER NAILGUN
+// 6 - HORNETGUN, SHOCK RIFLE, SNARK
+// 7 - ROCKET LAUNCHER, TFC G-LAUNCHER
+// 8 - TAU, GLUON, TFC FLAMETHROWER
 
 // glock
 // 8 dmg
@@ -138,3 +138,14 @@
 // 19 - 25 shoot 2
 // 26 - 31 shoot 3
 // 32 - 52 idle
+
+//11.25.25
+// egon
+// 0-10 draw
+// 11-21 fire1 loop
+// 22-32 fire2 loop
+// 33-40 fire3 loop
+// 41-51 fire4 loop
+// 52-68 idle1 loop 8 fps
+// 69-90 fidget1 8 fps
+// 91-101 holster

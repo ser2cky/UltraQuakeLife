@@ -74,13 +74,13 @@ void() SetNewParms =
 	parm1 = IT_SHOTGUN | IT_AXE;
 	parm2 = 100;
 	parm4 = 25;
-	parm8 = WPN_SHOTGUN;
+	parm8 = WPN_GLOCK;
 	parm3 = 0;
 	parm5 = 0;
 	parm6 = 0;
 	parm7 = 0;
 	parm9 = 0;
-	parm10 = WPN_SHOTGUN | WPN_AXE;
+	parm10 = WPN_GLOCK | WPN_CROWBAR;
 }
 
 
@@ -92,9 +92,9 @@ void() SetCoopParms =
 	parm2 = 100;
 	parm4 = max(25,self.ammo_shells);
 	if (parm1 & IT_SUPER_SHOTGUN)
-		parm8 = WPN_SUPER_SHOTGUN;
-	else
 		parm8 = WPN_SHOTGUN;
+	else
+		parm8 = WPN_GLOCK;
 
 	parm3 = 0;
 	parm5 = self.ammo_nails;

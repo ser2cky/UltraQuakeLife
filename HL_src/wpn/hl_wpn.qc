@@ -15,6 +15,7 @@
 //	on crowbar.
 //	11.22.25: crossbow, HORNET!!
 //	11.23.25 : rpg.
+//	11.25.25 : egon, bugfixes
 //
 //======================================
 
@@ -57,7 +58,7 @@ HL_DefaultReload
 ============
 */
 
-float(float frame_start, float frame_end, float frame_reset, float framerate, float clipsize, float delay) HL_DefaultReload = 
+float(float frame_start, float frame_end, float frame_reset, float framerate, float clipsize, float delay, optional float idle = 3.0) HL_DefaultReload = 
 {
 	weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
 
@@ -72,7 +73,7 @@ float(float frame_start, float frame_end, float frame_reset, float framerate, fl
 	W_SetWeaponAnim2(frame_start, frame_end, frame_reset, framerate);
 	
 	self.attack_finished = time + delay;
-	self.nextidle = time + 3;
+	self.nextidle = time + idle; // Altered to let .357 finish it's reload.
 	self.weaponstate = WS_RELOAD;
 	return TRUE;
 };
@@ -613,6 +614,21 @@ void() W_PythonDeploy =
 
 /*
 ============
+W_PythonDeploy
+============
+*/
+
+void() W_PythonHolster =
+{
+	if (self.fuser2)
+	{
+		//sprint(self, "test\n");
+		W_PythonSecAttack();
+	}
+}
+
+/*
+============
 W_PythonPrimAttack
 ============
 */
@@ -668,17 +684,48 @@ float() W_PythonPrimAttack =
 
 /*
 ============
+W_PythonSecAttack
+============
+*/
+
+float() W_PythonSecAttack =
+{
+	if (self.fuser2)
+	{
+		stuffcmd(self, "unzoom\n");
+		self.fuser2 = 0;
+	}
+	else
+	{
+		stuffcmd(self, "zoom_python\n");
+		self.fuser2 = 1;
+	}
+	
+	self.attack2_finished = time + 0.5;
+	return TRUE;
+}
+
+
+/*
+============
 W_PythonReload
 ============
 */
 
 float() W_PythonReload =
 {
-	float result = HL_DefaultReload(139, 200, 200, 20, 6, 2.0);
+	float result = HL_DefaultReload(139, 200, 200, 20, 6, 2.0, 3.1);
+	
+	if (self.fuser2)
+	{
+		//sprint(self, "test\n");
+		W_PythonSecAttack();
+	}
 	
 	if (result)
 	{
 		self.fuser1 = time + 1.5;
+		self.nextidle = time + 4.0;
 	}
 	return result;
 }
@@ -968,7 +1015,8 @@ void() W_ShotgunPostThink =
 			
 			case 2:
 			{
-				if ((self.button0) && (self.clip_shotgun >= 1)) // If we want to shoot..
+				if (((self.button0) && (self.clip_shotgun >= 1) && (self.firemode == 0))
+				|| ((self.button0) && (self.clip_shotgun >= 2) && (self.firemode == 1))) // If we want to shoot..
 				{
 					self.attack_phase = 0;
 					self.weaponstate = WS_READY;
@@ -1419,7 +1467,7 @@ void() W_CrossbowHolster =
 {
 	if (self.fuser1)
 	{
-		sprint(self, "test\n");
+		//sprint(self, "test\n");
 		W_CrossbowSecAttack();
 	}
 }
@@ -1581,7 +1629,13 @@ W_CrossbowReload
 
 float() W_CrossbowReload = 
 {
-	float result = HL_DefaultReload(71, 139, 139, 15, 5, 4.5);
+	float result = HL_DefaultReload(71, 139, 139, 15, 5, 4.5, 3.5);
+	
+	if (self.fuser1)
+	{
+		//sprint(self, "test\n");
+		W_CrossbowSecAttack();
+	}
 	
 	if (result)
 	{
@@ -2143,6 +2197,14 @@ entity() W_CreateHornet =
 	
 	hornet.touch = W_HornetTouch;
 	hornet.think = W_HornetTrack;
+	
+	hornet.th_stand = SUB_Null;
+	hornet.th_walk = SUB_Null;
+	hornet.th_run = SUB_Null;
+	hornet.th_missile = SUB_Null;
+	hornet.th_pain = SUB_NullPain;
+	hornet.th_die = SUB_Null;
+	hornet.th_checkattack = SUB_NullFloat;
 	
 	hornet.frame = 0;
 	hornet.nextthink = time + 0.1;
@@ -2859,6 +2921,16 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 			ApplyMultiDamage();
 		}
 		
+		entity corpse = HL_CorpseChecker(trace_endpos);
+		
+		if (corpse != world)
+		{
+			trace_ent = corpse;
+			ClearMultiDamage();
+			TraceAttack(dmg, dir);
+			ApplyMultiDamage();
+		}
+		
 		if (trace_ent.solid == SOLID_BSP && !trace_ent.takedamage)
 		{
 			local float n;
@@ -3007,3 +3079,273 @@ void() W_GaussIdle =
 		}
 	}
 };
+
+/*
+============
+// egon
+// 0-10 draw
+// 11-21 fire1 loop
+// 22-32 fire2 loop
+// 33-40 fire3 loop
+// 41-51 fire4 loop
+// 52-68 idle1 loop 8 fps
+// 69-90 fidget1 8 fps
+// 91-101 holster
+============
+*/
+
+// fuser2 == firestate
+// fuser3 == ammo use time
+// fuser4 == shoottime
+
+void() W_EgonPrecache =
+{
+	//precache_model("models/w_egon.mdl");
+	precache_model("progs/v_egon.mdl");
+	precache_sound("hl_weapons/egon_run3.wav");
+	precache_sound("hl_weapons/egon_off1.wav");
+	precache_sound("hl_weapons/egon_windup2.wav");
+}
+
+/*
+============
+W_EgonDeploy
+============
+*/
+
+enum egon_firestates
+{
+	FIRE_OFF,
+	FIRE_CHARGE
+};
+
+void() W_EgonDeploy = 
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+};
+
+/*
+============
+W_EgonHolster
+============
+*/
+
+void() W_EgonHolster =
+{
+	if (self.fuser2 != FIRE_OFF)
+		W_EgonEndAttack();
+		
+	if (self.ent1)
+	{
+		self.ent1 = world;
+	}
+}
+
+/*
+============
+W_EgonPrimAttack
+============
+*/
+
+float() W_EgonPrimAttack =
+{
+	if (self.waterlevel == 3)
+	{
+		if (self.ent1)
+		{
+			W_EgonEndAttack();
+		}
+		else
+		{
+			HL_PlayEmptySound();
+		}
+		return FALSE;
+	}
+	
+	makevectors(self.v_angle + self.punchangle);
+	vector myaim = v_forward;
+	vector src = self.origin + self.view_ofs;
+	
+	switch (self.fuser2)
+	{
+		case FIRE_OFF:
+		{
+			if (self.currentammo <= 0)
+			{
+				self.attack_finished = time + 0.25;
+				HL_PlayEmptySound();
+				return FALSE;
+			}
+			
+			float r = random();
+			
+			if (r < 0.25)
+				W_SetWeaponAnim2(11, 21, -1, 20);
+			else if (r < 0.50)
+				W_SetWeaponAnim2(22, 32, -1, 20);
+			else if (r < 0.75)
+				W_SetWeaponAnim2(33, 40, -1, 20);
+			else
+				W_SetWeaponAnim2(41, 51, -1, 20);
+			
+			sound(self, CHAN_WEAPON, "hl_weapons/egon_windup2.wav", 0.98, ATTN_NORM);
+			
+			self.fuser3 = time; // Ammo use time.
+			self.fuser4 = time + 2.0; // shoot time
+			self.nextidle = time + 0.1;
+			self.dmgtime = time + 0.1; // pulse time
+			self.fuser2 = FIRE_CHARGE;
+			break;
+		}
+		case FIRE_CHARGE:
+		{
+			W_EgonFire(src, myaim);
+		
+			if (self.fuser4 != 0 && time > self.fuser4)
+			{
+				sound(self, 7, "hl_weapons/egon_run3.wav", 0.98, ATTN_NORM);
+				self.fuser4 = 0;
+			}
+		
+			if (self.currentammo <= 0)
+			{
+				W_EgonEndAttack();
+				self.fuser2 = FIRE_OFF;
+				self.attack_finished = time + 1.0;
+				return FALSE;
+			}
+			break;
+		}
+	}
+	
+	return TRUE;
+}
+
+/*
+============
+W_EgonFire
+============
+*/
+
+.float ammo_consume; // ok WHATEVER
+void(vector src, vector dir) W_EgonFire =
+{
+	vector dest = src + dir * 2048;
+	vector tmpsrc = src + v_up * -8 + v_right * 3 + v_forward * 16;
+	
+	traceline(src, dest, 0, self);
+	
+	if (trace_allsolid)
+		return;
+		
+	if (self.dmgtime < time)
+	{
+		ClearMultiDamage();
+		if (trace_ent && trace_ent.takedamage)
+			TraceAttack(20, dir);
+		ApplyMultiDamage();
+		
+		entity corpse = HL_CorpseChecker(trace_endpos);
+		
+		if (corpse != world)
+		{
+			trace_ent = corpse;
+			ClearMultiDamage();
+			TraceAttack(20, dir);
+			ApplyMultiDamage();
+		}
+		
+		if (deathmatch)
+		{
+			if (time >= self.ammo_consume)
+			{
+				self.currentammo = self.ammo_cells -= 1;
+				self.ammo_consume = time + 0.2;
+			}
+		}
+		else
+		{
+			if (time >= self.ammo_consume)
+			{
+				self.currentammo = self.ammo_cells -= 1;
+				self.ammo_consume = time + 0.1;
+			}
+		}
+		
+		if (self.deadflag != DEAD_NO)
+			return;
+	}
+	
+	particle (trace_endpos, '0 0 100', 208, 20);
+	
+	if (!self.ent1)
+	{
+		self.ent1 = spawn();
+		setorigin(self.ent1, tmpsrc);
+	}
+	else
+	{
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+		WriteEntity (MSG_BROADCAST, self.ent1);
+		WriteCoord (MSG_BROADCAST, tmpsrc_x);
+		WriteCoord (MSG_BROADCAST, tmpsrc_y);
+		WriteCoord (MSG_BROADCAST, tmpsrc_z);
+		WriteCoord (MSG_BROADCAST, trace_endpos_x);
+		WriteCoord (MSG_BROADCAST, trace_endpos_y);
+		WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	}
+}
+
+/*
+============
+W_EgonEndAttack
+============
+*/
+
+void() W_EgonEndAttack =
+{
+	if (self.ent1)
+	{
+		self.ent1 = world;
+	}
+
+	sound(self, 7, "hl_weapons/egon_off1.wav", 0.98, ATTN_NORM);
+	sound(self, CHAN_WEAPON, "hl_weapons/egon_off1.wav", 0.98, ATTN_NORM);
+	self.fuser2 = FIRE_OFF;
+	self.nextidle = time + 2.0;
+	self.attack_finished = time + 0.5;
+}
+
+/*
+============
+W_EgonIdle
+============
+*/
+
+void() W_EgonIdle =
+{
+	HL_ResetEmptySound();
+
+	if (self.ent1)
+	{
+		self.ent1 = world;
+	}
+
+	if (self.nextidle > time)
+		return;
+		
+	if (self.fuser2 != FIRE_OFF)
+		W_EgonEndAttack();
+
+	if (random() < 0.5)
+	{
+		W_SetWeaponAnim2(52, 68, -1, 8);
+		self.nextidle = time + random(10, 15);
+	}
+	else
+	{
+		W_SetWeaponAnim2(69, 90, -1, 8);
+		self.nextidle = time + 3.0;
+	}
+}

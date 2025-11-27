@@ -86,25 +86,29 @@ Weapon bit stuff
 ============
 */
 
-float MAX_WEAPON_NUM = 8;
+const float MAX_WEAPON_NUM = 8;
+const float NUMBER_OF_WEAPONS = 11;
 
 const float WPN_NONE 				= 16777216;
-const float	WPN_AXE					= 4096;
-const float	WPN_SHOTGUN				= 1;
-const float	WPN_SUPER_SHOTGUN		= 2;
-const float	WPN_NAILGUN				= 4;
-const float	WPN_SUPER_NAILGUN		= 8;
-const float	WPN_GRENADE_LAUNCHER	= 16;
-const float	WPN_ROCKET_LAUNCHER		= 32;
-const float	WPN_LIGHTNING			= 64;
-const float	WPN_WEAPONS				= 127 + 4096;
-const float WPN_PYTHON				= 128;
 
-const float HUD_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
-					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING;
+const float	WPN_CROWBAR				= 4096;
+const float	WPN_GLOCK				= 1;
+const float	WPN_SHOTGUN				= 2;
+const float	WPN_MP5					= 4;
+const float	WPN_CROSSBOW			= 8;
+const float	WPN_RPG					= 16;
+const float	WPN_HORNETGUN			= 32;
+const float	WPN_GAUSS				= 64;
+const float WPN_PYTHON				= 128;
+const float WPN_EGON				= 256;
+
+const float	WPN_WEAPONS				= 127 + 4096;
+
+const float HUD_WPNS = WPN_CROWBAR + WPN_GLOCK + WPN_SHOTGUN + WPN_MP5 + WPN_CROSSBOW
+					+ WPN_RPG + WPN_HORNETGUN + WPN_GAUSS;
 					
-const float ALL_WPNS = WPN_AXE + WPN_SHOTGUN + WPN_SUPER_SHOTGUN + WPN_NAILGUN + WPN_SUPER_NAILGUN
-					+ WPN_GRENADE_LAUNCHER + WPN_ROCKET_LAUNCHER + WPN_LIGHTNING + WPN_PYTHON;
+const float ALL_WPNS = WPN_CROWBAR + WPN_GLOCK + WPN_SHOTGUN + WPN_MP5 + WPN_CROSSBOW
+					+ WPN_RPG + WPN_HORNETGUN + WPN_GAUSS + WPN_PYTHON + WPN_EGON;
 
 /*
 ============

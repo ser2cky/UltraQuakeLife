@@ -154,7 +154,7 @@ void() weapon_shotgun =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model3 ("progs/g_shotgn.mdl");
 	setmodel (self, "progs/g_shotgn.mdl");
-	self.weapon = WPN_SHOTGUN;
+	self.weapon = WPN_GLOCK;
 	self.ammo_shells = 5;
 	self.netname = "Shotgun";
 	StartWeapon();
@@ -179,7 +179,7 @@ void() weapon_supershotgun =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
-	self.weapon = WPN_SUPER_SHOTGUN;
+	self.weapon = WPN_SHOTGUN;
 	self.ammo_shells = 10;
 	self.netname = "Double-barreled Shotgun";
 	StartWeapon();
@@ -203,7 +203,7 @@ void() weapon_nailgun =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
-	self.weapon = WPN_NAILGUN;
+	self.weapon = WPN_MP5;
 	self.ammo_nails = 30;
 	self.netname = "Nailgun";
 	StartWeapon();
@@ -227,7 +227,7 @@ void() weapon_supernailgun =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
-	self.weapon = WPN_SUPER_NAILGUN;
+	self.weapon = WPN_CROSSBOW;
 	self.ammo_nails = 30;
 	self.netname = "Perforator";
 	StartWeapon();
@@ -251,7 +251,7 @@ void() weapon_grenadelauncher =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
-	self.weapon = WPN_GRENADE_LAUNCHER;
+	self.weapon = WPN_RPG;
 	self.ammo_rockets = 5;
 	self.netname = "Grenade Launcher";
 	StartWeapon();
@@ -275,7 +275,7 @@ void() weapon_rocketlauncher =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
-	self.weapon = WPN_ROCKET_LAUNCHER;
+	self.weapon = WPN_HORNETGUN;
 	self.ammo_rockets = 5;
 	self.netname = "Rocket Launcher";
 	StartWeapon();
@@ -300,7 +300,7 @@ void() weapon_lightning =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
-	self.weapon = WPN_LIGHTNING;
+	self.weapon = WPN_GAUSS;
 	self.ammo_cells = 12;
 	self.netname = "Thunderbolt";
 	StartWeapon();
@@ -323,7 +323,7 @@ void() weapon_axe =
 	if (!SUB_ShouldSpawn()) return;
 	precache_model_safe ("progs/g_axe.mdl");
 	setmodel (self, "progs/g_axe.mdl");
-	self.weapon = WPN_AXE;
+	self.weapon = WPN_CROWBAR;
 	self.netname = "Axe. Find some wood!";
 	StartWeapon();
 }

@@ -316,10 +316,5 @@ const float	DEBUG_DMG_PER_NAIL		= 9;
 const float	DEBUG_DMG_PER_SHELL		= 24;
 const float	DEBUG_DMG_PER_CELL		= 30;
 
-const float	MAX_AMMO_SHELLS			= 100;
-const float	MAX_AMMO_NAILS			= 200;
-const float	MAX_AMMO_ROCKETS		= 100;
-const float	MAX_AMMO_CELLS			= 100;
-
 //================================================
 

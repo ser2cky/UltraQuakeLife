@@ -26,6 +26,7 @@ item_backpack.qc
 projectiles.qc
 wpn/hl_wpn_grenades.qc
 wpn/hl_wpn.qc
+wpn/hl_items.qc
 wpn/wpn_axe.qc
 wpn/wpn_lightning.qc
 wpn/wpn_shotguns.qc

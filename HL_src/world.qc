@@ -325,6 +325,7 @@ void() worldspawn =
 	precache_sound ("player/pain4.wav");
 	precache_sound ("player/pain5.wav");
 	precache_sound ("player/pain6.wav");
+	precache_sound ("player/pl_fallpain3.wav");
 
 // player death sounds
 	precache_sound ("player/death1.wav");

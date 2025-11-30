@@ -18,6 +18,9 @@
 //	calls holster function !!!
 //	11.24.25: Added check for firing
 //	on empty.
+//	11.28.25: changed deploy behaviour.
+//	now sets weaponstate to ready once
+//	attack_finish passes.
 //
 //======================================
 
@@ -37,18 +40,22 @@ typedef struct {
 	float() reload;
 	void() postframe;
 	void() deploy;
-	void() holster;
+	float() holster;
 	void() idle;
 	void() precache;
 } weaponclass_t;
 
-.float ammo_fields[6] = {
+.float ammo_fields[10] = {
 	currentammo,
 	ammo_shells,
 	ammo_nails, 
 	ammo_rockets,
 	ammo_cells,
-	ammo_hornets
+	ammo_hornets,
+	ammo_handgrenades,
+	ammo_satchels,
+	ammo_tripmines,
+	ammo_snarks
 };
 
 .float clip_fields[7] = {
@@ -62,6 +69,7 @@ typedef struct {
 };
 
 float() W_NullFunc = {return FALSE;};
+float() W_NullTrue = {return TRUE;};
 void() W_DefaultDeploy = {self.weaponstate = WS_DEPLOY; W_SetWeaponAnim(0, 0, 0, -1);};
 
 weaponclass_t wpc_none =
@@ -81,7 +89,7 @@ weaponclass_t wpc_none =
 	W_NullFunc, // Reload
 	SUB_Null, // Post-Think function.
 	W_DefaultDeploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	SUB_Null, // Idle.
 	SUB_Null // Precache.
 };
@@ -103,7 +111,7 @@ weaponclass_t wpc_crowbar =
 	W_NullFunc, // Reload
 	W_CrowbarPostFrame, // Post-Think function.
 	W_CrowbarDeploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	SUB_Null, // Idle.
 	W_CrowbarPrecache // Precache.
 };
@@ -125,7 +133,7 @@ weaponclass_t wpc_glock =
 	W_GlockReload, // Reload
 	W_GlockEvents, // Post-Think function.
 	W_GlockDeploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	W_GlockIdle, // Idle.
 	W_GlockPrecache // Precache.
 };
@@ -169,7 +177,7 @@ weaponclass_t wpc_shotgun =
 	W_ShotgunReload, // Reload
 	W_ShotgunPostThink, // Post-Think function.
 	W_ShotgunDeploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	W_ShotgunIdle, // Idle.
 	W_ShotgunPrecache // Precache.
 };
@@ -185,13 +193,13 @@ weaponclass_t wpc_mp5 =
 	"progs/v_9mmAR.mdl", // V_Model
 	"MP5", // Weapon name.
 	WPN_MP5, // Weapon I.D
-	WFL_HAS_CLIP, // Weapon flags
+	0, // Weapon flags
 	W_MP5PrimAttack, // Attack1
 	W_MP5SecAttack, // Attack2
 	W_MP5Reload, // Reload
 	W_MP5Events, // Post-Think function.
 	W_MP5Deploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	W_MP5Idle, // Idle.
 	W_MP5Precache // Precache.
 };
@@ -251,7 +259,7 @@ weaponclass_t wpc_hornetgun =
 	"progs/v_hgun.mdl", // V_Model
 	"Hornetgun", // Weapon name.
 	WPN_HORNETGUN, // Weapon I.D
-	0, // Weapon flags
+	WFL_USABLE_IF_EMPTY, // Weapon flags
 	W_HGunPrimAttack, // Attack1
 	W_HGunSecAttack, // Attack2
 	W_HGunReload, // Reload
@@ -279,7 +287,7 @@ weaponclass_t wpc_gauss =
 	W_NullFunc, // Reload
 	SUB_Null, // Post-Think function.
 	W_GaussDeploy, // Deploy.
-	SUB_Null, // Holster.
+	W_NullTrue, // Holster.
 	W_GaussIdle, // Idle.
 	W_GaussPrecache // Precache.
 };
@@ -306,18 +314,110 @@ weaponclass_t wpc_egon =
 	W_EgonPrecache // Precache.
 };
 
-weaponclass_t weaponsclass[11] = {
+weaponclass_t wpc_handgrenades =
+{
+	9, // Slot
+	0, // Slot pos.
+	"hand_grenades", // Ammo1
+	"", // Ammo2
+	1, // Ammo usage.
+	0, // Clip size.
+	"progs/v_grenade.mdl", // V_Model
+	"Hand-Grenade", // Weapon name.
+	WPN_HANDGRENADE, // Weapon I.D
+	0, // Weapon flags
+	W_GrenadePrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_GrenadeDeploy, // Deploy.
+	W_GrenadeHolster, // Holster.
+	W_GrenadeIdle, // Idle.
+	W_GrenadePrecache // Precache.
+};
+
+weaponclass_t wpc_tripmine =
+{
+	9, // Slot
+	1, // Slot pos.
+	"tripmines", // Ammo1
+	"", // Ammo2
+	1, //
+	0, // Clip size.
+	"progs/v_tripmine.mdl", // V_Model
+	"Tripmine", // Weapon name.
+	WPN_TRIPMINE, // Weapon I.D
+	0, // Weapon flags
+	W_TripminePrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_TripmineDeploy, // Deploy.
+	W_TripmineHolster, // Holster.
+	W_TripmineIdle, // Idle.
+	W_TripminePrecache // Precache.
+};
+
+weaponclass_t wpc_satchel =
+{
+	9, // Slot
+	2, // Slot pos.
+	"satchels", // Ammo1
+	"", // Ammo2
+	1, // 
+	0, // Clip size.
+	"progs/v_satchel.mdl", // V_Model
+	"Satchel", // Weapon name.
+	WPN_SATCHEL, // Weapon I.D
+	0, // Weapon flags
+	W_SatchelPrimAttack, // Attack1
+	W_SatchelSecAttack, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_SatchelDeploy, // Deploy.
+	W_SatchelHolster, // Holster.
+	W_SatchelIdle, // Idle.
+	W_SatchelPrecache // Precache.
+};
+
+weaponclass_t wpc_snark =
+{
+	9, // Slot
+	3, // Slot pos.
+	"snarks", // Ammo1
+	"", // Ammo2
+	1, // 
+	0, // Clip size.
+	"progs/v_squeak.mdl", // V_Model
+	"Snarks", // Weapon name.
+	WPN_SNARK, // Weapon I.D
+	0, // Weapon flags
+	W_SnarkPrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_SnarkDeploy, // Deploy.
+	W_SnarkHolster, // Holster.
+	W_SnarkIdle, // Idle.
+	W_SnarkPrecache // Precache.
+};
+
+weaponclass_t weaponsclass[15] = {
 	wpc_none,
 	wpc_crowbar,
 	wpc_glock,
+	wpc_python,
 	wpc_shotgun,
 	wpc_mp5,
 	wpc_crossbow,
 	wpc_rpg,
 	wpc_hornetgun,
 	wpc_gauss,
-	wpc_python,
-	wpc_egon
+	wpc_egon,
+	wpc_handgrenades,
+	wpc_tripmine,
+	wpc_satchel,
+	wpc_snark,
 };
 
 typedef struct {
@@ -325,16 +425,17 @@ typedef struct {
 	float qt;
 } weaponslot_t;
 
-weaponslot_t weaponslots[9] = {
+weaponslot_t weaponslots[10] = {
 	{{wpc_none}, 1},
-	{{wpc_crowbar}, 1}, // axe
-	{{wpc_glock, wpc_python}, 2}, // sgun
-	{{wpc_shotgun}, 1}, // ssgun
-	{{wpc_mp5}, 1}, // nailg
-	{{wpc_crossbow}, 1}, // snailg
-	{{wpc_rpg}, 1}, // gl
-	{{wpc_hornetgun}, 1}, // rl
-	{{wpc_gauss, wpc_egon}, 2} // bolt
+	{{wpc_crowbar}, 1},
+	{{wpc_glock, wpc_python}, 2},
+	{{wpc_shotgun}, 1},
+	{{wpc_mp5}, 1},
+	{{wpc_crossbow}, 1},
+	{{wpc_rpg}, 1},
+	{{wpc_hornetgun}, 1},
+	{{wpc_gauss, wpc_egon}, 2},
+	{{wpc_handgrenades, wpc_tripmine, wpc_satchel, wpc_snark}, 4}
 };
 
 enum {
@@ -346,6 +447,10 @@ enum {
 /*
 ============
 W_GetWeapon
+
+Add WeaponID here to get
+the code to read all of it's
+info.
 ============
 */
 
@@ -355,14 +460,18 @@ float(float weap) W_GetWeapon =
 	{
 		case WPN_CROWBAR:			return 1;
 		case WPN_GLOCK:				return 2;
-		case WPN_SHOTGUN:			return 3;
-		case WPN_MP5:				return 4;
-		case WPN_CROSSBOW:			return 5;
-		case WPN_RPG:				return 6;
-		case WPN_HORNETGUN:			return 7;
-		case WPN_GAUSS:				return 8;
-		case WPN_PYTHON:			return 9;
+		case WPN_PYTHON:			return 3;
+		case WPN_SHOTGUN:			return 4;
+		case WPN_MP5:				return 5;
+		case WPN_CROSSBOW:			return 6;
+		case WPN_RPG:				return 7;
+		case WPN_HORNETGUN:			return 8;
+		case WPN_GAUSS:				return 9;
 		case WPN_EGON:				return 10;
+		case WPN_HANDGRENADE:		return 11;
+		case WPN_TRIPMINE:			return 12;
+		case WPN_SATCHEL:			return 13;
+		case WPN_SNARK:				return 14;
 		default:					return 0;
 	}
 }
@@ -373,15 +482,27 @@ W_CheckWeapon
 ============
 */
 
-float(float weap, entity cl) W_CheckWeapon = {
+float(float weap, entity cl) W_CheckWeapon = 
+{
 	weaponclass_t weapcl = weaponsclass[W_GetWeapon(weap)];
 
-	if (weap == WPN_NONE) return WEAPONSTAT_AVAILABLE;
-	if (!(cl.weapons & weap)) return WEAPONSTAT_NOWEAPON;
-	if (cl.(clip_fields[W_GetClipField(weapcl.name)]) <= 0 && cl.(ammo_fields[W_GetAmmoField(weapcl.ammo1)]) < weapcl.ammo_usage && weapcl.clip_size != 0)
+	if (weap == WPN_NONE) 
+		return WEAPONSTAT_AVAILABLE;
+		
+	if (!(cl.weapons & weap)) 
+		return WEAPONSTAT_NOWEAPON;
+	
+	if ((cl.(clip_fields[W_GetClipField(weapcl.name)]) <= 0) && (cl.(ammo_fields[W_GetAmmoField(weapcl.ammo1)]) < weapcl.ammo_usage) && (weapcl.clip_size > 0))
 		return WEAPONSTAT_NOAMMO;
-	if (cl.(ammo_fields[W_GetAmmoField(weapcl.ammo1)]) < weapcl.ammo_usage && weapcl.clip_size <= 0)
-		return WEAPONSTAT_NOAMMO;
+	
+	if (cl.(ammo_fields[W_GetAmmoField(weapcl.ammo1)]) < weapcl.ammo_usage && weapcl.clip_size <= 0 && !(weapcl.wpn_flags & WFL_USABLE_IF_EMPTY))
+	{
+		// THIS TOOK SO FUKKEN LONG TO FIGURE OUT!!!!!
+		if ( cl.weapon & WPN_SATCHEL && W_SatchelHack(cl) )
+			return WEAPONSTAT_AVAILABLE;
+		else
+			return WEAPONSTAT_NOAMMO;
+	}
 
 	//dprint3("Ammo: ", ftos(cl.(weapcl.ammofield)), "\n");
 	return WEAPONSTAT_AVAILABLE;
@@ -397,12 +518,16 @@ float(string ammo_name) W_GetAmmoField =
 {
 	switch (ammo_name)
 	{
-		case "shells":		return 1;
-		case "nails":		return 2;
-		case "rockets":		return 3;
-		case "cells":		return 4;
-		case "hornets":		return 5;
-		default:			return 0;
+		case "shells":				return 1;
+		case "nails":				return 2;
+		case "rockets":				return 3;
+		case "cells":				return 4;
+		case "hornets":				return 5;
+		case "hand_grenades": 		return 6;
+		case "satchels":			return 7;
+		case "tripmines":			return 8;
+		case "snarks":				return 9;
+		default:					return 0;
 	}
 }
 
@@ -452,8 +577,6 @@ W_ResetClipFields
 
 void() W_ResetClipFields =
 {
-	self.ammo_hornets = 8;
-	
 	for (float i = 0; i < NUMBER_OF_WEAPONS; i++)
 	{
 		weaponclass_t weap = weaponsclass[i];
@@ -487,16 +610,24 @@ W_BestWeaponParms
 
 float(float weapons, entity cl, float waterlevel) W_BestWeaponParms =
 {
+	if (W_CheckWeapon(WPN_EGON, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
+		return WPN_EGON;
 	if (W_CheckWeapon(WPN_GAUSS, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
 		return WPN_GAUSS;
+	if (W_CheckWeapon(WPN_HORNETGUN, cl) == WEAPONSTAT_AVAILABLE)
+		return WPN_HORNETGUN;
 	if (W_CheckWeapon(WPN_CROSSBOW, cl) == WEAPONSTAT_AVAILABLE)
 		return WPN_CROSSBOW;
-	if (W_CheckWeapon(WPN_SHOTGUN, cl) == WEAPONSTAT_AVAILABLE)
+	if (W_CheckWeapon(WPN_SHOTGUN, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
 		return WPN_SHOTGUN;
-	if (W_CheckWeapon(WPN_MP5, cl) == WEAPONSTAT_AVAILABLE)
+	if (W_CheckWeapon(WPN_MP5, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
 		return WPN_MP5;
+	if (W_CheckWeapon(WPN_PYTHON, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
+		return WPN_PYTHON;
 	if (W_CheckWeapon(WPN_GLOCK, cl) == WEAPONSTAT_AVAILABLE)
 		return WPN_GLOCK;
+	if (W_CheckWeapon(WPN_SNARK, cl) == WEAPONSTAT_AVAILABLE)
+		return WPN_SNARK;
 	if (W_CheckWeapon(WPN_CROWBAR, cl) == WEAPONSTAT_AVAILABLE)
 		return WPN_CROWBAR;
 
@@ -562,6 +693,8 @@ float(float imp) W_ChangeSlot =
 	float weaponstat, firstweaponstat;
 	float startSlotPos;
 	float i;
+	
+	float holster = currentWeapon.holster();
 
 	if (currentWeapon.slot == imp)
 		startSlotPos = wrap(currentWeapon.slotpos + 1, 0, newSlot.qt - 1);
@@ -572,9 +705,8 @@ float(float imp) W_ChangeSlot =
 	{
 		weaponstat = W_CheckWeapon(newSlot.weaps[startSlotPos].id, self);
 		if (i == 0 || weaponstat == WEAPONSTAT_NOAMMO) firstweaponstat = weaponstat;
-		if (weaponstat == WEAPONSTAT_AVAILABLE && (newSlot.weaps[startSlotPos].id != currentWeapon.id))
+		if (weaponstat == WEAPONSTAT_AVAILABLE && (newSlot.weaps[startSlotPos].id != currentWeapon.id) && (holster == TRUE))
 		{
-			currentWeapon.holster(); // Call deploy function here..
 			W_ChangeWeapon(newSlot.weaps[startSlotPos].id);
 			return weaponstat;
 		}
@@ -596,14 +728,14 @@ void(float stp) W_CycleWeapon =
 	float currentWeapon = W_GetWeapon(self.weapon);
 	float next = wrap(currentWeapon + stp, 1, MAX_WEAPON_NUM);
 	float i;
+	float holster = weaponsclass[W_GetWeapon(self.weapon)].holster();
 	
 	while (next != currentWeapon && i <= MAX_WEAPON_NUM) 
 	{
 		//dprint3("Testing slot ", ftos(next), "...\n");
-		if (W_CheckWeapon(weaponsclass[next].id, self) == WEAPONSTAT_AVAILABLE) 
+		if ((W_CheckWeapon(weaponsclass[next].id, self) == WEAPONSTAT_AVAILABLE) && (holster == TRUE)) 
 		{
 		//	dprint3("Fund! slot ", ftos(next), "\n");
-			weaponsclass[W_GetWeapon(self.weapon)].holster();
 			W_ChangeWeapon(weaponsclass[next].id);
 			return;
 		}
@@ -626,7 +758,10 @@ void() W_Attack =
 	weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
 	
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE)
+	{
+		dprint(weap.name);
 		return;
+	}
 
 	makevectors(self.v_angle);			// calculate forward angle for velocity
 	float fired = (self.firemode == 1) ? weap.attack2() : weap.attack1();
@@ -885,7 +1020,7 @@ void() W_WeaponFrame =
 	weap.postframe(); // Call all "PostFrame" functions..
 	
 	// Set to ready once we're finished with our deploy.
-	if (self.weaponstate == WS_DEPLOY && self.weaponframe == self.targetframe)
+	if (self.weaponstate == WS_DEPLOY && self.attack_finished < time)
 	{
 		//W_PrintWeaponState(); // dev thing..
 		self.weaponstate = WS_READY;
@@ -992,20 +1127,26 @@ void() W_Precache =
 	
 	precache_sound ("zombie/z_hit.wav");
 	
-	precache_sound ("hl_weapons/357_cock1.wav");
+	precache_sound ("weapons/357_cock1.wav");
 	
-	precache_sound ("hl_weapons/pl_shell1.wav");
-	precache_sound ("hl_weapons/pl_shell2.wav");
-	precache_sound ("hl_weapons/pl_shell3.wav");
-	precache_sound ("hl_weapons/sshell1.wav");
-	precache_sound ("hl_weapons/sshell2.wav");
-	precache_sound ("hl_weapons/sshell3.wav");
-	precache_sound ("hl_weapons/debris1.wav");
-	precache_sound ("hl_weapons/debris2.wav");
-	precache_sound ("hl_weapons/debris3.wav");
-	precache_sound ("hl_weapons/explode3.wav");
-	precache_sound ("hl_weapons/explode4.wav");
-	precache_sound ("hl_weapons/explode5.wav");
+	precache_sound ("weapons/pl_shell1.wav");
+	precache_sound ("weapons/pl_shell2.wav");
+	precache_sound ("weapons/pl_shell3.wav");
+	precache_sound ("weapons/sshell1.wav");
+	precache_sound ("weapons/sshell2.wav");
+	precache_sound ("weapons/sshell3.wav");
+	precache_sound ("weapons/debris1.wav");
+	precache_sound ("weapons/debris2.wav");
+	precache_sound ("weapons/debris3.wav");
+	precache_sound ("weapons/explode3.wav");
+	precache_sound ("weapons/explode4.wav");
+	precache_sound ("weapons/explode5.wav");
+	precache_sound ("weapons/grenade_hit1.wav");
+	precache_sound ("weapons/grenade_hit2.wav");
+	precache_sound ("weapons/grenade_hit3.wav");
+	precache_sound ("weapons/g_bounce1.wav");
+	precache_sound ("weapons/g_bounce2.wav");
+	precache_sound ("weapons/g_bounce3.wav");
 	precache_sound ("player/pl_step1.wav");
 	precache_sound ("player/pl_step2.wav");
 	precache_sound ("player/pl_step3.wav");
@@ -1013,15 +1154,11 @@ void() W_Precache =
 	precache_model ("progs/shell.mdl");
 	precache_model ("progs/hl_grenade.mdl");
 	precache_model ("progs/hl_explode.spr");
+	precache_model ("progs/hl_explode1.spr");
 	precache_model ("progs/shotgunshell.mdl");
-
-	precache_model ("progs/v_axe.mdl");
-	precache_model ("progs/v_nail.mdl");
-	precache_model ("progs/v_rock.mdl");
-	precache_model ("progs/v_shot2.mdl");
-	precache_model ("progs/v_nail2.mdl");
-	precache_model ("progs/v_rock2.mdl");
-	precache_model ("progs/v_light.mdl");
+	precache_sound("items/weapondrop1.wav");
+	precache_sound("items/suitchargeok1.wav");
+	precache_sound("items/gunpickup2.wav");
 	
 	for (float i = 0; i < NUMBER_OF_WEAPONS; i++)
 	{

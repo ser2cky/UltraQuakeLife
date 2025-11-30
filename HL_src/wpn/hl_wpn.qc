@@ -16,8 +16,23 @@
 //	11.22.25: crossbow, HORNET!!
 //	11.23.25 : rpg.
 //	11.25.25 : egon, bugfixes
+//	11.27.25 : satchel, tripmine, handgrenade
+//	11.28.25: gave satchel,tripmine, handgrenade
+//	proper models & fixed them all.
 //
 //======================================
+
+/*
+============
+HL_RetireWeapon
+============
+*/
+
+void() HL_RetireWeapon =
+{
+	self.weaponmodel = "";
+	W_ChangeWeapon(W_BestWeapon());
+}
 
 /*
 ============
@@ -29,7 +44,7 @@ void() HL_PlayEmptySound =
 {
 	if (!self.fuser5)
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/357_cock1.wav", 0.8, ATTN_NORM); 
+		sound(self, CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM); 
 		self.fuser5 = 1;
 	}
 };
@@ -184,20 +199,20 @@ void() BrassSound =
 	if (self.model != "progs/shotgunshell.mdl") 
 	{
 		if (r < 0.333)
-			sound (self, CHAN_WEAPON, "hl_weapons/pl_shell1.wav", 1, ATTN_NORM);
+			sound (self, CHAN_WEAPON, "weapons/pl_shell1.wav", 1, ATTN_NORM);
 		else if (r < 0.666)
-			sound (self, CHAN_WEAPON, "hl_weapons/pl_shell2.wav", 1, ATTN_NORM);
+			sound (self, CHAN_WEAPON, "weapons/pl_shell2.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_WEAPON, "hl_weapons/pl_shell3.wav", 1, ATTN_NORM);	
+			sound (self, CHAN_WEAPON, "weapons/pl_shell3.wav", 1, ATTN_NORM);	
 	}
 	else 
 	{
 		if (r < 0.333)
-			sound (self, CHAN_WEAPON, "hl_weapons/sshell1.wav", 1, ATTN_NORM);
+			sound (self, CHAN_WEAPON, "weapons/sshell1.wav", 1, ATTN_NORM);
 		else if (r < 0.666)
-			sound (self, CHAN_WEAPON, "hl_weapons/sshell2.wav", 1, ATTN_NORM);
+			sound (self, CHAN_WEAPON, "weapons/sshell2.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_WEAPON, "hl_weapons/sshell3.wav", 1, ATTN_NORM);	
+			sound (self, CHAN_WEAPON, "weapons/sshell3.wav", 1, ATTN_NORM);	
 	}
 };
 
@@ -259,12 +274,12 @@ void() W_CrowbarPrecache =
 {
 	precache_model("progs/v_crowbar.mdl");
 	//precache_model("progs/w_crowbar.mdl");
-	precache_sound("hl_weapons/cbar_hit1.wav");
-	precache_sound("hl_weapons/cbar_hit2.wav");
-	precache_sound("hl_weapons/cbar_hitbod1.wav");
-	precache_sound("hl_weapons/cbar_hitbod2.wav");
-	precache_sound("hl_weapons/cbar_hitbod3.wav");
-	precache_sound("hl_weapons/cbar_miss1.wav");
+	precache_sound("weapons/cbar_hit1.wav");
+	precache_sound("weapons/cbar_hit2.wav");
+	precache_sound("weapons/cbar_hitbod1.wav");
+	precache_sound("weapons/cbar_hitbod2.wav");
+	precache_sound("weapons/cbar_hitbod3.wav");
+	precache_sound("weapons/cbar_miss1.wav");
 }
 
 /*
@@ -329,7 +344,7 @@ float(float first) W_CrowbarSwing =
 				W_SetWeaponAnim2(57, 73, 10, 20);
 				
 			self.attack_finished = time + 0.5;
-			sound(self, CHAN_WEAPON, "hl_weapons/cbar_miss1.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/cbar_miss1.wav", 1, ATTN_NORM);
 		}
 	}
 	else
@@ -362,18 +377,18 @@ float(float first) W_CrowbarSwing =
 			r = random();
 		
 			if (r < 0.33)
-				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod1.wav", 1, ATTN_NORM);
+				sound(self, CHAN_WEAPON, "weapons/cbar_hitbod1.wav", 1, ATTN_NORM);
 			else if (r < 0.66)
-				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod2.wav", 1, ATTN_NORM);
+				sound(self, CHAN_WEAPON, "weapons/cbar_hitbod2.wav", 1, ATTN_NORM);
 			else
-				sound(self, CHAN_WEAPON, "hl_weapons/cbar_hitbod3.wav", 1, ATTN_NORM);
+				sound(self, CHAN_WEAPON, "weapons/cbar_hitbod3.wav", 1, ATTN_NORM);
 		}
 		else
 		{
 			if (r < 0.5)
-				sound(self, CHAN_ITEM, "hl_weapons/cbar_hit1.wav", 1, ATTN_NORM);
+				sound(self, CHAN_ITEM, "weapons/cbar_hit1.wav", 1, ATTN_NORM);
 			else
-				sound(self, CHAN_ITEM, "hl_weapons/cbar_hit2.wav", 1, ATTN_NORM);
+				sound(self, CHAN_ITEM, "weapons/cbar_hit2.wav", 1, ATTN_NORM);
 		}
 	}
 	
@@ -423,9 +438,9 @@ void() W_GlockPrecache =
 {
 	precache_model("progs/v_9mmhandgun.mdl");
 	//precache_model("progs/w_9mmhandgun.mdl");
-	precache_sound("hl_items/9mmclip1.wav");
-	precache_sound("hl_items/9mmclip2.wav");
-	precache_sound ("hl_weapons/pl_gun3.wav");
+	precache_sound("items/9mmclip1.wav");
+	precache_sound("items/9mmclip2.wav");
+	precache_sound ("weapons/pl_gun3.wav");
 }
 
 /*
@@ -489,7 +504,7 @@ float(vector spread, float nextattack, float dist_autoaim) W_GlockFire =
 	
 	vector shellvel = self.velocity + v_right * random(50,70) + v_up * random(100,150) + v_forward * 25;
 	EjectBrass("progs/shell.mdl", self.origin + self.view_ofs + v_up * -12 + v_forward * 32 + v_right * 6, shellvel);
-	sound(self, CHAN_WEAPON, "hl_weapons/pl_gun3.wav", random(0.92, 1.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/pl_gun3.wav", random(0.92, 1.0), ATTN_NORM);
 	
 	vector dir = aim (self, AUTOAIM_DIST);
 	HL_FireBullets(1, self.origin + self.view_ofs, dir, spread, 8192, 16, FALSE);
@@ -562,9 +577,9 @@ W_GlockIdle
 void() W_GlockEvents =
 {
 	if (self.weaponframe == 44 || self.weaponframe == 86)
-		sound(self, CHAN_WEAPON, "hl_items/9mmclip2.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "items/9mmclip2.wav", 1.0, ATTN_NORM);
 	if (self.weaponframe == 62 || self.weaponframe == 104)
-		sound(self, CHAN_WEAPON, "hl_items/9mmclip1.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "items/9mmclip1.wav", 1.0, ATTN_NORM);
 }
 
 /*
@@ -594,11 +609,11 @@ void() W_PythonPrecache =
 	precache_model("progs/v_357.mdl");
 	//precache_model("progs/w_357.mdl");
 	//precache_model("progs/w_357ammobox.mdl");
-	precache_sound("hl_items/9mmclip1.wav");              
-	precache_sound ("hl_weapons/357_reload1.wav");
-	precache_sound ("hl_weapons/357_cock1.wav");
-	precache_sound ("hl_weapons/357_shot1.wav");
-	precache_sound ("hl_weapons/357_shot2.wav");
+	precache_sound("items/9mmclip1.wav");              
+	precache_sound ("weapons/357_reload1.wav");
+	precache_sound ("weapons/357_cock1.wav");
+	precache_sound ("weapons/357_shot1.wav");
+	precache_sound ("weapons/357_shot2.wav");
 }
 
 /*
@@ -618,13 +633,14 @@ W_PythonDeploy
 ============
 */
 
-void() W_PythonHolster =
+float() W_PythonHolster =
 {
 	if (self.fuser2)
 	{
 		//sprint(self, "test\n");
 		W_PythonSecAttack();
 	}
+	return TRUE;
 }
 
 /*
@@ -650,7 +666,7 @@ float() W_PythonPrimAttack =
 		}
 		else
 		{
-			sound(self, CHAN_WEAPON, "hl_weapons/357_cock1.wav", 0.8, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM);
 			self.attack_finished = time + 0.15;
 		}
 		return FALSE;
@@ -663,11 +679,11 @@ float() W_PythonPrimAttack =
 	
 	if (random() < 0.5)
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/357_shot1.wav", random(0.8, 0.9), ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/357_shot1.wav", random(0.8, 0.9), ATTN_NORM);
 	}
 	else
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/357_shot2.wav", random(0.8, 0.9), ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/357_shot2.wav", random(0.8, 0.9), ATTN_NORM);
 	}
 	
 	makevectors(self.v_angle + self.punchangle);
@@ -742,7 +758,7 @@ void() W_PythonIdle =
 	
 	if (self.fuser1 != 0 && self.fuser1 <= time)
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/357_reload1.wav", random(0.8, 0.9), ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/357_reload1.wav", random(0.8, 0.9), ATTN_NORM);
 		self.fuser1 = 0;
 	}
 	
@@ -800,14 +816,13 @@ W_ShotgunPrecache
 void() W_ShotgunPrecache =
 {
 	precache_model("progs/v_shotgun.mdl");
-	//PRECACHE_MODEL("models/w_shotgun.mdl");
-	precache_sound("hl_items/9mmclip1.wav");              
-	precache_sound ("hl_weapons/dbarrel1.wav");
-	precache_sound ("hl_weapons/sbarrel1.wav");
-	precache_sound ("hl_weapons/reload1.wav");
-	precache_sound ("hl_weapons/reload3.wav");
-	precache_sound ("hl_weapons/357_cock1.wav");
-	precache_sound ("hl_weapons/scock1.wav");
+	precache_sound("items/9mmclip1.wav");              
+	precache_sound ("weapons/dbarrel1.wav");
+	precache_sound ("weapons/sbarrel1.wav");
+	precache_sound ("weapons/reload1.wav");
+	precache_sound ("weapons/reload3.wav");
+	precache_sound ("weapons/357_cock1.wav");
+	precache_sound ("weapons/scock1.wav");
 }
 
 /*
@@ -854,7 +869,7 @@ float() W_ShotgunPrimAttack =
 	vector shellvel = self.velocity + (v_right * random (50,70)) + (v_up * random(100,150)) + (v_forward * 25);
 	EjectBrass("progs/shotgunshell.mdl", self.origin + self.view_ofs + (v_up * -12) + (v_forward * 20) + (v_right * 4), shellvel);
 
-	sound(self, CHAN_WEAPON, "hl_weapons/sbarrel1.wav", random(0.95, 1.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/sbarrel1.wav", random(0.95, 1.0), ATTN_NORM);
 	
 	vector src = self.origin + self.view_ofs;
 	vector dir = aim (self, AUTOAIM_DIST);
@@ -911,7 +926,7 @@ float() W_ShotgunSecAttack =
 		EjectBrass("progs/shotgunshell.mdl", self.origin + self.view_ofs + (v_up * -12) + (v_forward * 20) + (v_right * 4), shellvel);
 	}
 
-	sound(self, CHAN_WEAPON, "hl_weapons/dbarrel1.wav", random(0.98, 1.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/dbarrel1.wav", random(0.98, 1.0), ATTN_NORM);
 	
 	vector src = self.origin + self.view_ofs;
 	vector dir = aim (self, AUTOAIM_DIST);
@@ -966,7 +981,7 @@ void() W_ShotgunIdle =
 	
 	if (self.fuser1 && self.fuser1 < time)
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/scock1.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/scock1.wav", 1.0, ATTN_NORM);
 		self.fuser1 = 0;
 	}
 	
@@ -1028,9 +1043,9 @@ void() W_ShotgunPostThink =
 						W_SetWeaponAnim2(62, 71, 62, 16);
 						
 						if (random() < 0.5)
-							sound(self, CHAN_WEAPON, "hl_weapons/reload1.wav", 1.0, ATTN_NORM);
+							sound(self, CHAN_WEAPON, "weapons/reload1.wav", 1.0, ATTN_NORM);
 						else
-							sound(self, CHAN_WEAPON, "hl_weapons/reload3.wav", 1.0, ATTN_NORM);
+							sound(self, CHAN_WEAPON, "weapons/reload3.wav", 1.0, ATTN_NORM);
 						
 						self.ammo_shells -= 1;
 						self.currentammo = self.clip_shotgun += 1;
@@ -1041,7 +1056,7 @@ void() W_ShotgunPostThink =
 					{
 						W_SetWeaponAnim2(72, 82, 82, 13);
 
-						sound(self, CHAN_WEAPON, "hl_weapons/scock1.wav", 1.0, ATTN_NORM);
+						sound(self, CHAN_WEAPON, "weapons/scock1.wav", 1.0, ATTN_NORM);
 						
 						self.currentammo = self.clip_shotgun;
 						self.nextidle = time + 1.5;
@@ -1085,15 +1100,15 @@ void() W_MP5Precache =
 	precache_model("progs/v_9mmAR.mdl");
 	//precache_model("models/w_9mmAR.mdl");
 	//precache_model("models/w_9mmARclip.mdl");
-	precache_sound("hl_items/9mmclip1.wav");
-	precache_sound("hl_items/clipinsert1.wav");
-	precache_sound("hl_items/cliprelease1.wav");
-	precache_sound ("hl_weapons/hks1.wav");
-	precache_sound ("hl_weapons/hks2.wav");
-	precache_sound ("hl_weapons/hks3.wav");
-	precache_sound( "hl_weapons/glauncher.wav" );
-	precache_sound( "hl_weapons/glauncher2.wav" );
-	precache_sound ("hl_weapons/357_cock1.wav");
+	precache_sound("items/9mmclip1.wav");
+	precache_sound("items/clipinsert1.wav");
+	precache_sound("items/cliprelease1.wav");
+	precache_sound ("weapons/hks1.wav");
+	precache_sound ("weapons/hks2.wav");
+	precache_sound ("weapons/hks3.wav");
+	precache_sound( "weapons/glauncher.wav" );
+	precache_sound( "weapons/glauncher2.wav" );
+	precache_sound ("weapons/357_cock1.wav");
 };
 
 /*
@@ -1142,9 +1157,9 @@ float() W_MP5PrimAttack =
 		W_SetWeaponAnim2(23, 29, 8, 10);
 	
 	if (random() < 0.5)
-		sound(self, CHAN_WEAPON, "hl_weapons/hks1.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/hks1.wav", 1.0, ATTN_NORM);
 	else
-		sound(self, CHAN_WEAPON, "hl_weapons/hks2.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/hks2.wav", 1.0, ATTN_NORM);
 	
 	makevectors(self.v_angle + self.punchangle);
 	
@@ -1201,11 +1216,11 @@ float() W_MP5SecAttack =
 	W_SetWeaponAnim2(30, 52, 8, 20);
 	
 	if (random() < 0.5)
-		sound(self, CHAN_WEAPON, "hl_weapons/glauncher.wav", 0.8, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/glauncher.wav", 0.8, ATTN_NORM);
 	else
-		sound(self, CHAN_WEAPON, "hl_weapons/glauncher2.wav", 0.8, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/glauncher2.wav", 0.8, ATTN_NORM);
 		
-	W_CreateContactGren(self.origin + self.view_ofs + v_forward * 16, v_forward * 500);
+	W_CreateContactGren(self.origin + self.view_ofs + v_forward * 16, v_forward * 800);
 		
 	self.currentammo = self.ammo_rockets -= 1;
 		
@@ -1264,9 +1279,9 @@ W_MP5Idle
 void() W_MP5Events =
 {
 	if (self.weaponframe == 56)
-		sound(self, CHAN_WEAPON, "hl_items/cliprelease1.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "items/cliprelease1.wav", 1.0, ATTN_NORM);
 	if (self.weaponframe == 69)
-		sound(self, CHAN_WEAPON, "hl_items/clipinsert1.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "items/clipinsert1.wav", 1.0, ATTN_NORM);
 }
 
 /*
@@ -1341,16 +1356,16 @@ void() W_BoltTouch =
 		self.velocity = '0 0 0';
 		
 		if (random() < 0.5)
-			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
 		else
-			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
 		
 		if (!deathmatch)
 			remove(self);
 	}
 	else
 	{
-		sound(self, CHAN_WEAPON, "hl_weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
 		particle(self.origin, '0 0 -0.5', 111, 20);
 	
 		self.think = SUB_Remove;
@@ -1402,15 +1417,15 @@ void() W_BoltExplode =
 	
 	if (r < 0.333)
 	{
-		sound (self, CHAN_BODY, "hl_weapons/explode3.wav", 1.0, ATTN_NONE);
+		sound (self, CHAN_BODY, "weapons/explode3.wav", 1.0, ATTN_NONE);
 	}
 	else if (r < 0.666)
 	{
-		sound (self, CHAN_BODY, "hl_weapons/explode4.wav", 1.0, ATTN_NONE);
+		sound (self, CHAN_BODY, "weapons/explode4.wav", 1.0, ATTN_NONE);
 	}
 	else
 	{
-		sound (self, CHAN_BODY, "hl_weapons/explode5.wav", 1.0, ATTN_NONE);
+		sound (self, CHAN_BODY, "weapons/explode5.wav", 1.0, ATTN_NONE);
 	}
 	
 	self.movetype = MOVETYPE_NONE;
@@ -1436,11 +1451,11 @@ void() W_CrossbowPrecache =
 	//precache_model("progs/w_crossbow.mdl");
 	precache_model("progs/v_crossbow.mdl");
 	precache_model("progs/xbolt.mdl");
-	precache_sound("hl_weapons/xbow_fire1.wav");
-	precache_sound("hl_weapons/xbow_reload1.wav");
-	precache_sound("hl_weapons/xbow_hitbod1.wav");
-	precache_sound("hl_weapons/xbow_hitbod2.wav");
-	precache_sound("hl_weapons/xbow_hit1.wav");
+	precache_sound("weapons/xbow_fire1.wav");
+	precache_sound("weapons/xbow_reload1.wav");
+	precache_sound("weapons/xbow_hitbod1.wav");
+	precache_sound("weapons/xbow_hitbod2.wav");
+	precache_sound("weapons/xbow_hit1.wav");
 }
 
 /*
@@ -1463,13 +1478,14 @@ W_CrossbowHolster
 ============
 */
 
-void() W_CrossbowHolster =
+float() W_CrossbowHolster =
 {
 	if (self.fuser1)
 	{
 		//sprint(self, "test\n");
 		W_CrossbowSecAttack();
 	}
+	return TRUE;
 }
 
 /*
@@ -1506,11 +1522,11 @@ float() W_CrossbowFireSniperBolt =
 	
 	self.currentammo = self.clip_crossbow -= 1;
 	
-	sound(self, CHAN_WEAPON, "hl_weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
 	
 	if (self.clip_crossbow)
 	{
-		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		sound(self, CHAN_ITEM, "weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
 		W_SetWeaponAnim2(22, 59, 10, 20);
 	}
 	else
@@ -1531,9 +1547,9 @@ float() W_CrossbowFireSniperBolt =
 	if (trace_ent.takedamage)
 	{
 		if (random() < 0.5)
-			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/xbow_hitbod1.wav", 1, ATTN_NORM);
 		else
-			sound(self, CHAN_WEAPON, "hl_weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
 			
 		ClearMultiDamage();
 		TraceAttack(120, dir);
@@ -1548,7 +1564,7 @@ float() W_CrossbowFireSniperBolt =
 		mybolt.touch = SUB_Null;
 		mybolt.think = SUB_Remove;
 
-		sound(mybolt, CHAN_WEAPON, "hl_weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
+		sound(mybolt, CHAN_WEAPON, "weapons/xbow_hit1.wav", random(0.95, 1), ATTN_NORM);
 		particle(mybolt.origin, '0 0 -0.5', 111, 20);
 
 		if (trace_ent == world)
@@ -1576,11 +1592,11 @@ float() W_CrossbowFireBolt =
 	
 	self.currentammo = self.clip_crossbow -= 1;
 	
-	sound(self, CHAN_WEAPON, "hl_weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/xbow_fire1.wav", random(0.95, 1.0), ATTN_NORM);
 	
 	if (self.clip_crossbow)
 	{
-		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		sound(self, CHAN_ITEM, "weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
 		W_SetWeaponAnim2(22, 59, 10, 20);
 	}
 	else
@@ -1639,7 +1655,7 @@ float() W_CrossbowReload =
 	
 	if (result)
 	{
-		sound(self, CHAN_ITEM, "hl_weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
+		sound(self, CHAN_ITEM, "weapons/xbow_reload1.wav", random(0.95, 1.0), ATTN_NORM);
 		return result;
 	}
 	
@@ -1780,7 +1796,7 @@ entity(vector org, vector myangles, entity myowner, entity launcher) W_CreateRoc
 	rocket.solid = SOLID_BBOX;
 	
 	setmodel(rocket, "progs/rpgrocket.mdl");
-	setsize(rocket, VEC_ORIGIN, VEC_ORIGIN);
+	setsize(rocket, '0 0 0', '0 0 0');
 	setorigin(rocket, org);
 	
 	rocket.angles_x -= 30;
@@ -1797,13 +1813,15 @@ entity(vector org, vector myangles, entity myowner, entity launcher) W_CreateRoc
 	rocket.ent1.fuser2 += 1;
 	rocket.owner = rocket.trueowner = myowner;
 	
+	rocket.dmg = 120;
+	
 	rocket.nextthink = time + 0.4;
 	return rocket;
 }
 
 void() W_RocketTouch =
 {
-	if (other == self.owner)
+	if (other == self.trueowner)
 		return;
 
 	if (self.ent1)
@@ -1816,7 +1834,7 @@ void() W_RocketTouch =
 	self.think = SUB_Null;
 	self.effects = 0;
 	
-	HL_GrenadeExplodeTouch();
+	HL_ExplodeTouch();
 }
 
 void() W_RocketIgnite =
@@ -1824,7 +1842,7 @@ void() W_RocketIgnite =
 	self.movetype = MOVETYPE_FLYMISSILE;
 	self.effects |= EF_DIMLIGHT;
 	
-	sound(self, CHAN_VOICE, "hl_weapons/rocket1.wav", 1, 0.5);
+	sound(self, CHAN_VOICE, "weapons/rocket1.wav", 1, 0.5);
 	setmodel(self, "progs/rpgrocket1.mdl");
 	
 	self.fuser1 = time;
@@ -1924,9 +1942,9 @@ void() W_PrecacheRPG =
 	precache_model("progs/rpgrocket.mdl");
 	precache_model("progs/rpgrocket1.mdl");
 	precache_sound("items/9mmclip1.wav");
-	precache_sound("hl_weapons/rocketfire1.wav");
-	precache_sound("hl_weapons/rocket1.wav");
-	precache_sound("hl_weapons/glauncher.wav");
+	precache_sound("weapons/rocketfire1.wav");
+	precache_sound("weapons/rocket1.wav");
+	precache_sound("weapons/glauncher.wav");
 }
 
 /*
@@ -1979,13 +1997,14 @@ W_RPGHolster
 */
 
 //ENT1 = laser
-void() W_RPGHolster =
+float() W_RPGHolster =
 {
 	if (self.ent1 != world || self.ent1)
 	{
 		remove(self.ent1);
 		self.ent1 = world;
 	}
+	return TRUE;
 }
 
 /*
@@ -2008,8 +2027,8 @@ float() W_RPGPrimAttack =
 		makevectors(self.v_angle); // Remake makevectors again.
 		rocket.velocity = rocket.velocity + v_forward * DotProduct(self.velocity, v_forward);
 		
-		sound(self, CHAN_WEAPON, "hl_weapons/rocketfire1.wav", 0.9, ATTN_NORM);
-		sound(self, CHAN_ITEM, "hl_weapons/glauncher.wav", 0.7, ATTN_NORM);
+		sound(self, CHAN_WEAPON, "weapons/rocketfire1.wav", 0.9, ATTN_NORM);
+		sound(self, CHAN_ITEM, "weapons/glauncher.wav", 0.7, ATTN_NORM);
 		
 		self.currentammo = self.clip_rpg -= 1;
 		
@@ -2442,10 +2461,11 @@ W_HGunHolster
 ============
 */
 
-void() W_HGunHolster = 
+float() W_HGunHolster = 
 {
 	if (!self.ammo_hornets)
 		self.ammo_hornets = 1;
+	return TRUE;
 }
 
 /*
@@ -2658,12 +2678,12 @@ void() W_GaussPrecache =
 
 	//precache_sound("items/9mmclip1.wav");
 
-	precache_sound("hl_weapons/gauss2.wav");
-	precache_sound("hl_weapons/electro4.wav");
-	precache_sound("hl_weapons/electro5.wav");
-	precache_sound("hl_weapons/electro6.wav");
+	precache_sound("weapons/gauss2.wav");
+	precache_sound("weapons/electro4.wav");
+	precache_sound("weapons/electro5.wav");
+	precache_sound("weapons/electro6.wav");
 	
-	precache_sound("hl_weapons/charge.wav");
+	precache_sound("weapons/charge.wav");
 }
 
 /*
@@ -2722,7 +2742,7 @@ float() W_GaussSecFire =
 	{
 		if (self.attack_phase != 0)
 		{
-			sound(self, CHAN_WEAPON, "hl_weapons/electro4.wav", 1.0, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/electro4.wav", 1.0, ATTN_NORM);
 			W_SetWeaponAnim2(73, 93, 73, 5);
 			self.attack_phase = 0;
 		}
@@ -2739,7 +2759,7 @@ float() W_GaussSecFire =
 	{
 		if (self.ammo_cells <= 0)
 		{
-			sound(self, CHAN_WEAPON, "hl_weapons/357_cock1.wav", 0.8, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM);
 			self.attack_finished = time + 0.5;
 			return FALSE;
 		}
@@ -2758,7 +2778,7 @@ float() W_GaussSecFire =
 		{
 			W_SetWeaponAnim2(62, 72, -1, 20);
 			self.attack_phase = 2;
-			sound(self, CHAN_WEAPON, "hl_weapons/charge.wav", 1.0, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/charge.wav", 1.0, ATTN_NORM);
 		}
 	}
 	else
@@ -2795,8 +2815,8 @@ float() W_GaussSecFire =
 			
 			if (self.fuser1 < time - 10)
 			{
-				sound(self, CHAN_WEAPON, "hl_weapons/electro4.wav", 1.0, ATTN_NORM);
-				sound(self, CHAN_ITEM, "hl_weapons/electro6.wav", 1.0, ATTN_NORM);
+				sound(self, CHAN_WEAPON, "weapons/electro4.wav", 1.0, ATTN_NORM);
+				sound(self, CHAN_ITEM, "weapons/electro6.wav", 1.0, ATTN_NORM);
 				
 				self.attack_phase = 0;
 				self.nextidle = time + 1.0;
@@ -2841,24 +2861,20 @@ void(float primary) W_GaussStartFire =
 		self.punchangle_x -= 2;
 	}
 	
+	// Removed the piece of code that prevents you
+	// from doing crazy jumps with the gauss
+	// -serecky 11.28.25
 	if (self.attack_phase != 3)
 	{
-		local float zvel = self.velocity_z;
-		
 		if (!primary)
 		{
 			self.velocity = self.velocity - v_forward * damage * 5;
 		}
 		
-		if (deathmatch)
-		{
-			self.velocity_z = zvel;
-		}
-		
 		W_SetWeaponAnim2(13, 40, 73, 20);
 		player_shot1();
 	}
-	sound(self, CHAN_WEAPON, "hl_weapons/gauss2.wav", 0.5 + damage * (1.0 / 400.0), ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + damage * (1.0 / 400.0), ATTN_NORM);
 	self.fuser3 = time + random(0.3, 0.8); // Aftershock sound timer..
 	
 	W_GaussFire(src, aiming, damage, primary);
@@ -3041,11 +3057,11 @@ void() W_GaussIdle =
 		local float rs;
 		rs = rint ((random() * 3) + 1);
 		if (rs == 1)
-			self.noise = "hl_weapons/electro4.wav";
+			self.noise = "weapons/electro4.wav";
 		if (rs == 2)
-			self.noise = "hl_weapons/electro5.wav";
+			self.noise = "weapons/electro5.wav";
 		if (rs == 3)
-			self.noise = "hl_weapons/electro6.wav";
+			self.noise = "weapons/electro6.wav";
 		sound (self, CHAN_WEAPON, self.noise, 1, ATTN_NONE);
 		self.fuser3 = 0.0;
 	}
@@ -3102,9 +3118,9 @@ void() W_EgonPrecache =
 {
 	//precache_model("models/w_egon.mdl");
 	precache_model("progs/v_egon.mdl");
-	precache_sound("hl_weapons/egon_run3.wav");
-	precache_sound("hl_weapons/egon_off1.wav");
-	precache_sound("hl_weapons/egon_windup2.wav");
+	precache_sound("weapons/egon_run3.wav");
+	precache_sound("weapons/egon_off1.wav");
+	precache_sound("weapons/egon_windup2.wav");
 }
 
 /*
@@ -3130,7 +3146,7 @@ W_EgonHolster
 ============
 */
 
-void() W_EgonHolster =
+float() W_EgonHolster =
 {
 	if (self.fuser2 != FIRE_OFF)
 		W_EgonEndAttack();
@@ -3139,6 +3155,7 @@ void() W_EgonHolster =
 	{
 		self.ent1 = world;
 	}
+	return TRUE;
 }
 
 /*
@@ -3188,7 +3205,7 @@ float() W_EgonPrimAttack =
 			else
 				W_SetWeaponAnim2(41, 51, -1, 20);
 			
-			sound(self, CHAN_WEAPON, "hl_weapons/egon_windup2.wav", 0.98, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "weapons/egon_windup2.wav", 0.98, ATTN_NORM);
 			
 			self.fuser3 = time; // Ammo use time.
 			self.fuser4 = time + 2.0; // shoot time
@@ -3203,7 +3220,7 @@ float() W_EgonPrimAttack =
 		
 			if (self.fuser4 != 0 && time > self.fuser4)
 			{
-				sound(self, 7, "hl_weapons/egon_run3.wav", 0.98, ATTN_NORM);
+				sound(self, 7, "weapons/egon_run3.wav", 0.98, ATTN_NORM);
 				self.fuser4 = 0;
 			}
 		
@@ -3310,8 +3327,8 @@ void() W_EgonEndAttack =
 		self.ent1 = world;
 	}
 
-	sound(self, 7, "hl_weapons/egon_off1.wav", 0.98, ATTN_NORM);
-	sound(self, CHAN_WEAPON, "hl_weapons/egon_off1.wav", 0.98, ATTN_NORM);
+	sound(self, 7, "weapons/egon_off1.wav", 0.98, ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/egon_off1.wav", 0.98, ATTN_NORM);
 	self.fuser2 = FIRE_OFF;
 	self.nextidle = time + 2.0;
 	self.attack_finished = time + 0.5;
@@ -3347,5 +3364,1111 @@ void() W_EgonIdle =
 	{
 		W_SetWeaponAnim2(69, 90, -1, 8);
 		self.nextidle = time + 3.0;
+	}
+}
+
+/*
+============
+W_GrenadePrecache
+============
+*/
+
+//fuser1 = startthrow
+//fuser2 = release
+
+void() W_GrenadePrecache =
+{
+	precache_model("progs/v_grenade.mdl");
+	precache_model("progs/w_grenade.mdl");
+}
+
+/*
+============
+W_GrenadeDeploy
+============
+*/
+
+void() W_GrenadeDeploy =
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+	self.fuser2 = -1;
+}
+
+/*
+============
+W_GrenadeHolster
+============
+*/
+
+float() W_GrenadeHolster =
+{
+	if (self.ammo_handgrenades <= 0)
+	{
+		self.weapons &= ~WPN_HANDGRENADE;
+	}
+	
+	if (self.fuser1 != 0)
+		return FALSE;
+	
+	return TRUE;
+}
+
+/*
+============
+W_GrenadePrimAttack
+============
+*/
+
+float() W_GrenadePrimAttack =
+{
+	if (!self.fuser1 && self.currentammo > 0)
+	{
+		self.fuser1 = time;
+		self.fuser2 = 0;
+		
+		W_SetWeaponAnim2(11, 22, 22, 20);
+		
+		self.nextidle = time + 0.5;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/*
+============
+W_GrenadeIdle
+============
+*/
+
+void() W_GrenadeIdle =
+{
+	if (self.fuser2 == 0)
+		self.fuser2 = time;
+		
+	if (self.nextidle > time)
+		return;
+		
+	if (self.fuser1)
+	{
+		vector angthrow = self.v_angle + self.punchangle;
+		
+		if (angthrow_x < 0)
+			angthrow_x = -10 + angthrow_x * ((90-10)/90.0);
+		else
+			angthrow_x = -10 + angthrow_x * ((90+10)/90.0);
+			
+		float vel = (90 - angthrow_x) * 4;
+		if (vel > 500)
+			vel = 500;
+			
+		makevectors(angthrow);
+		
+		vector src = self.origin + self.view_ofs + v_forward * 16;
+		vector throw = v_forward * vel + self.velocity;
+		
+		float mytime = self.fuser1 - time + 3.0;
+		
+		if (mytime < 0)
+			mytime = 0;
+			
+		W_CreateTimedGren(src, throw, mytime);
+		
+		if (vel < 500)
+		{
+			W_SetWeaponAnim2(23, 41, 41, 13);
+		}
+		else if (vel < 1000)
+		{
+			W_SetWeaponAnim2(42, 60, 60, 20);
+		}
+		else
+		{
+			W_SetWeaponAnim2(61, 79, 79, 30);
+		}
+		
+		self.fuser1 = 0;
+		self.attack_finished = time + 0.5;
+		self.nextidle = time + 0.5;
+		
+		self.currentammo = self.ammo_handgrenades -= 1;
+		
+		if (!self.ammo_handgrenades)
+		{
+			self.attack_finished = self.attack2_finished = self.nextidle = time + 0.5;
+		}
+		return;
+	}
+	else if (self.fuser2 > 0)
+	{
+		self.fuser1 = 0;
+	
+		if (self.ammo_handgrenades)
+		{
+			W_SetWeaponAnim2(0, 10, 10, 20);
+		}
+		else
+		{
+			HL_RetireWeapon();
+			return;
+		}
+	
+		self.nextidle = time + random(10, 15);
+		self.fuser2 = -1;
+		return;
+	}
+	
+	if (self.ammo_handgrenades)
+	{
+		if (random() <= 0.75)
+		{
+			W_SetWeaponAnim2(80, 104, -1, 8);
+			self.nextidle = time + random(10, 15);
+		}
+		else
+		{
+			W_SetWeaponAnim2(105, 125, -1, 8);
+			self.nextidle = time + 2.5;
+		}
+	}
+}
+
+/*
+============
+W_CreateSatchel
+============
+*/
+
+entity(vector start, vector vel) W_CreateSatchel =
+{
+	entity gren;
+	gren = W_CreateBasicGrenade();
+	
+	gren.classname = "monster_satchel";
+	setmodel(gren, "progs/w_satchel.mdl");
+	setsize(gren, '-4 -4 -4', '4 4 4');
+	setorigin(gren, start);
+	
+	gren.velocity = vel;
+	gren.angles = VEC_ORIGIN;
+	
+	gren.think = W_SatchelThink;
+	gren.touch = W_SatchelSlide;
+	gren.nextthink = time + 0.1;
+	gren.dmg = 150;
+	
+	gren.gravity = 0.5;
+	gren.frame = 1;
+	return gren;
+}
+
+/*
+============
+W_SatchelDeactivate
+============
+*/
+
+void() W_SatchelDeactivate =
+{
+	self.solid = SOLID_NOT;
+	remove(self);
+}
+
+/*
+============
+W_SatchelSlide
+============
+*/
+
+void() W_SatchelSlide =
+{
+	self.gravity = 1;
+	
+	traceline(self.origin, self.origin - '0 0 10', 1, self);
+	
+	if (trace_fraction < 1.0)
+	{
+		self.velocity = self.velocity * 0.95;
+		self.avelocity = self.avelocity * 0.9;
+	}
+	
+	if (!(self.flags & FL_ONGROUND) && vlen2d(self.velocity) > 10)
+	{
+		W_SatchelBounceSound();
+	}
+}
+
+/*
+============
+W_SatchelThink
+============
+*/
+
+void() W_SatchelThink =
+{
+	self.nextthink = time + 0.1;
+	
+	if (self.waterlevel == 3)
+	{
+		self.movetype = MOVETYPE_FLY;
+		self.velocity = self.velocity * 0.8;
+		self.avelocity = self.avelocity * 0.9;
+		self.velocity.z += 8;
+	}
+	else if (self.waterlevel == 0)
+	{
+		self.movetype = MOVETYPE_BOUNCE;
+	}
+	else
+	{
+		self.velocity_z -= 8;
+	}
+}
+
+/*
+============
+W_SatchelBounceSound
+============
+*/
+
+void() W_SatchelBounceSound =
+{
+	float r = random();
+	
+	if (r < 0.33)
+		sound(self, CHAN_VOICE, "weapons/g_bounce1.wav", 0.25, ATTN_NORM);
+	else if (r < 0.66)
+		sound(self, CHAN_VOICE, "weapons/g_bounce2.wav", 0.25, ATTN_NORM);
+	else
+		sound(self, CHAN_VOICE, "weapons/g_bounce3.wav", 0.25, ATTN_NORM);
+}
+
+/*
+============
+W_SatchelPrecache
+============
+*/
+
+void() W_SatchelPrecache =
+{
+	precache_model("progs/v_satchel.mdl");
+	precache_model("progs/v_satchel_radio.mdl");
+	precache_model("progs/w_satchel.mdl");
+}
+
+/*
+============
+W_SatchelDeploy
+============
+*/
+
+float(entity cl) W_SatchelHack =
+{
+	if (cl.ammo_satchels >= 0)
+	{
+		dprint("ready\n");
+		return TRUE;
+	}
+	
+	if (cl.satchel_ready)
+	{
+		dprint("ready\n");
+		return TRUE;
+	}	
+		
+	dprint("not ready\n");
+	return FALSE;
+}
+
+void() W_SatchelDeploy =
+{
+	if (self.satchel_ready)
+	{
+		HL_DefaultDeploy(0, 40, 40, 20);
+		self.weaponmodel = "progs/v_satchel_radio.mdl";
+	}
+	else
+	{
+		HL_DefaultDeploy(0, 40, 40, 20);
+		self.weaponmodel = "progs/v_satchel.mdl";
+	}
+}
+
+/*
+============
+W_SatchelHolster
+============
+*/
+
+float() W_SatchelHolster =
+{
+	if ((self.ammo_satchels <= 0) && (!self.satchel_ready))
+	{
+		dprint("No satchel\n");
+		self.weapon &= ~WPN_SATCHEL;
+	}
+	return TRUE;
+}
+
+/*
+============
+W_SatchelPrimAttack
+============
+*/
+
+float() W_SatchelPrimAttack =
+{
+	switch (self.satchel_ready)
+	{
+		case 0:
+		{
+			W_SatchelThrow();
+			break;
+		}
+		case 1:
+		{
+			W_SetWeaponAnim2(13, 33, 33, 20);
+			
+			entity satchel;
+			
+			satchel = findradius(self.origin, 4096);
+			
+			while (satchel)
+			{
+				if (satchel.classname == "monster_satchel")
+				{
+					if (satchel.owner == self)
+					{
+						satchel.think = HL_GrenadeDetonate;
+						satchel.nextthink = time;
+						self.satchel_ready = 2;
+					}
+				}
+				satchel = satchel.chain;
+			}
+			
+			self.satchel_ready = 2;
+			self.attack_finished = time + 0.5;
+			self.attack2_finished = time + 0.5;
+			self.nextidle = time + 0.5;
+			break;
+		}
+		case 2:
+		{
+			break;
+		}
+	}
+	return TRUE;
+}
+
+/*
+============
+W_SatchelSecAttack
+============
+*/
+
+float() W_SatchelSecAttack =
+{
+	if (self.satchel_ready != 2)
+		W_SatchelThrow();
+	return TRUE;
+}
+
+/*
+============
+W_SatchelThrow
+============
+*/
+
+void() W_SatchelThrow =
+{
+	if (self.ammo_satchels)
+	{
+		vector src = self.origin;
+		vector throw = v_forward * 274 + self.velocity;
+		
+		entity satchel = W_CreateSatchel(src, throw);
+		satchel.avelocity_y = 400;
+		
+		self.satchel_ready = 1;
+		self.currentammo = self.ammo_satchels -= 1;
+		
+		self.weaponmodel = "progs/v_satchel_radio.mdl";
+		W_SetWeaponAnim2(0, 12, 12, 20);
+		
+		self.attack_finished = time + 1.0;
+		self.attack2_finished = time + 0.5;
+	}
+}
+
+/*
+============
+W_SatchelIdle
+============
+*/
+
+void() W_SatchelIdle =
+{
+	if (self.nextidle > time)
+		return;
+	
+	switch (self.satchel_ready)
+	{
+		case 0:
+		{// Satchel
+			W_SetWeaponAnim2(41, 57, 57, 8);
+			break;
+		}
+		case 1:
+		{// Radio
+			W_SetWeaponAnim2(34, 63, 63, 8);
+			break;
+		}
+		case 2:
+		{
+			if (self.ammo_satchels <= 0)
+			{
+				self.satchel_ready = 0;
+				HL_RetireWeapon();
+				return;
+			}
+			
+			self.weaponmodel = "progs/v_satchel.mdl";
+			W_SetWeaponAnim2(0, 40, 40, 20);
+			
+			self.attack_finished = time + 0.5;
+			self.attack2_finished = time + 0.5;
+			self.satchel_ready = 0;
+			break;
+		}
+	}
+	self.nextidle = time + random(10,15);
+}
+
+/*
+============
+W_DeactivatePlayerSatchels
+============
+*/
+
+void(entity myowner) W_DeactivatePlayerSatchels =
+{
+	entity satchels;
+	
+	satchels = find(satchels, classname, "monster_satchel");
+	
+	while (satchels)
+	{
+		if (satchels.owner == myowner)
+		{
+			satchels.think = W_SatchelDeactivate;
+		}
+		satchels = satchels.chain;
+	}
+}
+
+/*
+============
+W_TripminePrecache
+============
+*/
+
+void() W_TripminePrecache =
+{
+	precache_sound("weapons/mine_deploy.wav");
+	precache_sound("weapons/mine_activate.wav");
+	precache_sound("weapons/mine_charge.wav");
+	precache_model("progs/v_tripmine.mdl");
+	precache_model("progs/w_tripmine.mdl");
+}
+
+/*
+============
+W_CreateTripmine
+============
+*/
+
+entity(vector org, vector ang) W_CreateTripmine =
+{
+	entity mine;
+	
+	mine = spawn();
+	
+	mine.movetype = MOVETYPE_FLY;
+	mine.solid = SOLID_NOT;
+	mine.classname = "monster_tripmine";
+	
+	setmodel(mine, "progs/w_tripmine.mdl");
+	setsize(mine, '-8 -8 -8', '8 8 8');
+	setorigin(mine, org);
+	
+	mine.think = W_TripminePowerup;
+	mine.nextthink = time + 0.2;
+	mine.fuser1 = time + 2.5;// powerup time
+	
+	mine.takedamage = DAMAGE_AIM;
+	mine.health = 1;
+	mine.dmg = 150;
+	mine.owner = mine.trueowner = self;
+	
+	sound(mine, CHAN_VOICE, "weapons/mine_deploy.wav", 1.0, ATTN_NORM);
+	sound(mine, CHAN_BODY, "weapons/mine_charge.wav", 0.2, ATTN_NORM);
+
+	mine.angles = ang;
+	vector myangles = mine.angles;
+	myangles_x = -myangles_x;
+		
+	makevectors(myangles);
+	
+	mine.vuser3 = v_forward; // dir
+	mine.vuser4 = mine.origin + mine.vuser3 * 2048; // end
+	
+	mine.th_pain = W_TripminePain;
+	mine.th_die = W_TripmineKilled;
+	mine.frame = 1;
+
+	return mine;
+}
+
+/*
+============
+W_TripminePowerup
+============
+*/
+
+void() W_TripminePowerup =
+{
+	//self.owner = world;
+	
+	traceline(self.origin + self.vuser3 * 8, self.origin - self.vuser3 * 32, 0, self);
+	
+	if (trace_startsolid || ((self.trueowner) && (trace_ent == self.trueowner)))
+	{
+		self.owner = self.trueowner;
+		self.fuser1 += 0.1;
+		self.nextthink = time + 0.1;
+		return;
+	}
+	
+	if (trace_fraction < 1.0)
+	{
+		self.owner = trace_ent;
+	}
+	else
+	{
+		sound(self, CHAN_VOICE, "misc/null.wav", 1.0, ATTN_NORM);
+		sound(self, CHAN_BODY, "misc/null.wav", 0.2, ATTN_NORM);
+		self.think = SUB_Remove;
+		self.nextthink = time + 0.1;
+		return;
+	}
+
+	if (time > self.fuser1)
+	{
+		self.solid = SOLID_BBOX;
+		setorigin(self, self.origin);
+		
+		W_TripmineStartBeam();
+		
+		sound(self, CHAN_VOICE, "weapons/mine_activate.wav", 0.5, ATTN_NORM);
+	}
+	
+	self.nextthink = time + 0.2;
+}
+
+/*
+============
+W_TripmineStartBeam
+============
+*/
+
+void() W_TripmineStartBeam =
+{
+	traceline(self.origin, self.vuser4, 0, self);
+	self.fuser2 = trace_fraction; // Initial trace_fraction
+	
+	self.think = W_TripmineBeamBreak;
+	self.nextthink = time + 0.1;
+}
+
+/*
+============
+W_TripmineBeamBreak
+============
+*/
+
+void() W_TripmineBeamBreak =
+{
+	float blowup = FALSE;
+	
+	traceline(self.origin, self.vuser4, 0, self);
+	
+	if (fabs(self.fuser2 - trace_fraction) > 0.001)
+	{
+		blowup = TRUE;
+	}
+	else
+	{
+		if (self.trueowner == world)
+			blowup = TRUE;
+	}
+	
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+	WriteEntity (MSG_BROADCAST, self);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteCoord (MSG_BROADCAST, trace_endpos_x);
+	WriteCoord (MSG_BROADCAST, trace_endpos_y);
+	WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	
+	if (blowup)
+	{
+		sound(self, CHAN_VOICE, "player/pain5.wav", 0.5, ATTN_NORM);
+		self.owner = self.trueowner;// real owner
+		self.health = 0;
+		W_TripmineKilled();
+		return;
+	}
+	
+	self.nextthink = time + 0.1;
+}
+
+/*
+============
+W_TripminePain
+============
+*/
+
+void(entity attacker, float damage) W_TripminePain =
+{
+	if (time < self.fuser1 && damage < self.health)
+	{
+		self.think = SUB_Remove;
+		self.nextthink = time;
+		return;
+	}
+}
+
+/*
+============
+W_TripmineKilled
+============
+*/
+
+void() W_TripmineKilled =
+{
+	self.takedamage = DAMAGE_NO;
+	
+	if (self.dmg_inflictor && (self.dmg_inflictor.flags & FL_CLIENT))
+	{
+		self.owner = self.dmg_inflictor;// Set owner to dmg inflictor.
+	}
+	
+	self.think = W_TripmineDeathThink;
+	self.nextthink = time + random(0.1, 0.3);
+}
+
+/*
+============
+W_TripmineDeathThink
+============
+*/
+
+void() W_TripmineDeathThink =
+{
+	self.think = SUB_Null;
+	HL_GrenadeExplode();
+}
+
+/*
+============
+W_TripmineDeploy
+============
+*/
+
+void() W_TripmineDeploy =
+{
+	HL_DefaultDeploy(0, 10, 10, 20);
+}
+
+/*
+============
+W_TripmineHolster
+============
+*/
+
+float() W_TripmineHolster =
+{
+	if (self.ammo_tripmines <= 0)
+	{
+		self.weapons &= ~WPN_TRIPMINE;
+	}
+	return TRUE;
+}
+
+/*
+============
+W_TripminePrimAttack
+============
+*/
+
+float() W_TripminePrimAttack =
+{
+	if (self.ammo_tripmines <= 0)
+		return FALSE;
+		
+	makevectors(self.v_angle + self.punchangle);
+	vector src = self.origin + self.view_ofs;
+	vector dir = v_forward;
+	
+	traceline( src, src + dir * 128, 0, self);
+	
+	if (trace_fraction < 1.0)
+	{
+		vector ang = vectoangles(trace_plane_normal);
+		
+		entity tripmine = W_CreateTripmine(trace_endpos + trace_plane_normal * 8, ang);
+		
+		self.currentammo = self.ammo_tripmines -= 1;
+
+		if (self.ammo_tripmines > 0)
+		{
+			W_SetWeaponAnim2(0, 10, 10, 20);
+		}
+		else
+		{
+			HL_RetireWeapon();
+			return FALSE;
+		}
+	}
+	
+	self.attack_finished = time + 0.3;
+	self.nextidle = time + random(10, 15);
+	return TRUE;
+}
+
+/*
+============
+W_TripmineIdle
+============
+*/
+
+void() W_TripmineIdle =
+{
+	if (self.nextidle > time)
+		return;
+	
+	if (self.ammo_tripmines > 0)
+	{
+		W_SetWeaponAnim2(0, 10, 10, 20);
+	}
+	else
+	{
+		return;
+	}
+	
+	float r = random();
+	
+	if (r <= 0.25)
+	{
+		W_SetWeaponAnim2(11, 35, -1, 8);
+		self.nextidle = time + 3.0;
+	}
+	else if (r <= 0.75)
+	{
+		W_SetWeaponAnim2(36, 52, -1, 8);
+		self.nextidle = time + 2.0;
+	}
+	else
+	{
+		W_SetWeaponAnim2(53, 80, -1, 8);
+		self.nextidle = time + 3.375;
+	}
+}
+
+entity() W_CreateSnark =
+{
+	entity snark;
+	snark = spawn();
+	
+	snark.movetype = MOVETYPE_BOUNCE;
+	snark.solid = SOLID_BBOX;
+	
+	setmodel(snark, "progs/w_squeak.mdl");
+	setsize(snark, '-4 -4 0', '4 4 8');
+	setorigin(snark, snark.origin);
+	
+	snark.classname = "monster_snark";
+	snark.owner = snark.trueowner = self;
+	snark.touch = Snark_BounceTouch;
+	snark.think = Snark_HuntThink;
+	snark.nextthink = time + 0.1;
+	
+	snark.flags |= FL_MONSTER;
+	snark.takedamage = DAMAGE_AIM;
+	snark.health = 2;
+	snark.gravity = 0.5;
+	snark.dmg = 10;
+	
+	snark.fuser1 = time + 15.0;// m_flDie
+	snark.fuser2 = time;// Bounce sound time
+	
+	snark.th_die = SUB_Null;
+	snark.th_pain = Snark_Pain;
+	
+	return snark;
+}
+
+void() Snark_HuntThink =
+{
+	self.nextthink = time + 0.1;
+	
+	if (time >= self.fuser1)
+	{
+		self.health = -1;
+		self.th_die();
+		return;
+	}
+	
+	if (self.waterlevel != 0)
+	{
+		if (self.movetype == MOVETYPE_BOUNCE)
+		{
+			self.movetype = MOVETYPE_FLY;
+		}
+		self.velocity = self.velocity * 0.9;
+		self.velocity_z += 8.0;
+	}
+	else if (self.movetype == MOVETYPE_FLY)
+	{
+		self.movetype = MOVETYPE_BOUNCE;
+		self.origin_z += 1.0;
+	}
+	
+	//nexthunt
+	if (self.fuser4 > time)
+		return;
+	
+	self.fuser4 = time + 2.0;
+	
+	vector dir, mytarget;
+	
+	makevectors(self.angles);
+	
+	if (!self.enemy || self.enemy.deadflag != DEAD_NO)
+	{
+		entity ent = findradius(self.origin, 512);
+		
+		while (ent)
+		{
+			if (ent.takedamage != DAMAGE_NO && ent != world && (ent.flags & FL_MONSTER) && ent.classname != "monster_snark")
+			{
+				if (visible(ent))
+				{	
+					dprint(ent.classname);
+					dprint("\n");
+					self.enemy = ent;
+				}
+			}
+			ent = ent.chain;
+		}
+	}
+	
+	if ((self.fuser1 - time <= 0.5) && (self.fuser1 - time <= 0.3))
+	{
+		sound(self, CHAN_VOICE, "squeek/sqk_die1.wav", 1, ATTN_NORM);
+	}
+	
+	if (self.enemy)
+	{
+		if (visible(self.enemy))
+		{
+			dir = (self.enemy.origin + self.enemy.view_ofs) - self.origin;
+			mytarget = normalize(dir);
+		}
+		
+		float vel = vlen(self.velocity);
+		float adj = 50.0 / (vel + 10.0);
+		
+		if (adj > 1.2)
+			adj = 1.2;
+			
+		self.velocity = self.velocity * adj + mytarget * 300;
+	}
+	
+	if (self.flags & FL_ONGROUND)
+	{
+		self.avelocity = '0 0 0';
+	}
+	else
+	{
+		if (self.avelocity == '0 0 0')
+		{
+			self.avelocity_x = random(-100, 100);
+			self.avelocity_y = random(-100, 100);
+		}
+	}
+	
+	if (vlen(self.origin - self.vuser1) < 1.0)
+	{
+		self.velocity_x = random(-100, 100);
+		self.velocity_y = random(-100, 100);
+	}
+	self.vuser1 = self.origin;
+	
+	self.angles = vectoangles(self.velocity);
+	self.angles.z = 0;
+	self.angles.x = 0;
+}
+
+void() Snark_BounceTouch =
+{
+	float pitch;
+	
+	if (self.owner && other == self.owner)
+		return;
+	
+	self.owner = world;
+	
+	self.angles_x = 0;
+	self.angles_z = 0;
+	
+	if (self.fuser3 > time)
+		return;
+		
+	pitch = 155.0 - 60.0 * ((self.fuser1 - time) / 15.0);
+	
+	if (other.takedamage && self.attack_finished < time)
+	{
+		T_Damage (other, self, self.trueowner, self.dmg, DMGTYPE_MELEE);
+		sound(self, CHAN_WEAPON, "squeek/sqk_deploy1.wav", 1, ATTN_NORM);
+		self.attack_finished = time + 0.5;
+	}
+
+	self.fuser3 = time + 0.1; // Nexthit
+	self.fuser4 = time;
+
+	if (deathmatch)
+	{
+		if (time < self.fuser2)
+			return;
+	}
+	
+	if (!(self.flags & FL_ONGROUND))
+	{
+		float r = random();
+		
+		if (r <= 0.33)
+			sound(self, CHAN_VOICE, "squeek/sqk_hunt1.wav", 1, ATTN_NORM);
+		else if (r <= 0.66)
+			sound(self, CHAN_VOICE, "squeek/sqk_hunt2.wav", 1, ATTN_NORM);
+		else
+			sound(self, CHAN_VOICE, "squeek/sqk_hunt3.wav", 1, ATTN_NORM);
+	}
+	
+	self.fuser2 = time + 0.5;
+}
+
+void(entity attacker, float damage) Snark_Pain =
+{
+	
+}
+
+void() W_SnarkPrecache =
+{
+	precache_model("progs/v_squeak.mdl");
+	precache_model("progs/w_squeak.mdl");
+	precache_sound("squeek/sqk_blast1.wav");
+	precache_sound("squeek/sqk_die1.wav");
+	precache_sound("squeek/sqk_hunt1.wav");
+	precache_sound("squeek/sqk_hunt2.wav");
+	precache_sound("squeek/sqk_hunt3.wav");
+	precache_sound("squeek/sqk_deploy1.wav");
+}
+
+void() W_SnarkDeploy =
+{
+	HL_DefaultDeploy(0, 33, 33, 20);
+}
+
+float() W_SnarkHolster =
+{
+	if (self.ammo_snarks <= 0)
+	{
+		self.weapons &= ~WPN_SNARK;
+	}
+	return TRUE;
+}
+
+float() W_SnarkPrimAttack =
+{
+	if (self.ammo_snarks > 0)
+	{
+		makevectors(self.v_angle);
+		
+		traceline(self.origin + v_forward * 16, self.origin + v_forward * 64, 0, self);
+		
+		if (trace_allsolid == 0 && trace_startsolid == 0 && trace_fraction > 0.25)
+		{
+			W_SetWeaponAnim2(34, 45, 45, 20);
+			
+			entity snark = W_CreateSnark();
+			
+			setorigin(snark, trace_endpos);
+			snark.angles = self.v_angle;
+			snark.velocity = v_forward * 200 + self.velocity;
+			
+			if (random() <= 0.5)
+				sound(self, CHAN_VOICE, "squeek/sqk_hunt2.wav", 1, ATTN_NORM);
+			else
+				sound(self, CHAN_VOICE, "squeek/sqk_hunt3.wav", 1, ATTN_NORM);
+				
+			self.currentammo = self.ammo_snarks -= 1;
+			self.fuser1 = 1; // Just thrown.
+			
+			self.attack_finished = time + 0.3;
+			self.nextidle = time + 1.0;
+		}
+	}
+	return TRUE;
+}
+
+void() W_SnarkIdle =
+{
+	if (self.nextidle > time)
+		return;
+
+	if (self.fuser1)
+	{
+		self.fuser1 = 0;
+		
+		if (self.ammo_snarks <= 0)
+		{
+			HL_RetireWeapon();
+			return;
+		}
+		
+		W_SetWeaponAnim2(0, 33, 33, 20);
+		self.nextidle = time + random(10, 15);
+		return;
+	}
+	
+	float r = random();
+	
+	if (r <= 0.75)
+	{
+		W_SetWeaponAnim2(46, 61, -1, 8);
+		self.nextidle = time + (15.0/8.0);
+	}
+	else if (r <= 0.875)
+	{
+		W_SetWeaponAnim2(62, 132, -1, 16);
+		self.nextidle = time + (70.0/16.0);
+	}
+	else
+	{
+		W_SetWeaponAnim2(133, 213, -1, 16);
+		self.nextidle = time + (80.0/16.0);
 	}
 }

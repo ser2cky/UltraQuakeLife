@@ -33,6 +33,12 @@ void() Cheat_Items =
 	self.ammo_rockets = MAX_AMMO_ROCKETS;
 	self.ammo_cells = MAX_AMMO_CELLS;
 	
+	self.ammo_hornets = MAX_AMMO_HORNETS;
+	self.ammo_handgrenades = MAX_AMMO_HANDGRENADES;
+	self.ammo_satchels = MAX_AMMO_SATCHEL;
+	self.ammo_tripmines = MAX_AMMO_TRIPMINE;
+	self.ammo_snarks = MAX_AMMO_SNARK;
+	
 	self.items = self.items | HUD_WPNS;
 	self.weapons = self.weapons | ALL_WPNS;
 
@@ -165,7 +171,7 @@ void() ImpulseCommands =
 	if (!self.impulse) return;
 	float ret;
 	
-	if (self.impulse < 9)
+	if (self.impulse <= 9)
 	{
 		ret = W_ChangeSlot(self.impulse);
 		if (ret == WEAPONSTAT_NOAMMO)
@@ -265,7 +271,7 @@ void() ImpulseCommands =
 		centerprint(self, version_s);
 		break;
 	
-	case 9:
+	case 13:
 		Cheat_Items();
 		break;
 	case 99:

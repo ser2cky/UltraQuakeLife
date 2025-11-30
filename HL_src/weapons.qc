@@ -149,3 +149,38 @@
 // 52-68 idle1 loop 8 fps
 // 69-90 fidget1 8 fps
 // 91-101 holster
+
+//11.27.25
+// grenaid
+// 0 - 10 draw
+// 11 - 22 pinpull
+// 23 - 41 throw1 13 fps
+// 42 - 60 throw2 20 fps
+// 61 - 79 throw30 30 fps
+// 80 - 104 idle 8 fps 
+// 105 - 125 fidget 8fps
+
+//satchel
+//0-40 draw
+//41-57 fidget 8fps
+//58-85 idle 8fps
+
+//11.28.25
+// radio
+// 0-12 draw
+// 13 - 33 fire
+// 34 - 63 fidget 
+
+//tripmine
+// 0-10 draw
+// 11-35 idle1 loop 8fps
+// 36-52 idle2 loop 8fps
+// 53-80 fidget loop 8fps
+
+//11.29.25
+//snark
+//0-33 draw
+//34-45 throw
+//46-61 idle1 fps8
+//62-132 hissy idle fps16
+//133-213 hungry boy fps16

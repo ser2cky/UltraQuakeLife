@@ -66,7 +66,10 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype;
 	parm10 = self.weapons;
-
+	parm11 = self.ammo_handgrenades;
+	parm12 = self.ammo_satchels;
+	parm13 = self.ammo_tripmines;
+	parm14 = self.ammo_snarks;
 }
 
 void() SetNewParms =
@@ -81,6 +84,10 @@ void() SetNewParms =
 	parm7 = 0;
 	parm9 = 0;
 	parm10 = WPN_GLOCK | WPN_CROWBAR;
+	parm11 = 0;
+	parm12 = 0;
+	parm13 = 0;
+	parm14 = 0;
 }
 
 
@@ -102,6 +109,10 @@ void() SetCoopParms =
 	parm7 = 0;
 	parm9 = 0;
 	parm10 = self.weapons & WPN_WEAPONS;
+	parm11 = 0;
+	parm12 = 0;
+	parm13 = 0;
+	parm14 = 0;
 }
 
 void() DecodeLevelParms =
@@ -120,6 +131,10 @@ void() DecodeLevelParms =
 	self.weapon = parm8;
 	self.armortype = parm9;
 	self.weapons = parm10;
+	self.ammo_handgrenades = parm11;
+	self.ammo_satchels = parm12;
+	self.ammo_tripmines = parm13;
+	self.ammo_snarks = parm14;
 	
 	armor_set_type(self);
 }

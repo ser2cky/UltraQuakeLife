@@ -136,30 +136,6 @@ void() StartWeapon =
 */
 
 
-/*QUAKED weapon_shotgun (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Shotgun.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_shotgn.mdl" }) = weapon_shotgun : "Shotgun. 
-5 Shells." []
-*/
-void() weapon_shotgun =
-{
-	if (!SUB_ShouldSpawn()) return;
-	precache_model3 ("progs/g_shotgn.mdl");
-	setmodel (self, "progs/g_shotgn.mdl");
-	self.weapon = WPN_GLOCK;
-	self.ammo_shells = 5;
-	self.netname = "Shotgun";
-	StartWeapon();
-}
-
 
 /*QUAKED weapon_supershotgun (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
 Double-barreled shotgun.
@@ -177,8 +153,8 @@ Keys:
 void() weapon_supershotgun =
 {
 	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_shot.mdl");
-	setmodel (self, "progs/g_shot.mdl");
+	precache_model_safe ("progs/w_shotgun.mdl");
+	setmodel (self, "progs/w_shotgun.mdl");
 	self.weapon = WPN_SHOTGUN;
 	self.ammo_shells = 10;
 	self.netname = "Double-barreled Shotgun";

@@ -31,6 +31,11 @@ float (vector v) vlensqr =
 	return v_x * v_x + v_y * v_y + v_z * v_z;
 }
 
+float (vector v) vlen2d =
+{
+	return sqrt(v_x*v_x + v_y*v_y);
+}
+
 vector(float num) SinCos =
 {
 	local vector angle, vf, vu, vr, result;

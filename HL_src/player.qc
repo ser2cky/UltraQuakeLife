@@ -445,6 +445,11 @@ void() PlayerDie =
 		player_died1();
 	else
 		player_diee1();
+		
+	// HLMOD
+	self.satchel_ready = -1;
+	W_DeactivatePlayerSatchels(self);
+	// HLMOD
 
 }
 

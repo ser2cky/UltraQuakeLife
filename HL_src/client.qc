@@ -76,10 +76,10 @@ void() SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
 	parm2 = 100;
-	parm4 = 25;
+	parm4 = 10;
 	parm8 = WPN_GLOCK;
 	parm3 = 0;
-	parm5 = 0;
+	parm5 = 50;
 	parm6 = 0;
 	parm7 = 0;
 	parm9 = 0;
@@ -102,7 +102,6 @@ void() SetCoopParms =
 		parm8 = WPN_SHOTGUN;
 	else
 		parm8 = WPN_GLOCK;
-
 	parm3 = 0;
 	parm5 = self.ammo_nails;
 	parm6 = 0;

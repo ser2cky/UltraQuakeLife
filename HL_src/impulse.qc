@@ -162,6 +162,50 @@ void() ServerflagsCommand =
 	dev_serverflags();
 };
 
+entity() pool =
+{
+	entity me;
+	me = spawn();
+	me.movetype = MOVETYPE_NONE;
+	me.solid = SOLID_TRIGGER;
+	setorigin(me, me.origin);
+	setsize(me, '0 0 0', '0 0 0');
+	setmodel(me, "progs/player.mdl");
+	me.think = shit_item;
+	me.nextthink = time;
+	
+	return me;
+}
+
+void() shit_item =
+{
+	HL_RandomAmmo();
+	self.think = SUB_Null;
+}
+
+void() TestSpawn =
+{
+	float i;
+	vector myspot;
+	
+	for (i = 0; i < 256; i++)
+	{
+		myspot_x = random(-1024, 1024);
+		myspot_y = random(-1024, 1024);
+		myspot_z = random(-1024, 1024);
+		
+		if (pointcontents(myspot) == CONTENT_EMPTY)
+		{
+			entity thing = pool();
+			setorigin(thing, myspot);
+		}
+		
+		bprint(vtos(myspot));
+		bprint("\n");
+	}
+}
+
+
 
 // --------------------------------
 // ImpulseCommands

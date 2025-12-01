@@ -148,6 +148,7 @@ const float WPN_SNARK				= 8192;
 // const float WPN_BARNACLE			= 4194304;
 // const float WPN_ASSAULT_CANON		= 8388608; // tfc gun!!!
 const float WPN_NONE 				= 16777216;
+const float PI 						= 3.14159265358979323846;
 
 // I wanted to add a few more T.F.C weapons like the
 // 12.gauge or Nailguns, but I'd probably have to use

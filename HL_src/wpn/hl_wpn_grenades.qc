@@ -73,15 +73,9 @@ HL_GrenadeExplode
 
 void() HL_GrenadeExplode =
 {
-	entity myowner;
-	
-	if (!self.owner)
-		myowner = world;
-	else
-		myowner = self.owner;
 	self.owner = world;
 	
-	HL_RadiusDamage(self.origin, self, myowner, self.dmg, "", DMGTYPE_EXPLOSION);
+	HL_RadiusDamage(self.origin, self, self.trueowner, self.dmg, "", DMGTYPE_EXPLOSION);
 	
 	float r;
 	r = random();

@@ -267,6 +267,7 @@ void() worldspawn =
 
 // player precaches	
 	W_Precache ();			// get weapon precaches
+	//TestSpawn();
 
 	precache_sound ("misc/null.wav");
 
@@ -371,7 +372,6 @@ void() worldspawn =
 	precache_model ("progs/backpack.mdl");
 
 	precache_model ("progs/zom_gib.mdl");
-	
 }
 
 void() StartFrame =

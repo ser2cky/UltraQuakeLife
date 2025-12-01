@@ -136,172 +136,40 @@ void() StartWeapon =
 */
 
 
-
-/*QUAKED weapon_supershotgun (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Double-barreled shotgun.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_shot.mdl" }) = weapon_supershotgun : "Double-barreled shotgun.
-10 shells." []
-*/
 void() weapon_supershotgun =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/w_shotgun.mdl");
-	setmodel (self, "progs/w_shotgun.mdl");
-	self.weapon = WPN_SHOTGUN;
-	self.ammo_shells = 10;
-	self.netname = "Double-barreled Shotgun";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-/*QUAKED weapon_nailgun (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Nailgun.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_nail.mdl" }) = weapon_nailgun : "Nailgun.
-30 nails." []
-*/
 void() weapon_nailgun =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_nail.mdl");
-	setmodel (self, "progs/g_nail.mdl");
-	self.weapon = WPN_MP5;
-	self.ammo_nails = 30;
-	self.netname = "Nailgun";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-/*QUAKED weapon_supernailgun (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Perforator (Super Nailgun).
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_nail2.mdl" }) = weapon_supernailgun : "Perforator (Super Nailgun).
-30 nails." []
-*/
 void() weapon_supernailgun =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_nail2.mdl");
-	setmodel (self, "progs/g_nail2.mdl");
-	self.weapon = WPN_CROSSBOW;
-	self.ammo_nails = 30;
-	self.netname = "Perforator";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-/*QUAKED weapon_grenadelauncher (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Grenade Launcher.
 
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_rock.mdl" }) = weapon_grenadelauncher : "Grenade launcher.
-5 rockets." []
-*/
 void() weapon_grenadelauncher =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_rock.mdl");
-	setmodel (self, "progs/g_rock.mdl");
-	self.weapon = WPN_RPG;
-	self.ammo_rockets = 5;
-	self.netname = "Grenade Launcher";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-/*QUAKED weapon_rocketlauncher (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Rocket Launcher.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_rock2.mdl" }) = weapon_rocketlauncher : "Rocket launcher.
-5 rockets." []
-*/
 void() weapon_rocketlauncher =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_rock2.mdl");
-	setmodel (self, "progs/g_rock2.mdl");
-	self.weapon = WPN_HORNETGUN;
-	self.ammo_rockets = 5;
-	self.netname = "Rocket Launcher";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-
-/*QUAKED weapon_lightning (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-Thunderbolt Cannon.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_light.mdl" }) = weapon_lightning : "Thunderbolt.
-12 cells." []
-*/
 void() weapon_lightning =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_light.mdl");
-	setmodel (self, "progs/g_light.mdl");
-	self.weapon = WPN_GAUSS;
-	self.ammo_cells = 12;
-	self.netname = "Thunderbolt";
-	StartWeapon();
+	HL_RandomWeapon();
 }
 
-/*QUAKED weapon_axe (0 0 1) (-16 -16 0) (16 16 56) ? ? SUSPENDED
-The axe, should you happen to make the player start without one.
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Weapon) model({ "path": ":progs/g_axe.mdl" }) = weapon_axe : "Axe." []
-*/
 void() weapon_axe =
 {
-	if (!SUB_ShouldSpawn()) return;
-	precache_model_safe ("progs/g_axe.mdl");
-	setmodel (self, "progs/g_axe.mdl");
-	self.weapon = WPN_CROWBAR;
-	self.netname = "Axe. Find some wood!";
-	StartWeapon();
+	weapon_crowbar();
 }
 
 
@@ -380,173 +248,26 @@ void() StartAmmo =
 @baseclass size(0 0 0, 32 32 32) color(0 160 160) base(Item) = Ammo [ spawnflags(flags) =  [ 1 : "Large box (2x)" : 0 ] ]
 */
 
-/*QUAKED item_shells (0 .5 .5) (0 0 0) (32 32 32) BIG ? SUSPENDED
-20 shells for both Shotgun and SuperShotgun.
-
-Flags:
-"big" gives 40 instead of 20
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Ammo)
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_shell1.bsp",
-                                ":maps/b_shell0.bsp"
-        }}
-    ) = item_shells : "Shells, 20/40" []
-*/
 void() item_shells =
 {
-	if (!SUB_ShouldSpawn()) return;
-	if (self.spawnflags & ITEM_AMMO_BIG)
-	{
-		self.ammo_shells = 40;
-		precache_model_safe ("progs/m_shell2.mdl");
-		setmodel (self, "progs/m_shell2.mdl");
-	}
-	else
-	{
-		self.ammo_shells = 20;
-		precache_model_safe ("progs/m_shell1.mdl");
-		setmodel (self, "progs/m_shell1.mdl");
-	}
-	self.weapon = 1;
-	self.netname = "shells";
-	StartAmmo();
+	HL_RandomAmmo();
 }
 
-/*QUAKED item_spikes (0 .5 .5) (0 0 0) (32 32 32) BIG ? SUSPENDED
-25 ammo points (spikes) for Perforator and Super Perforator.
-
-Flags:
-"big" gives 50 instead of 25
-
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Ammo) 
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_nail1.bsp",
-                                ":maps/b_nail0.bsp"
-        }}
-    ) = item_spikes : "Nailgun/Perforator ammo, 25/50" []
-*/
 void() item_spikes =
 {
-	if (!SUB_ShouldSpawn()) return;
-	if (self.spawnflags & ITEM_AMMO_BIG)
-	{
-		self.ammo_nails = 50;
-		precache_model_safe ("progs/m_nails2.mdl");
-		setmodel (self, "progs/m_nails2.mdl");
-	}
-	else
-	{
-		self.ammo_nails = 25;
-		precache_model_safe ("progs/m_nails1.mdl");
-		setmodel (self, "progs/m_nails1.mdl");
-	}
-	self.weapon = 2;
-	self.netname = "nails";
-	StartAmmo();
+	HL_RandomAmmo();
 }
 
-/*QUAKED item_rockets (0 .5 .5) (0 0 0) (32 32 32) BIG ? SUSPENDED
-3 ammo points (rockets) for the Rocket/Grenade Launcher.
-
-Flags:
-"big" gives 6 instead of 3
-    
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Ammo) 
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_rock1.bsp",
-                                ":maps/b_rock0.bsp"
-        }}
-    ) =
-    item_rockets : "Rockets, 4/8" []
-*/
 void() item_rockets =
 {
-	if (!SUB_ShouldSpawn()) return;
-	if (self.spawnflags & ITEM_AMMO_BIG)
-	{
-		self.ammo_rockets = 8;
-		precache_model_safe ("progs/m_rock2.mdl");
-		setmodel (self, "progs/m_rock2.mdl");
-	}
-	else
-	{
-		self.ammo_rockets = 4;
-		precache_model_safe ("progs/m_rock1.mdl");
-		setmodel (self, "progs/m_rock1.mdl");
-	}
-	self.weapon = 3;
-	self.netname = "rockets";
-	StartAmmo();
+	HL_RandomAmmo();
 }
 
-/*QUAKED item_cells (0 .5 .5) (0 0 0) (32 32 32) BIG ? SUSPENDED
-6 ammo points (cells) for the  Thunderbolt (Lightning).
 
-Flags:
-"big" gives 12 instead of 6
-    
-Keys:
-"target/2/3/4/k" - entity to trigger when picked up
-"targetname" - will not spawn until triggered
-"wait" - will respawn after 'wait' seconds. fires targets every time.
-"count" - limit number of times to respawn
-*/
-/*FGD
-@PointClass base(Ammo) 
-    model(
-        {{
-            spawnflags & 1 ->   ":maps/b_batt1.bsp",
-                                ":maps/b_batt0.bsp"
-        }}
-    ) =
-    item_cells : "Thunderbolt Ammo, 6/12 cells" []
-*/
 void() item_cells =
 {
-	if (!SUB_ShouldSpawn()) return;
-	if (self.spawnflags & ITEM_AMMO_BIG)
-	{
-		self.ammo_cells = 12;
-		precache_model_safe ("progs/m_cells2.mdl");
-		setmodel (self, "progs/m_cells2.mdl");
-	}
-	else
-	{
-		self.ammo_cells = 6;
-		precache_model_safe ("progs/m_cells1.mdl");
-		setmodel (self, "progs/m_cells1.mdl");
-	}
-	self.weapon = 4;
-	self.netname = "cells";
-	StartAmmo();
+	HL_RandomAmmo();
 }
-
-
 
 // ================================
 

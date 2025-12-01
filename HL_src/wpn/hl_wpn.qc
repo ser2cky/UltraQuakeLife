@@ -19,6 +19,9 @@
 //	11.27.25 : satchel, tripmine, handgrenade
 //	11.28.25: gave satchel,tripmine, handgrenade
 //	proper models & fixed them all.
+//	11.29.25: snarks.
+//	11.30.25: finished snarks. thanks to skidmark
+//	for fixes.
 //
 //======================================
 
@@ -236,7 +239,7 @@ void(string shellmodel, vector org, vector vel) EjectBrass =
 	new.angles_y = self.angles_y;
 	new.movetype = MOVETYPE_BOUNCE;
 	new.solid = SOLID_TRIGGER;
-	new.owner = new.trueowner = self;
+	new.owner = self;
 	new.touch = BrassSound;
 	new.think = SUB_Remove;
 	new.ltime = time;
@@ -1316,6 +1319,7 @@ entity() W_BoltSpawn =
 	
 	bolt.classname = "bolt";
 	bolt.movetype = MOVETYPE_FLYMISSILE;
+	bolt.owner = bolt.trueowner = self;
 	bolt.solid = SOLID_BBOX;
 	bolt.touch = W_BoltTouch;
 	
@@ -1402,15 +1406,9 @@ W_BoltExplode
 
 void() W_BoltExplode =
 {
-	entity myowner;
-	
-	if (!self.owner)
-		myowner = world;
-	else
-		myowner = self.owner;
 	self.owner = world;
 	
-	HL_RadiusDamage(self.origin, self, myowner, 40, "", DMGTYPE_EXPLOSION);
+	HL_RadiusDamage(self.origin, self, self.trueowner, 40, "", DMGTYPE_EXPLOSION);
 	
 	float r;
 	r = random();
@@ -1615,7 +1613,6 @@ float() W_CrossbowFireBolt =
 	entity mybolt = W_BoltSpawn();
 	mybolt.origin = src;
 	mybolt.angles = myaim;
-	mybolt.owner = self;
 	
 	if (self.waterlevel == 3)
 		mybolt.velocity = dir * 1000;
@@ -3369,6 +3366,19 @@ void() W_EgonIdle =
 
 /*
 ============
+Grenade
+// 0 - 10 draw
+// 11 - 22 pinpull
+// 23 - 41 throw1 13 fps
+// 42 - 60 throw2 20 fps
+// 61 - 79 throw30 30 fps
+// 80 - 104 idle 8 fps 
+// 105 - 125 fidget 8fps
+============
+*/
+
+/*
+============
 W_GrenadePrecache
 ============
 */
@@ -3531,6 +3541,22 @@ void() W_GrenadeIdle =
 		}
 	}
 }
+
+/*
+============
+Satchel
+
+//satchel
+//0-40 draw
+//41-57 fidget 8fps
+//58-85 idle 8fps
+
+// radio
+// 0-12 draw
+// 13 - 33 fire
+// 34 - 63 fidget 
+============
+*/
 
 /*
 ============
@@ -3868,6 +3894,16 @@ void(entity myowner) W_DeactivatePlayerSatchels =
 
 /*
 ============
+//tripmine
+// 0-10 draw
+// 11-35 idle1 loop 8fps
+// 36-52 idle2 loop 8fps
+// 53-80 fidget loop 8fps
+============
+*/
+
+/*
+============
 W_TripminePrecache
 ============
 */
@@ -4187,12 +4223,36 @@ void() W_TripmineIdle =
 	}
 }
 
+/*
+============
+//snark
+//0-33 draw
+//34-45 throw
+//46-61 idle1 fps8
+//62-132 hissy idle fps16
+//133-213 hungry boy fps16
+============
+*/
+
+// I hate these things. The one thing that
+// was an absolute pain in the ass to rewrite into
+// QuakeC was this entity. Quake and Half-Life both
+// handle movetypes differently, and this entity
+// just to happens to be the one that's most affected
+// by this difference. 
+
+/*
+============
+W_CreateSnark
+============
+*/
+
 entity() W_CreateSnark =
 {
 	entity snark;
 	snark = spawn();
 	
-	snark.movetype = MOVETYPE_BOUNCE;
+	snark.movetype = MOVETYPE_TOSS;
 	snark.solid = SOLID_BBOX;
 	
 	setmodel(snark, "progs/w_squeak.mdl");
@@ -4204,89 +4264,47 @@ entity() W_CreateSnark =
 	snark.touch = Snark_BounceTouch;
 	snark.think = Snark_HuntThink;
 	snark.nextthink = time + 0.1;
+	snark.fuser5 = time + 0.1; // nextthink
 	
 	snark.flags |= FL_MONSTER;
 	snark.takedamage = DAMAGE_AIM;
 	snark.health = 2;
 	snark.gravity = 0.5;
-	snark.dmg = 10;
+	snark.dmg = 5;
 	
 	snark.fuser1 = time + 15.0;// m_flDie
 	snark.fuser2 = time;// Bounce sound time
+	snark.fuser4 = time;
 	
-	snark.th_die = SUB_Null;
+	snark.th_walk = SUB_Null;
+	snark.th_run = SUB_Null;
+	snark.th_stand = SUB_Null;
+	snark.th_checkattack = SUB_NullFloat;
+	snark.th_die = Snark_Die;
 	snark.th_pain = Snark_Pain;
+	
+	snark.frame = 0;
+	snark.nextanim = time;
 	
 	return snark;
 }
 
-void() Snark_HuntThink =
+/*
+============
+Snark_UpdateToEnemyPos
+============
+*/
+
+void() Snark_UpdateToEnemyPos =
 {
-	self.nextthink = time + 0.1;
-	
-	if (time >= self.fuser1)
-	{
-		self.health = -1;
-		self.th_die();
-		return;
-	}
-	
-	if (self.waterlevel != 0)
-	{
-		if (self.movetype == MOVETYPE_BOUNCE)
-		{
-			self.movetype = MOVETYPE_FLY;
-		}
-		self.velocity = self.velocity * 0.9;
-		self.velocity_z += 8.0;
-	}
-	else if (self.movetype == MOVETYPE_FLY)
-	{
-		self.movetype = MOVETYPE_BOUNCE;
-		self.origin_z += 1.0;
-	}
-	
-	//nexthunt
-	if (self.fuser4 > time)
-		return;
-	
-	self.fuser4 = time + 2.0;
-	
 	vector dir, mytarget;
 	
-	makevectors(self.angles);
-	
-	if (!self.enemy || self.enemy.deadflag != DEAD_NO)
+	if (self.enemy && self.enemy.deadflag == DEAD_NO)
 	{
-		entity ent = findradius(self.origin, 512);
-		
-		while (ent)
-		{
-			if (ent.takedamage != DAMAGE_NO && ent != world && (ent.flags & FL_MONSTER) && ent.classname != "monster_snark")
-			{
-				if (visible(ent))
-				{	
-					dprint(ent.classname);
-					dprint("\n");
-					self.enemy = ent;
-				}
-			}
-			ent = ent.chain;
-		}
-	}
-	
-	if ((self.fuser1 - time <= 0.5) && (self.fuser1 - time <= 0.3))
-	{
-		sound(self, CHAN_VOICE, "squeek/sqk_die1.wav", 1, ATTN_NORM);
-	}
-	
-	if (self.enemy)
-	{
-		if (visible(self.enemy))
-		{
-			dir = (self.enemy.origin + self.enemy.view_ofs) - self.origin;
-			mytarget = normalize(dir);
-		}
+		dir = (self.enemy.origin + self.enemy.view_ofs) - self.origin;
+		mytarget = normalize(dir);
+		bprint(vtos(dir));
+		bprint("\n");
 		
 		float vel = vlen(self.velocity);
 		float adj = 50.0 / (vel + 10.0);
@@ -4295,6 +4313,7 @@ void() Snark_HuntThink =
 			adj = 1.2;
 			
 		self.velocity = self.velocity * adj + mytarget * 300;
+		self.flags &= ~FL_ONGROUND; // always remember - skidmark (hazel)
 	}
 	
 	if (self.flags & FL_ONGROUND)
@@ -4306,7 +4325,7 @@ void() Snark_HuntThink =
 		if (self.avelocity == '0 0 0')
 		{
 			self.avelocity_x = random(-100, 100);
-			self.avelocity_y = random(-100, 100);
+			self.avelocity_z = random(-100, 100);
 		}
 	}
 	
@@ -4318,15 +4337,141 @@ void() Snark_HuntThink =
 	self.vuser1 = self.origin;
 	
 	self.angles = vectoangles(self.velocity);
-	self.angles.z = 0;
-	self.angles.x = 0;
+	self.angles_z = 0;
+	self.angles_x = 0;
 }
+
+/*
+============
+Snark_HuntThink
+============
+*/
+
+void() Snark_HuntThink =
+{
+	// Making fuser5 act as a nextthink
+	// so I can get animation working on this
+	// bastard without having to write out
+	// stupid blocks of animation frame code
+	// -serecky 11.30.25
+
+	if (pointcontents(self.origin) == CONTENT_SOLID)
+		remove(self);
+
+	self.nextthink = time;
+
+	if (self.angles_y < -360.0) 
+		self.angles_y += 360.0;
+	if (self.angles_y > 360.0)
+		self.angles_y -= 360.0;
+
+	if (self.enemy.deadflag != DEAD_NO)
+		self.enemy = world;
+
+	if (self.nextanim < time)
+	{
+		self.frame = mod(self.frame + 1, 9);
+		self.nextanim = time + (1.0/45.0);
+		
+		float move = walkmove(self.angles_y, 5);
+		
+		if (self.enemy != world)
+		{
+			if (self.flags & FL_ONGROUND)
+			{
+				Snark_UpdateToEnemyPos();
+			}
+		}
+		else
+		{
+			if (!move && (self.flags & FL_ONGROUND))
+			{
+				self.angles_y += 90;
+				bprint("turning\n");
+			}
+		}
+	}
+	
+	if (time >= self.fuser1)
+	{
+		self.health = -1;
+		self.th_die();
+		return;
+	}
+	
+	//Nextthink
+	if (self.fuser5 > time)
+		return;
+
+	self.fuser5 = time + 0.1;
+
+	if (self.waterlevel != 0)
+	{
+		if (self.movetype == MOVETYPE_BOUNCE)
+		{
+			self.movetype = MOVETYPE_TOSS;
+		}
+		self.velocity = self.velocity * 0.9;
+		self.velocity_z += 8.0;
+	}
+	else if (self.movetype == MOVETYPE_TOSS) // toss makes them more bound by gravity - skidmark (hazel)
+	{
+		self.movetype = MOVETYPE_BOUNCE;
+	}
+	
+	//nexthunt
+	if (self.fuser4 > time)
+		return;
+	
+	self.fuser4 = time + 2.0;
+	makevectors(self.angles);
+	
+	if (self.enemy == world)
+	{
+		entity ent = findradius(self.origin, 512);
+		
+		while (ent)
+		{
+			if (ent.takedamage && (ent.flags & FL_MONSTER || ent.flags & FL_CLIENT) && ent.classname != "monster_snark")
+			{
+				if (infront(ent))
+				{	
+					float difference = self.origin_z - ent.origin_z;
+					
+					bprint(ftos(difference));
+					bprint("\n");
+					if ((difference >= -36.0) && (difference <= 36.0) && infront(ent))
+					{
+						bprint(ent.classname);
+						bprint("\n");
+						self.enemy = ent;
+						break;
+					}
+				}
+			}
+			ent = ent.chain;
+		}
+	}
+	
+	if ((self.fuser1 - time <= 0.5) && (self.fuser1 - time <= 0.3))
+	{
+		sound(self, CHAN_VOICE, "squeek/sqk_die1.wav", 1, ATTN_NORM);
+	}
+	
+	// Moved to a whole function so I can call it in touch
+	// and think. -serecky 11.30.25
+	Snark_UpdateToEnemyPos();
+}
+
+/*
+============
+Snark_BounceTouch
+============
+*/
 
 void() Snark_BounceTouch =
 {
-	float pitch;
-	
-	if (self.owner && other == self.owner)
+	if (self.owner && other == self.owner || other.classname == "monster_snark")
 		return;
 	
 	self.owner = world;
@@ -4336,18 +4481,21 @@ void() Snark_BounceTouch =
 	
 	if (self.fuser3 > time)
 		return;
-		
-	pitch = 155.0 - 60.0 * ((self.fuser1 - time) / 15.0);
 	
-	if (other.takedamage && self.attack_finished < time)
+	if ((other.takedamage) && (self.attack_finished < time))
 	{
-		T_Damage (other, self, self.trueowner, self.dmg, DMGTYPE_MELEE);
+		T_Damage (other, self, self.trueowner, 10, DMGTYPE_MELEE);
 		sound(self, CHAN_WEAPON, "squeek/sqk_deploy1.wav", 1, ATTN_NORM);
+		self.dmg += 5;
 		self.attack_finished = time + 0.5;
 	}
 
 	self.fuser3 = time + 0.1; // Nexthit
 	self.fuser4 = time;
+	
+// skidmark (hazel)
+	//Snark_UpdateToEnemyPos();
+// skidmark (hazel)
 
 	if (deathmatch)
 	{
@@ -4370,10 +4518,46 @@ void() Snark_BounceTouch =
 	self.fuser2 = time + 0.5;
 }
 
+/*
+============
+Snark_Pain
+============
+*/
+
 void(entity attacker, float damage) Snark_Pain =
 {
-	
 }
+
+/*
+============
+Snark_Die
+============
+*/
+
+void() Snark_Die =
+{
+	self.model = string_null;
+	self.think = SUB_Remove;
+	self.touch = SUB_Null;
+	self.nextthink = time + 0.1;
+	
+	self.takedamage = DAMAGE_NO;
+	
+	sound(self, CHAN_ITEM, "squeek/sqk_blast1.wav", 1.0, 0.5);
+	
+	if (self.trueowner != world)
+		HL_RadiusDamage(self.origin, self, self.trueowner, self.dmg, "", DMGTYPE_EXPLOSION);
+	else
+		HL_RadiusDamage(self.origin, self, self, self.dmg, "", DMGTYPE_EXPLOSION);
+	
+	particle(self.origin, '0 0 0', 73, 11);
+}
+
+/*
+============
+W_SnarkPrecache
+============
+*/
 
 void() W_SnarkPrecache =
 {
@@ -4387,10 +4571,22 @@ void() W_SnarkPrecache =
 	precache_sound("squeek/sqk_deploy1.wav");
 }
 
+/*
+============
+W_SnarkDeploy
+============
+*/
+
 void() W_SnarkDeploy =
 {
 	HL_DefaultDeploy(0, 33, 33, 20);
 }
+
+/*
+============
+W_SnarkHolster
+============
+*/
 
 float() W_SnarkHolster =
 {
@@ -4400,6 +4596,12 @@ float() W_SnarkHolster =
 	}
 	return TRUE;
 }
+
+/*
+============
+W_SnarkPrimAttack
+============
+*/
 
 float() W_SnarkPrimAttack =
 {
@@ -4433,6 +4635,12 @@ float() W_SnarkPrimAttack =
 	}
 	return TRUE;
 }
+
+/*
+============
+W_SnarkIdle
+============
+*/
 
 void() W_SnarkIdle =
 {

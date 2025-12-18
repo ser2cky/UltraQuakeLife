@@ -22,8 +22,191 @@
 //	11.29.25: snarks.
 //	11.30.25: finished snarks. thanks to skidmark
 //	for fixes.
+//	12.15.25: new traceattack, fixed exp. code
 //
 //======================================
+
+/*
+============
+T_RadiusDamage2
+Based in Half-life
+RadiusDamage code..
+============
+*/
+void(vector src, entity inflictor, entity attacker, float damage, float radius, string ignore, float dmgtype = DMGTYPE_EXPLOSION) T_RadiusDamage2 =
+{
+	local entity ent = world;
+	local float adjusteddamage, falloff;
+	local vector spot;
+	local vector endpos;
+	local float frac;
+	
+	if (radius)
+		falloff = damage / radius;
+	else
+		falloff = 1.0;
+	
+	float inwater = (pointcontents(src) == CONTENT_WATER);
+	
+	src_z += 1;
+	
+	if (!attacker)
+		attacker = inflictor;
+	
+	ent = findradius(src, radius);
+	
+	while (ent)
+	{
+		if (ent.takedamage != DAMAGE_NO)
+		{
+			if (ent.classname == ignore)
+			{
+				ent = ent.chain;
+				continue;
+			}
+			
+			if (inwater && ent->waterlevel == 0)
+			{
+				ent = ent.chain;
+				continue;
+			}
+			if (inwater && ent->waterlevel == 3)
+			{
+				ent = ent.chain;
+				continue;
+			}
+				
+			spot = (ent.absmax + ent.absmin) * 0.5;
+			
+			traceline(src, spot, 0, inflictor);
+			endpos = trace_endpos;
+			frac = trace_fraction;
+			
+			if (frac == 1.0 || trace_ent == ent)
+			{
+				if (trace_startsolid)
+				{
+					endpos = src;
+					frac = 0.0;
+				}
+				
+				adjusteddamage = vlen(src - endpos) * falloff;
+				adjusteddamage = damage - adjusteddamage;
+				
+				if ( adjusteddamage < 0)
+				{
+					adjusteddamage = 0;
+				}
+				
+				if (frac != 1.0)
+				{
+					HL_ClearMultiDamage();
+					HL_TraceAttack(inflictor, adjusteddamage, normalize(endpos - src));
+					HL_ApplyMultiDamage(inflictor, attacker);
+				}
+				else
+				{
+					T_Damage (ent, inflictor, attacker, adjusteddamage, dmgtype);
+				}
+			}
+		}
+		ent = ent.chain;
+	}
+}
+
+void(vector src, entity inflictor, entity attacker, float damage, string ignore, float dmgtype = DMGTYPE_EXPLOSION) HL_RadiusDamage =
+{
+	T_RadiusDamage2(src, inflictor, attacker, damage, damage * 2.5, ignore, dmgtype);
+}
+
+/*
+================
+MultiDamage stuff...
+
+Made to replicate  Hl1's way of
+dealing with MultiDamage...
+================
+*/
+
+float multi_damage;
+
+void() HL_ClearMultiDamage =
+{
+	multi_ent = world;
+	multi_damage = 0;
+};
+
+void(entity inflictor, entity attacker, float dmgtype = 0) HL_ApplyMultiDamage =
+{
+	if (!multi_ent)
+		return;
+	
+	if ((dmgtype & DMGTYPE_NEVERGIB))
+	{
+		if ((multi_ent.health - multi_damage) < 0)
+			multi_damage = multi_ent.health;
+		if (multi_ent.deadflag != DEAD_NO)
+			multi_damage = 0;
+	}
+	
+	T_Damage (multi_ent, inflictor, attacker, multi_damage, dmgtype);
+	multi_ent = world;
+}
+
+void(entity inflictor, entity hit, float dmg, float dmgtype = 0) HL_AddMultiDamage =
+{
+	if (!hit)
+		return;
+
+	if (hit != multi_ent)
+	{
+		HL_ApplyMultiDamage(inflictor, inflictor, dmgtype);
+		multi_damage = dmg;
+		multi_ent = hit;
+	}
+
+	multi_damage += dmg;
+}
+
+
+/*
+================
+HL_TraceAttack
+
+Custom version of Traceattack made
+to work similar to Half-Life's
+================
+*/
+
+vector(entity attacker, float damage, vector dir, float dmgtype = 0) HL_TraceAttack =
+{
+	vector vel, org;
+	
+	vel = normalize(dir + v_up*crandom() + v_right*crandom());
+	vel = vel + 2*trace_plane_normal;
+
+	org = trace_endpos - dir*4;
+
+	if (trace_ent.takedamage)
+	{
+		if (multi_damage >= trace_ent.health && (trace_ent.flags & FL_MONSTER || trace_ent.flags & FL_CORPSE))
+		{
+			trace_ent.gravity = 0.5;
+			trace_ent.flags &= ~FL_ONGROUND;
+			
+			trace_ent.origin_z += 1.0;
+			trace_ent.velocity_x += dir_x * (multi_damage * 2.5);
+			trace_ent.velocity_y += dir_y * (multi_damage * 2.5);
+			trace_ent.velocity_z += multi_damage / 2;
+		}
+	
+		SpawnBlood (org, vel*40, damage);
+		HL_AddMultiDamage (attacker, trace_ent, damage, dmgtype);
+	}
+	else gunshot(org);
+
+	return org;
+}
 
 /*
 ============
@@ -76,7 +259,7 @@ HL_DefaultReload
 ============
 */
 
-float(float frame_start, float frame_end, float frame_reset, float framerate, float clipsize, float delay, optional float idle = 3.0) HL_DefaultReload = 
+float(float frame_start, float frame_end, float frame_reset, float framerate, float clipsize, float delay, float idle = 3.0) HL_DefaultReload = 
 {
 	weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
 
@@ -119,7 +302,7 @@ entity(vector endpos) HL_CorpseChecker =
 			if (ent.deadflag == DEAD_DEAD)
 			{
 				trace_ent = ent;
-				sprint(self, "Hit something!\n");
+				//sprint(self, "Hit something!\n");
 				return ent;
 			}
 			ent = ent.chain;
@@ -135,9 +318,9 @@ HL_FireBullets
 ============
 */
 
-void(float shots, vector src, vector dir, vector spread, float distance, float damage, float can_gib = FALSE) HL_FireBullets =
+void(float shots, vector src, vector dir, vector spread, float distance, float damage, entity attacker, float dmgtype = 0) HL_FireBullets =
 {
-	ClearMultiDamage();
+	HL_ClearMultiDamage();
 	for (float shot = 1; shot <= shots; shot++)
 	{
 		float x, y, z;
@@ -154,7 +337,7 @@ void(float shots, vector src, vector dir, vector spread, float distance, float d
 		
 		if (trace_fraction != 1.0)
 		{
-			TraceAttack (damage, dir);
+			HL_TraceAttack (attacker, damage, dir, dmgtype);
 		}
 		
 		// Corpse checker!
@@ -169,20 +352,13 @@ void(float shots, vector src, vector dir, vector spread, float distance, float d
 			if (corpse != world)
 			{
 				trace_ent = corpse;
-				TraceAttack (damage, dir);
+				HL_TraceAttack (attacker, damage, dir);
 			}
 		}
 		// Put bubble trail here...
 	}
-
-	// Basic gib check!
-	if (!can_gib && (trace_ent.deadflag != DEAD_NO) && (trace_ent.multi_dmg > trace_ent.health))
-	{
-		trace_ent.multi_dmg = 0;
-		trace_ent.health = 0;
-	}
-		
-	ApplyMultiDamage();
+	
+	HL_ApplyMultiDamage(self, attacker, dmgtype);
 }
 
 /*
@@ -333,6 +509,16 @@ float(float first) W_CrowbarSwing =
 		trace_fraction = 0.0;
 	}
 	
+	r = random();
+	if (r < 0.25)
+		SUB_CallAsSelf(player_axe1, self.animcontroller);
+	else if (r<0.5)
+		SUB_CallAsSelf(player_axeb1, self.animcontroller);
+	else if (r<0.75)
+		SUB_CallAsSelf(player_axec1, self.animcontroller);
+	else
+		SUB_CallAsSelf(player_axed1, self.animcontroller);
+	
 	if (trace_fraction >= 1.0)
 	{
 		if (first)
@@ -363,19 +549,19 @@ float(float first) W_CrowbarSwing =
 		else
 			W_SetWeaponAnim2(74, 89, 10, 20);
 			
-		ClearMultiDamage();
+		HL_ClearMultiDamage();
 		if ( self.attack_finished + 1 < time || deathmatch )
 		{
-			TraceAttack(10, v_forward);
+			HL_TraceAttack(self, 10, v_forward);
 		}
 		else
 		{
-			TraceAttack(5, v_forward);
+			HL_TraceAttack(self, 5, v_forward);
 		}
-		ApplyMultiDamage();
+		HL_ApplyMultiDamage(self, self);
 		self.attack_finished = time + 0.25;
 		
-		if (trace_ent)
+		if (trace_ent.takedamage)
 		{
 			r = random();
 		
@@ -510,11 +696,13 @@ float(vector spread, float nextattack, float dist_autoaim) W_GlockFire =
 	sound(self, CHAN_WEAPON, "weapons/pl_gun3.wav", random(0.92, 1.0), ATTN_NORM);
 	
 	vector dir = aim (self, AUTOAIM_DIST);
-	HL_FireBullets(1, self.origin + self.view_ofs, dir, spread, 8192, 16, FALSE);
+	HL_FireBullets(1, self.origin + self.view_ofs, dir, spread, 8192, 16, self, DMGTYPE_NEVERGIB);
 	
 	self.attack_finished = self.attack2_finished = time + nextattack;
 	self.nextidle = time + random(10,15);
 	self.punchangle_x -= 2;
+	
+	SUB_CallAsSelf(player_nail1, self.animcontroller);
 	return TRUE;
 }
 
@@ -693,11 +881,13 @@ float() W_PythonPrimAttack =
 	vector src = self.origin + self.view_ofs;
 	vector myaim = aim(self, AUTOAIM_DIST);
 	
-	HL_FireBullets(1, src, myaim, VECTOR_CONE_1DEGREES, 8192, 36, FALSE);
+	HL_FireBullets(1, src, myaim, VECTOR_CONE_1DEGREES, 8192, 36, self, DMGTYPE_NEVERGIB);
 	
 	self.attack_finished = time + 0.75;
 	self.nextidle = time + random(10, 15);
 	self.punchangle_x -= 10;
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
 	return TRUE;
 }
 
@@ -878,9 +1068,9 @@ float() W_ShotgunPrimAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(4, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, FALSE);
+		HL_FireBullets(4, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, self, DMGTYPE_NEVERGIB);
 	else
-		HL_FireBullets(6, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, FALSE);
+		HL_FireBullets(6, src, dir, VECTOR_CONE_10DEGREES, 2048, 10, self, DMGTYPE_NEVERGIB);
 		
 	if (self.currentammo != 0)
 	{
@@ -891,6 +1081,8 @@ float() W_ShotgunPrimAttack =
 	self.attack_finished = time + 0.75;
 	self.attack2_finished = time + 0.75;
 	self.punchangle_x -= 5;
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
 	return TRUE;
 }
 
@@ -935,9 +1127,9 @@ float() W_ShotgunSecAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, TRUE);
+		HL_FireBullets(8, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, self);
 	else
-		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, TRUE);
+		HL_FireBullets(12, src, dir, VECTOR_CONE_10DEGREES, 2048, 12, self);
 		
 	if (self.currentammo != 0)
 	{
@@ -1174,9 +1366,9 @@ float() W_MP5PrimAttack =
 	vector dir = aim (self, AUTOAIM_DIST);
 	
 	if (deathmatch)
-		HL_FireBullets(1, src, dir, VECTOR_CONE_6DEGREES, 8192, 10, FALSE);
+		HL_FireBullets(1, src, dir, VECTOR_CONE_6DEGREES, 8192, 10, self, DMGTYPE_NEVERGIB);
 	else
-		HL_FireBullets(1, src, dir, VECTOR_CONE_3DEGREES, 8192, 10, FALSE);
+		HL_FireBullets(1, src, dir, VECTOR_CONE_3DEGREES, 8192, 10, self, DMGTYPE_NEVERGIB);
 	// Buffed damage for single-player..
 	
 	if (!(self.items & IT_NAILS))
@@ -1191,6 +1383,8 @@ float() W_MP5PrimAttack =
 	
 	self.nextidle = time + random(10, 15);
 	self.punchangle_x = random(-2, 2);
+	
+	SUB_CallAsSelf(player_nail1, self.animcontroller);
 	return TRUE;
 };
 
@@ -1349,13 +1543,12 @@ void() W_BoltTouch =
 			dir1 = v_forward;
 		}
 		
-		ClearMultiDamage();
-		
 		trace_ent = other;
 		trace_endpos = self.origin;
-		TraceAttack(50, dir1);
 		
-		ApplyMultiDamage();
+		HL_ClearMultiDamage();
+		HL_TraceAttack(self.owner, 50, dir1, DMGTYPE_NEVERGIB);
+		HL_ApplyMultiDamage(self, self.owner, DMGTYPE_NEVERGIB);
 		
 		self.velocity = '0 0 0';
 		
@@ -1549,9 +1742,9 @@ float() W_CrossbowFireSniperBolt =
 		else
 			sound(self, CHAN_WEAPON, "weapons/xbow_hitbod2.wav", 1, ATTN_NORM);
 			
-		ClearMultiDamage();
-		TraceAttack(120, dir);
-		ApplyMultiDamage();
+		HL_ClearMultiDamage();
+		HL_TraceAttack(self, 120, dir, DMGTYPE_NEVERGIB);
+		HL_ApplyMultiDamage(self, self, DMGTYPE_NEVERGIB);
 	}
 	else
 	{
@@ -1571,6 +1764,7 @@ float() W_CrossbowFireSniperBolt =
 			mybolt.nextthink = time;
 	}
 	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
 	return TRUE;
 }
 
@@ -1631,6 +1825,7 @@ float() W_CrossbowFireBolt =
 	else
 		self.nextidle = 0.75;
 		
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
 	return TRUE;
 }
 
@@ -2032,6 +2227,8 @@ float() W_RPGPrimAttack =
 		self.attack_finished = time + 1.5;
 		self.nextidle = time + 1.5;
 		self.punchangle_x -= 5;
+		
+		SUB_CallAsSelf(player_shot1, self.animcontroller);
 	}
 	else
 	{
@@ -2260,8 +2457,8 @@ void() W_HornetTrack =
 			{
 				if (visible(ent))
 				{	
-					sprint(self.trueowner, ent.classname);
-					sprint(self.trueowner, "\n");
+					//sprint(self.trueowner, ent.classname);
+					//sprint(self.trueowner, "\n");
 					self.enemy = ent;
 				}
 			}
@@ -2499,6 +2696,9 @@ float() W_HGunPrimAttack =
 		self.attack_finished = time + 0.25;
 	}
 	self.nextidle = time + random(10,15);
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
+	
 	return TRUE;
 }
 
@@ -2577,6 +2777,9 @@ float() W_HGunSecAttack =
 	self.attack_finished = self.attack2_finished = time + 0.1;
 	self.nextidle = time + random(10, 15);
 	self.punchangle_x = random(0, 2);
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
+	
 	return TRUE;
 }
 
@@ -2869,7 +3072,7 @@ void(float primary) W_GaussStartFire =
 		}
 		
 		W_SetWeaponAnim2(13, 40, 73, 20);
-		player_shot1();
+		SUB_CallAsSelf(player_shot1, self.animcontroller);
 	}
 	sound(self, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + damage * (1.0 / 400.0), ATTN_NORM);
 	self.fuser3 = time + random(0.3, 0.8); // Aftershock sound timer..
@@ -2929,9 +3132,9 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 		
 		if (trace_ent.takedamage)
 		{
-			ClearMultiDamage();
-			TraceAttack(dmg, dir);
-			ApplyMultiDamage();
+			HL_ClearMultiDamage();
+			HL_TraceAttack(self, dmg, dir);
+			HL_ApplyMultiDamage(self, self);
 		}
 		
 		entity corpse = HL_CorpseChecker(trace_endpos);
@@ -2939,9 +3142,9 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 		if (corpse != world)
 		{
 			trace_ent = corpse;
-			ClearMultiDamage();
-			TraceAttack(dmg, dir);
-			ApplyMultiDamage();
+			HL_ClearMultiDamage();
+			HL_TraceAttack(self, dmg, dir);
+			HL_ApplyMultiDamage(self, self);
 		}
 		
 		if (trace_ent.solid == SOLID_BSP && !trace_ent.takedamage)
@@ -2955,7 +3158,7 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 			{
 				local vector r;
 				
-				sprint(self, "reflect\n");
+				//sprint(self, "reflect\n");
 				
 				r = 2.0 * trace_plane_normal * n + dir;
 				maxfrac = maxfrac - trace_fraction;
@@ -2983,13 +3186,13 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 					traceline(tr_endpos + dir * 8, dest, 0, self);
 					local vector beam_endpos = trace_endpos;
 					
-					sprint(self, "trace endpos 1:");
-					sprint(self, vtos(tr_endpos));
-					sprint(self, "\n");
+					//sprint(self, "trace endpos 1:");
+					//sprint(self, vtos(tr_endpos));
+					//sprint(self, "\n");
 					
-					sprint(self, "beam endpos 1:");
-					sprint(self, vtos(beam_endpos));
-					sprint(self, "\n");
+					//sprint(self, "beam endpos 1:");
+					//sprint(self, vtos(beam_endpos));
+					//sprint(self, "\n");
 					
 					
 					if (!trace_allsolid)
@@ -2997,14 +3200,14 @@ void(vector origsrc, vector dir, float dmg, float primary) W_GaussFire =
 						traceline(beam_endpos, tr_endpos, 0, self);
 						beam_endpos = trace_endpos;
 						
-						sprint(self, "beam endpos 2:");
-						sprint(self, vtos(beam_endpos));
-						sprint(self, "\n");
+						//sprint(self, "beam endpos 2:");
+						//sprint(self, vtos(beam_endpos));
+						//sprint(self, "\n");
 						
 						n = vlen(beam_endpos - tr_endpos);
 						
-						sprint(self, ftos(n));
-						sprint(self, "\n");
+						//sprint(self, ftos(n));
+						//sprint(self, "\n");
 						
 						if ( n < dmg )
 						{
@@ -3254,19 +3457,19 @@ void(vector src, vector dir) W_EgonFire =
 		
 	if (self.dmgtime < time)
 	{
-		ClearMultiDamage();
+		HL_ClearMultiDamage();
 		if (trace_ent && trace_ent.takedamage)
-			TraceAttack(20, dir);
-		ApplyMultiDamage();
+			HL_TraceAttack(self, 20, dir);
+		HL_ApplyMultiDamage(self, self);
 		
 		entity corpse = HL_CorpseChecker(trace_endpos);
 		
 		if (corpse != world)
 		{
 			trace_ent = corpse;
-			ClearMultiDamage();
-			TraceAttack(20, dir);
-			ApplyMultiDamage();
+			HL_ClearMultiDamage();
+			HL_TraceAttack(self, 20, dir);
+			HL_ApplyMultiDamage(self, self);
 		}
 		
 		if (deathmatch)
@@ -3691,17 +3894,17 @@ float(entity cl) W_SatchelHack =
 {
 	if (cl.ammo_satchels >= 0)
 	{
-		dprint("ready\n");
+		//dprint("ready\n");
 		return TRUE;
 	}
 	
 	if (cl.satchel_ready)
 	{
-		dprint("ready\n");
+		//dprint("ready\n");
 		return TRUE;
 	}	
 		
-	dprint("not ready\n");
+	//dprint("not ready\n");
 	return FALSE;
 }
 
@@ -3729,7 +3932,7 @@ float() W_SatchelHolster =
 {
 	if ((self.ammo_satchels <= 0) && (!self.satchel_ready))
 	{
-		dprint("No satchel\n");
+		//dprint("No satchel\n");
 		self.weapon &= ~WPN_SATCHEL;
 	}
 	return TRUE;
@@ -4254,6 +4457,7 @@ entity() W_CreateSnark =
 	
 	snark.movetype = MOVETYPE_TOSS;
 	snark.solid = SOLID_BBOX;
+	snark.view_ofs = '0 0 8';
 	
 	setmodel(snark, "progs/w_squeak.mdl");
 	setsize(snark, '-4 -4 0', '4 4 8');
@@ -4301,11 +4505,16 @@ void() Snark_UpdateToEnemyPos =
 	
 	if (self.enemy && self.enemy.deadflag == DEAD_NO)
 	{
-		dir = (self.enemy.origin + self.enemy.view_ofs) - self.origin;
-		mytarget = normalize(dir);
-		bprint(vtos(dir));
-		bprint("\n");
+		if (self.enemy.flags & FL_CLIENT)
+			dir = (self.enemy.origin + self.enemy.view_ofs) - self.origin;
+		else
+			dir = (((self.enemy.absmin + self.enemy.absmax) * 0.5)) - self.origin;
 		
+		mytarget = normalize(dir);
+
+		//bprint(vtos(dir));
+		//bprint("\n");
+	
 		float vel = vlen(self.velocity);
 		float adj = 50.0 / (vel + 10.0);
 		
@@ -4343,9 +4552,124 @@ void() Snark_UpdateToEnemyPos =
 
 /*
 ============
+Snark_CheckEnemy
+
+Hopefully this'll stop snarks
+from trying to get things thru.
+walls...
+============
+*/
+
+float(entity ent) Snark_CheckEnemy =
+{
+	if (ent == self)
+	{
+		//bprint("failed on self-consumption check\n");
+		return FALSE;
+	}
+	
+	if (ent == self.owner)
+	{
+		//bprint("tried biting hand that feeds\n");
+		return FALSE;
+	}
+
+	// Don't try fighting your own kind !!!
+	if (ent.classname == "monster_snark")
+	{
+		//bprint("failed on same race check\n");
+		return FALSE;
+	}
+
+	// Don't even bother...
+	if (ent.classname == "monster_zombie")
+	{
+		//bprint("failed on zombie\n");
+		return FALSE;
+	}
+		
+	if (ent.flags & FL_NOTARGET)
+	{
+		//bprint("failed on notarget check\n");
+		return FALSE;
+	}
+		
+	if (ent.takedamage == DAMAGE_NO)
+	{
+		//bprint("failed on takedamage check\n");
+		return FALSE;
+	}
+		
+	if (!(ent.flags & (FL_MONSTER | FL_CLIENT)))
+	{
+		//bprint("Not a monster or player.\n");
+		return FALSE;
+	}
+	
+	float z_diff = (ent.absmin_z - self.absmin_z);
+	
+	if ((z_diff >= 128) || (z_diff <= -128))
+	{
+		//bprint(ent.classname);
+		//bprint("too high\n");
+		return FALSE;
+	}
+	
+	if ((self.waterlevel != 3 && ent.waterlevel == 3) || (self.waterlevel == 3 && ent.waterlevel == 0))
+		return FALSE;
+	
+	traceline(self.origin + self.view_ofs, ent.origin + ent.view_ofs, 0, self);
+	
+	if (trace_fraction <= 0.75)
+	{
+		//bprint(ftos(trace_fraction));
+		//bprint(ent.classname);
+		//bprint("failed on trace check\n");
+		return FALSE;
+	}
+		
+	if (!FInViewcone(ent, 0))
+	{
+		bprint(ent.classname);
+		bprint("failed on viewcone check\n");
+		return FALSE;
+	}
+		
+	return TRUE;
+}
+
+/*
+============
 Snark_HuntThink
 ============
 */
+
+vector(vector vec) make2d =
+{
+	vector vec2;
+	vec2_x = vec_x;
+	vec2_y = vec_y;
+	
+	return vec2;
+}
+
+float(entity ent, float fov) FInViewcone =
+{
+	vector vec2LOS;
+	float flDot;
+
+	makevectors( self.angles );
+	
+	vec2LOS = make2d(ent.origin - self.origin);
+	vec2LOS = normalize(vec2LOS);
+
+	flDot = DotProduct (vec2LOS, make2d(v_forward));
+
+	if ( flDot > fov )
+		return TRUE;
+	else
+		return FALSE;
+}
 
 void() Snark_HuntThink =
 {
@@ -4373,7 +4697,7 @@ void() Snark_HuntThink =
 		self.frame = mod(self.frame + 1, 9);
 		self.nextanim = time + (1.0/45.0);
 		
-		float move = walkmove(self.angles_y, 5);
+		makevectors(self.angles);
 		
 		if (self.enemy != world)
 		{
@@ -4384,10 +4708,11 @@ void() Snark_HuntThink =
 		}
 		else
 		{
-			if (!move && (self.flags & FL_ONGROUND))
+			if (self.flags & FL_ONGROUND)
 			{
-				self.angles_y += 90;
-				bprint("turning\n");
+				makevectors(self.angles);
+				self.velocity = v_forward * 400 + '0 0 16';
+				self.flags &= ~FL_ONGROUND;
 			}
 		}
 	}
@@ -4403,6 +4728,24 @@ void() Snark_HuntThink =
 	if (self.fuser5 > time)
 		return;
 
+	if ((self.enemy == world) || (self.enemy.deadflag != DEAD_NO))
+	{
+		entity ent = findradius(self.origin, 512);
+		
+		while (ent)
+		{
+			if (Snark_CheckEnemy(ent))
+			{
+				//bprint(ent.classname);
+				//bprint("\n");
+				self.enemy = ent;
+				break;
+			}
+			ent = ent.chain;
+		}
+	}
+
+	// nextthink
 	self.fuser5 = time + 0.1;
 
 	if (self.waterlevel != 0)
@@ -4411,7 +4754,6 @@ void() Snark_HuntThink =
 		{
 			self.movetype = MOVETYPE_TOSS;
 		}
-		self.velocity = self.velocity * 0.9;
 		self.velocity_z += 8.0;
 	}
 	else if (self.movetype == MOVETYPE_TOSS) // toss makes them more bound by gravity - skidmark (hazel)
@@ -4423,35 +4765,8 @@ void() Snark_HuntThink =
 	if (self.fuser4 > time)
 		return;
 	
-	self.fuser4 = time + 2.0;
+	self.fuser4 = time + 1.0;
 	makevectors(self.angles);
-	
-	if (self.enemy == world)
-	{
-		entity ent = findradius(self.origin, 512);
-		
-		while (ent)
-		{
-			if (ent.takedamage && (ent.flags & FL_MONSTER || ent.flags & FL_CLIENT) && ent.classname != "monster_snark")
-			{
-				if (infront(ent))
-				{	
-					float difference = self.origin_z - ent.origin_z;
-					
-					bprint(ftos(difference));
-					bprint("\n");
-					if ((difference >= -36.0) && (difference <= 36.0) && infront(ent))
-					{
-						bprint(ent.classname);
-						bprint("\n");
-						self.enemy = ent;
-						break;
-					}
-				}
-			}
-			ent = ent.chain;
-		}
-	}
 	
 	if ((self.fuser1 - time <= 0.5) && (self.fuser1 - time <= 0.3))
 	{

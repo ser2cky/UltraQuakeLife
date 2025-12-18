@@ -10,6 +10,7 @@
 //	11.19.25: made dead bodies
 //	use solid_trigger instead of bbox.
 // 	also got rid of BBoxFlat check.
+//	12.15.25: removed unused code.
 //
 //======================================
 
@@ -41,77 +42,6 @@ void() BecomeDead =
 
 /*
 ============
-BBoxFlat
-
-Competely stolen
-from Half-Life...
-============
-*/
-
-#ifdef 0
-
-float() BBoxFlat =
-{
-	float xsize, ysize;
-	float len1, len2;
-	vector point;
-	
-	xsize = self.size_x / 2;
-	ysize = self.size_y / 2;
-
-	point_x = self.origin_x + xsize;
-	point_y = self.origin_y + ysize;
-	point_z = self.origin_z;
-	
-	traceline(point, point - '0 0 100', 1, self);
-	len1 = vlen(point - trace_endpos);
-	
-	point_x = self.origin_x - xsize;
-	point_y = self.origin_y - ysize;
-
-	traceline(point, point - '0 0 100', 1, self);
-	len2 = vlen(point - trace_endpos);
-	
-	if (len2 > len1)
-	{
-		return FALSE;
-	}
-
-	len1 = len2;
-	
-	point_x = self.origin_x - xsize;
-	point_y = self.origin_y + ysize;
-	
-	traceline(point, point - '0 0 100', 1, self);
-	len2 = vlen(point - trace_endpos);
-	
-	if (len2 > len1)
-	{
-		return FALSE;
-	}
-	
-	len1 = len2;
-
-	point_x = self.origin_x + xsize;
-	point_y = self.origin_y - ysize;
-	
-	traceline(point, point - '0 0 100', 1, self);
-	len2 = vlen(point - trace_endpos);
-	
-	if (len2 > len1)
-	{
-		return FALSE;
-	}
-	
-	len1 = len2;
-
-	return TRUE;
-}
-
-#endif
-
-/*
-============
 BecomeCorpse
 ============
 */
@@ -137,40 +67,7 @@ void(string gibname) BecomeCorpse =
 	
 	self.noise = gibname;
 	self.th_die = Corpse_Die;
-	
-	//self.think = Corpse_Think;
-	//self.nextthink = time;
-
-	// if (!BBoxFlat())
-	// {
-		// setsize(self, '-8 -8 0', '8 8 1');
-		// setorigin(self, self.origin);
-	// }
-	// else
-	// {
-		setsize(self, min, max);
-	// }
-}
-
-/*
-============
-Corpse_Think
-============
-*/
-
-void() Corpse_Think =
-{
-	if (!(self.flags & FL_ONGROUND) && self.solid != SOLID_BBOX)
-	{
-		self.solid = SOLID_BBOX;
-		setorigin(self, self.origin);
-	}
-	else if ((self.flags & FL_ONGROUND) && self.solid != SOLID_TRIGGER)
-	{
-		self.solid = SOLID_TRIGGER;
-		setorigin(self, self.origin);
-	}
-	self.nextthink = time;
+	setsize(self, min, max);
 }
 
 /*

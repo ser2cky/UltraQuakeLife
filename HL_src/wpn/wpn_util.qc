@@ -1165,6 +1165,8 @@ void() W_Precache =
 		weaponclass_t weap = weaponsclass[i];
 		weap.precache();
 	}
+	
+	HL_PrecacheItems();
 }
 
 /*
@@ -1175,5 +1177,5 @@ W_ResetWeaponState
 
 void() W_ResetWeaponState =
 {
-	player_run ();		// get out of any weapon firing states
+	SUB_CallAsSelf(player_run, self.animcontroller);		// get out of any weapon firing states
 }

@@ -70,6 +70,7 @@ void() SetChangeParms =
 	parm12 = self.ammo_satchels;
 	parm13 = self.ammo_tripmines;
 	parm14 = self.ammo_snarks;
+	parm15 = self.player_modelnumber;
 }
 
 void() SetNewParms =
@@ -79,7 +80,7 @@ void() SetNewParms =
 	parm4 = 10;
 	parm8 = WPN_GLOCK;
 	parm3 = 0;
-	parm5 = 50;
+	parm5 = 17;
 	parm6 = 0;
 	parm7 = 0;
 	parm9 = 0;
@@ -88,6 +89,7 @@ void() SetNewParms =
 	parm12 = 0;
 	parm13 = 0;
 	parm14 = 0;
+	parm15 = 0;
 }
 
 
@@ -112,6 +114,7 @@ void() SetCoopParms =
 	parm12 = 0;
 	parm13 = 0;
 	parm14 = 0;
+	parm15 = self.player_modelnumber;
 }
 
 void() DecodeLevelParms =
@@ -134,6 +137,7 @@ void() DecodeLevelParms =
 	self.ammo_satchels = parm12;
 	self.ammo_tripmines = parm13;
 	self.ammo_snarks = parm14;
+	self.player_modelnumber = parm15;
 	
 	armor_set_type(self);
 }
@@ -578,7 +582,6 @@ entity() SelectSpawnPoint =
 	return spot;
 }
 
-
 /*
 ===========
 PutClientInServer
@@ -662,14 +665,23 @@ void() PutClientInServer =
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
 
+	setmodel (self, "progs/player_gordon.mdl");
+	modelindex_gordon = self.modelindex;
+
+	setmodel (self, "progs/player_hgrunt.mdl");
+	modelindex_hgrunt = self.modelindex;
+
 	setmodel (self, "progs/player.mdl");
 	modelindex_player = self.modelindex;
+
+	if (!self.player_modelindex)
+		self.player_modelindex = modelindex_player;
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	self.view_ofs = '0 0 22';
 
-	player_stand1();
+	SUB_CallAsSelf(player_stand1, self.animcontroller);
 	
 	// spawns fire targets when spawned at
 	SUB_UseEntTargets(spot);
@@ -953,7 +965,7 @@ void() PlayerDeathThink =
 		spawn_tdeath (self.origin, self);
 		
 		self.view_ofs = '0 0 22';
-		self.modelindex = modelindex_player;
+		self.modelindex = self.player_modelindex;
 		player_stand1();
 		W_ResetWeaponState();
 		
@@ -1350,7 +1362,7 @@ void() CheckPowerups =
 		self.modelindex = modelindex_eyes;
 	}
 	else
-		self.modelindex = modelindex_player;	// don't use eyes
+		self.modelindex = self.player_modelindex;	// don't use eyes
 
 // invincibility
 	if (self.invincible_finished)
@@ -1514,6 +1526,25 @@ void() PlayerUpdateStepSound =
 
 /*
 ================
+PlayerModelCheck
+
+Update modelindex accordingly if
+the index order somehow changes.
+================
+*/
+
+void() PlayerModelCheck =
+{
+	float modelindexes[3] = 
+	{modelindex_player, 
+	modelindex_gordon, 
+	modelindex_hgrunt};
+	
+	self.player_modelindex = modelindexes[self.player_modelnumber];
+}
+
+/*
+================
 PlayerPreThink
 
 Called every frame before physics are run
@@ -1637,6 +1668,7 @@ void() PlayerPostThink =
 		self.jump_flag = 0;
 	}
 
+	PlayerModelCheck();
 	CheckPowerups ();
 	
 	if (self.movetype != MOVETYPE_NOCLIP) 
@@ -1690,6 +1722,20 @@ void() ClientKill =
 
 /*
 ===========
+CreateAnimController
+
+From Alkaline.
+============
+*/
+void() CreateAnimController = 
+{
+	self.animcontroller = spawn();
+	self.animcontroller.owner = self;
+	self.animcontroller.classname = "animcontroller";
+}
+
+/*
+===========
 ClientConnect
 
 called when a player connects to a server
@@ -1702,6 +1748,9 @@ void() ClientConnect =
 	
 	clients += 1;
 //	clientsAlive += 1;	// happens on putclientinserver
+	
+	if (self.animcontroller.classname != "animcontroller") 
+		CreateAnimController();
 	
 // a client connecting during an intermission can cause problems
 	if (intermission)
@@ -1729,6 +1778,9 @@ void() ClientDisconnect =
 	
 	// don't leave with keys
 	TransferKeys();
+	
+	if (self.animcontroller.classname == "animcontroller") 
+		remove(self.animcontroller);
 	
 	// let everyone else know
 	bprint (self.netname);
@@ -1802,6 +1854,15 @@ void(float dmgtype) ClientObituary =
 
 		if (deathmatch)
 			attacker.owner.frags = attacker.owner.frags + 1;
+		return;
+	}
+	if (attacker.classname == "crate")
+	{
+		bprint (self.netname);
+		bprint (" was telefragged by a crate!\n");
+
+		if (deathmatch)
+			self.frags = self.frags - 1;
 		return;
 	}
 	if (attacker.classname == "trigger_void" || attacker.classname == "func_void")

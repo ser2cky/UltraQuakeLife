@@ -9,6 +9,13 @@
 //======================================
 
 const float FL_CORPSE = 16384;
+const float FL_ALMOST_DEAD = 32768;
+
+.float player_modelindex;
+.float player_modelnumber;
+
+float modelindex_hgrunt;
+float modelindex_gordon;
 
 /*
 ============
@@ -63,6 +70,7 @@ to ents.
 
 .entity ent1;
 .entity ent2;
+.entity animcontroller;
 
 // extra vectors
 .vector vuser1;

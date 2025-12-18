@@ -55,6 +55,8 @@ shooters.qc
 walls.qc
 sound.qc
 
+wpn/hl_misc_ents.qc
+
 fog.qc			// atmosfear
 t_void.qc		// bottomless pits
 fx.qc			// more dots

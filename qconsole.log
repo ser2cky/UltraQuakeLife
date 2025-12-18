@@ -4,8 +4,8 @@ Exe: 13:01:46 Nov 15 2025
 1907.3 megabyte heap
 Invalid joysticknum value
 No joysticks found
-7662k surface cache
-Detected video mode 2
+8412k surface cache
+WARNING: non-standard video mode
 Couldn't load 'localization/loc_english.txt'
 execing quake.rc
 execing default.cfg
@@ -17,408 +17,194 @@ Playing demo from demo1.dem.
 the Necropolis
 Using protocol 15
 file for music/track02.wv not found
-You got the shells
-]map crossfire
-No spawn function for:
-
-EDICT 8:
-origin         '-112.0 -1424.0 -1552.0'
-angles         '  0.0 122.0   0.0'
-classname      light_environment
-No spawn function for:
-
-EDICT 9:
-classname      func_healthcharger
-model          *1
-No spawn function for:
-
-EDICT 9:
-classname      func_healthcharger
-model          *2
-No spawn function for:
-
-EDICT 9:
-classname      func_healthcharger
-model          *3
-No spawn function for:
-
-EDICT 9:
-classname      func_healthcharger
-model          *4
-No spawn function for:
-
-EDICT 11:
-classname      func_ladder
-model          *7
-No spawn function for:
-
-EDICT 11:
-classname      func_ladder
-model          *8
-No spawn function for:
-
-EDICT 13:
-classname      func_ladder
-model          *14
-No spawn function for:
-
-EDICT 13:
-classname      func_ladder
-model          *15
-No spawn function for:
-
-EDICT 15:
-origin         '-400.0 -1504.0 -1360.0'
-classname      ambient_generic
-health          10.0
-spawnflags      56.0
-targetname     tower1_cannon_targ
-message        weapons/sbarrel1.wav
-No spawn function for:
-
-EDICT 15:
-origin         '-432.0 -1504.0 -1360.0'
-classname      env_shake
-targetname     tower1_cannon_targ
-No spawn function for:
-
-EDICT 15:
-origin         '296.0 -1512.0 -1360.0'
-classname      env_shake
-targetname     tower2_cannon_targ
-No spawn function for:
-
-EDICT 15:
-origin         '328.0 -1512.0 -1360.0'
-classname      ambient_generic
-health          10.0
-spawnflags      56.0
-targetname     tower2_cannon_targ
-message        weapons/sbarrel1.wav
-No spawn function for:
-
-EDICT 18:
-origin         '160.0 208.0 -1392.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         '-544.0 208.0 -1392.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         '-465.0 1120.0 -1392.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         ' 81.0 1120.0 -1392.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         '  0.0 -1584.0 -1560.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         ' -2.0 -2240.0 -1744.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 18:
-origin         '  2.0 -356.0 -1540.0'
-classname      ambient_generic
-health          10.0
-spawnflags      24.0
-targetname     strike_siren
-message        ambience/siren.wav
-No spawn function for:
-
-EDICT 19:
-origin         '-736.0  16.0 -1536.0'
-classname      monster_barney
-No spawn function for:
-
-EDICT 19:
-origin         '  0.0 -240.0 -1696.0'
-classname      monster_barney
-No spawn function for:
-
-EDICT 69:
-origin         '320.0 -1536.0 -1744.0'
-classname      monster_barney
-No spawn function for:
-
-EDICT 78:
-origin         '336.0 1216.0 -1840.0'
-angles         '  0.0 180.0   0.0'
-classname      item_longjump
-No spawn function for:
-
-EDICT 78:
-classname      func_recharge
-model          *37
-No spawn function for:
-
-EDICT 78:
-classname      func_recharge
-model          *38
-No spawn function for:
-
-EDICT 78:
-origin         '336.0 448.0 -1840.0'
-angles         '  0.0 180.0   0.0'
-classname      item_longjump
-No spawn function for:
-
-EDICT 92:
-origin         '-688.0 960.0 -1680.0'
-classname      item_healthkit
-No spawn function for:
-
-EDICT 92:
-origin         '-688.0 992.0 -1680.0'
-classname      item_healthkit
-No spawn function for:
-
-EDICT 101:
-origin         '848.0 1312.0 -1520.0'
-angles         '  0.0  90.0   0.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 101:
-origin         '816.0 1312.0 -1520.0'
-angles         '  0.0  90.0   0.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 101:
-classname      func_healthcharger
-model          *39
-No spawn function for:
-
-EDICT 101:
-classname      func_healthcharger
-model          *40
-No spawn function for:
-
-EDICT 125:
-origin         '472.0 280.0 -1520.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 125:
-origin         '472.0 312.0 -1520.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 125:
-origin         '-712.0 280.0 -1520.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 125:
-origin         '-680.0 280.0 -1520.0'
-classname      item_battery
-No spawn function for:
-
-EDICT 143:
-origin         '368.0 -1632.0 -1296.0'
-classname      multi_manager
-targetname     tower2_button_target
-No spawn function for:
-
-EDICT 143:
-origin         '  0.0 -1728.0 -1296.0'
-classname      multisource
-target         strike_mm
-targetname     tower_buttons_ms
-No spawn function for:
-
-EDICT 144:
-origin         '-368.0 -1632.0 -1296.0'
-classname      multi_manager
-targetname     tower1_button_target
-No spawn function for:
-
-EDICT 144:
-origin         '  0.0 -1696.0 -1296.0'
-classname      trigger_auto
-spawnflags       1.0
-target         strike_timer_relay
-No spawn function for:
-
-EDICT 145:
-origin         ' 64.0 -1696.0 -1296.0'
-classname      multi_manager
-spawnflags       1.0
-targetname     strike_timer_mma
-No spawn function for:
-
-EDICT 145:
-origin         ' 64.0 -1720.0 -1296.0'
-classname      multi_manager
-spawnflags       1.0
-targetname     strike_timer_mmb
-No spawn function for:
-
-EDICT 145:
-origin         ' 64.0 -2304.0 -1840.0'
-classname      multi_manager
-targetname     strike_mm
-No spawn function for:
-
-EDICT 145:
-origin         ' 64.0 -2336.0 -1840.0'
-classname      ambient_generic
-health           6.0
-spawnflags      49.0
-targetname     strike_flybywav
-message        ambience/jetflyby1.wav
-No spawn function for:
-
-EDICT 145:
-origin         ' 96.0 -2336.0 -1840.0'
-classname      env_fade
-spawnflags       1.0
-targetname     strike_flash
-No spawn function for:
-
-EDICT 145:
-origin         '128.0 -2336.0 -1840.0'
-classname      env_shake
-spawnflags       1.0
-targetname     strike_shake
-No spawn function for:
-
-EDICT 145:
-origin         '160.0 -2336.0 -1840.0'
-classname      ambient_generic
-health          10.0
-spawnflags      49.0
-targetname     strike_wav
-message        weapons/mortarhit.wav
-No spawn function for:
-
-EDICT 145:
-origin         '160.0 -2352.0 -1840.0'
-classname      ambient_generic
-health          10.0
-spawnflags      49.0
-targetname     strike_wav
-message        debris/beamstart11.wav
-No spawn function for:
-
-EDICT 145:
-origin         '160.0 -2368.0 -1840.0'
-classname      ambient_generic
-health          10.0
-spawnflags      49.0
-targetname     strike_wav
-message        weapons/electro5.wav
-No spawn function for:
-
-EDICT 146:
-origin         '160.0 -2320.0 -1840.0'
-classname      ambient_generic
-health          10.0
-spawnflags      49.0
-targetname     strike_wav
-message        weapons/mortarhit.wav
-No spawn function for:
-
-EDICT 146:
-origin         '160.0 -2304.0 -1840.0'
-classname      ambient_generic
-health          10.0
-spawnflags      49.0
-targetname     strike_wav
-message        weapons/mortarhit.wav
-No spawn function for:
-
-EDICT 162:
-angles         '  0.0  90.0   0.0'
-classname      func_tankmortar
-model          *53
-spawnflags      32.0
-target         tower2_cannon_targ
-targetname     tower2_cannon
-No spawn function for:
-
-EDICT 162:
-classname      func_tankcontrols
-model          *54
-target         tower2_cannon
-No spawn function for:
-
-EDICT 162:
-angles         '  0.0  90.0   0.0'
-classname      func_tankmortar
-model          *55
-spawnflags      32.0
-target         tower1_cannon_targ
-targetname     tower1_cannon
-No spawn function for:
-
-EDICT 162:
-classname      func_tankcontrols
-model          *56
-target         tower1_cannon
 
-FITZQUAKE 0.85 SERVER(41867 CRC)
-desert
+FITZQUAKE 0.85 SERVER(15674 CRC)
+Introduction
 Using protocol 666
-file for music/track01.wv not found
-You got the Snarks (slot 9)
-You got the R.P.G
-You got the 9mm Handgun
-You got the Tau Canon
-You got the Crossbow
-You got the Hornet-Gun
-You got the Gluon Gun (slot 8)
-You got the .357 (slot 2)
-You got the Crowbar
-You got the Tripmine (slot 9)
-You got the Satchel (slot 9)
-You got the Hand-Grenades (slot 9)
-You got the Shotgun
+file for music/track04.wv not found
+
+FITZQUAKE 0.85 SERVER(15674 CRC)
+the Slipgate Complex
+Using protocol 666
+file for music/track06.wv not found
+playerfailed on viewcone check
+You got 5 shells
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+monster_armyfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+monster_armyfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+serecky becomes bored with life
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+
+FITZQUAKE 0.85 SERVER(15674 CRC)
+the Slipgate Complex
+Using protocol 666
+file for music/track06.wv not found
+monster_armyfailed on viewcone check
+You got 5 shells
+You got 5 shells
+You got armor
+You got the Shotgun Shells
+monster_armyfailed on viewcone check
+monster_armyfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+You got 5 shells
+You got 5 shells
+You got 5 shells
+noclip ON
+noclip OFF
+You got 5 shells
+You got 5 shells
+You are healed by 25
+You are healed by 25
+You are healed by 15
+You got 5 shells
+You got 5 shells
+You got 5 shells
+You are healed by 15
+You got 5 shells
+You are healed by 15
+You begin to channel unstoppable power ...
+You got the Shotgun Shells
+You got the .44 Cal. Bullets
+You got 5 shells
+You got 5 shells
+You got 5 shells
+You got 5 shells
+You got 5 shells
 You got the 9mm Assault Rifle
-You got the Shotgun
-You got the Box of Uranium
-You got the Box of Shotgun Shells
-You got the Singular Rocket
-You got the Singular Rocket
-You got the Box of Shotgun Shells
-You got the Box of Uranium
-You got the Singular Rocket
-You got the Singular Rocket
-You got the Singular Rocket
-You got the Box of Uranium
+Quad damage's power weakens ...
+You got 5 shells
+You got 5 shells
+You got the .357 (slot 2)
+You got 5 shells
+You got 5 shells
+You got 5 shells
+You are healed by 15
+You got 5 shells
+You got 5 shells
+You got 5 shells
+You got 5 shells
+serecky becomes bored with life
+
+FITZQUAKE 0.85 SERVER(15674 CRC)
+the Slipgate Complex
+Using protocol 666
+file for music/track06.wv not found
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
+playerfailed on viewcone check
 Wrote ./HalfLife/config.cfg

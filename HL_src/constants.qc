@@ -101,6 +101,7 @@ const float DMGTYPE_LAVA			= 256;
 const float DMGTYPE_SLIME			= 512;
 const float DMGTYPE_CRUSH			= 1024;
 const float DMGTYPE_SCRIPT			= 2048;	// target_items, invoke, etc
+const float DMGTYPE_NEVERGIB		= 4096;
 
 const float	TRACE_NOMONSTERS		= 1;
 const float	TRACE_WATER				= 2;

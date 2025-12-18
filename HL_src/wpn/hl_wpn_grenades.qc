@@ -176,10 +176,10 @@ void() HL_GrenadeBounceTouch =
 
 	if ((self.owner) && (self.attack_finished < time) && (vlen(self.velocity) > 100) && (other != world))
 	{
-		ClearMultiDamage();
+		HL_ClearMultiDamage();
 		trace_ent = other;
-		TraceAttack(1, v_forward);
-		ApplyMultiDamage();
+		HL_TraceAttack(self, 1, v_forward);
+		HL_ApplyMultiDamage(self, self.trueowner);
 		self.attack_finished = time + 1.0;
 	}
 	

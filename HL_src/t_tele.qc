@@ -130,7 +130,7 @@ void(entity client) teleport_exit_limbo =
 	}
 	else
 	{
-		client.modelindex = modelindex_player;
+		client.modelindex = client.player_modelindex;
 		client.model = "progs/player.mdl";
 	}
 }

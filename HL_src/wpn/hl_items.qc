@@ -12,6 +12,8 @@
 //	11.28.25: Started.
 //	11.30.25: Starting to streamline the
 //	item creation process...
+//	12.15.25: randomized pickups suck...
+//	using crates now!!!
 //
 //======================================
 
@@ -51,7 +53,7 @@ itemdef_t item_glock =
 	ITEMTYPE_WEAPON, //type
 	"9mm Handgun", // netname
 	"nails", // ammo type
-	17 // ammo give
+	8 // ammo give
 };
 
 itemdef_t item_357 =
@@ -61,7 +63,7 @@ itemdef_t item_357 =
 	ITEMTYPE_WEAPON, //type
 	".357 (slot 2)", // netname
 	"nails", // ammo type
-	25 // ammo give
+	6 // ammo give
 };
 
 itemdef_t item_shotgun =
@@ -71,7 +73,7 @@ itemdef_t item_shotgun =
 	ITEMTYPE_WEAPON, //type
 	"Shotgun", // netname
 	"shells", // ammo type
-	12 // ammo give
+	6 // ammo give
 };
 
 itemdef_t item_mp5 =
@@ -121,7 +123,7 @@ itemdef_t item_gauss =
 	ITEMTYPE_WEAPON, //type
 	"Tau Canon", // netname
 	"cells", // ammo type
-	20 // ammo give
+	5 // ammo give
 };
 
 itemdef_t item_egon =
@@ -131,7 +133,7 @@ itemdef_t item_egon =
 	ITEMTYPE_WEAPON, //type
 	"Gluon Gun (slot 8)", // netname
 	"cells", // ammo type
-	20 // ammo give
+	5 // ammo give
 };
 
 itemdef_t item_handgrenade =
@@ -211,7 +213,7 @@ itemdef_t item_ARgrenades =
 	"progs/w_ARgrenade.mdl", // mdl
 	WPN_NONE, // item it gives you
 	ITEMTYPE_AMMO, //type
-	"M203 Grenades", // netname
+	"Assault Rifle Grenades", // netname
 	"rockets", // ammo type
 	2 // ammo give
 };
@@ -221,9 +223,9 @@ itemdef_t item_sshells =
 	"progs/w_shotbox.mdl", // mdl
 	WPN_NONE, // item it gives you
 	ITEMTYPE_AMMO, //type
-	"Box of Shotgun Shells", // netname
+	"Shotgun Shells", // netname
 	"shells", // ammo type
-	12 // ammo give
+	8 // ammo give
 };
 
 itemdef_t item_357ammo =
@@ -231,7 +233,7 @@ itemdef_t item_357ammo =
 	"progs/w_357ammobox.mdl", // mdl
 	WPN_NONE, // item it gives you
 	ITEMTYPE_AMMO, //type
-	"Box of .44 Cal. Bullets", // netname
+	".44 Cal. Bullets", // netname
 	"nails", // ammo type
 	6 // ammo give
 };
@@ -241,7 +243,7 @@ itemdef_t item_rpgclip =
 	"progs/w_rpgammo.mdl", // mdl
 	WPN_NONE, // item it gives you
 	ITEMTYPE_AMMO, //type
-	"Singular Rocket", // netname
+	"Rocket", // netname
 	"rockets", // ammo type
 	1 // ammo give
 };
@@ -251,7 +253,7 @@ itemdef_t item_gaussclip =
 	"progs/w_gaussammo.mdl", // mdl
 	WPN_NONE, // item it gives you
 	ITEMTYPE_AMMO, //type
-	"Box of Uranium", // netname
+	"Uranium", // netname
 	"cells", // ammo type
 	20 // ammo give
 };
@@ -296,6 +298,8 @@ itemdef_t all_items[23] =
 /*
 =============
 HL_GetItemIndexByName
+
+Grab item index by it's classname.
 =============
 */
 
@@ -303,20 +307,20 @@ float(string item_name) HL_GetItemIndexByName =
 {
 	switch (item_name)
 	{
-		case "crowbar":				return 0;
-		case "glock":				return 1;
-		case "357":					return 2;
-		case "shotgun":				return 3;
-		case "mp5":					return 4;
-		case "crossbow":			return 5;
-		case "rpg":					return 6;
-		case "hornetgun":			return 7;
-		case "gauss":				return 8;
-		case "egon":				return 9;
-		case "handgrenade":			return 10;
-		case "tripmine":			return 11;
-		case "satchel":				return 12;
-		case "snark":				return 13;
+		case "weapon_crowbar":			return 0;
+		case "weapon_9mmhandgun":		return 1;
+		case "weapon_357":				return 2;
+		case "weapon_shotgun":			return 3;
+		case "weapon_9mmAR":			return 4;
+		case "weapon_crossbow":			return 5;
+		case "weapon_rpg":				return 6;
+		case "weapon_hornetgun":		return 7;
+		case "weapon_gauss":			return 8;
+		case "weapon_egon":				return 9;
+		case "weapon_handgrenade":		return 10;
+		case "weapon_tripmine":			return 11;
+		case "weapon_satchel":			return 12;
+		case "weapon_snark":			return 13;
 		case "ammo_9mmclip":		return 14;
 		case "ammo_9mmAR":			return 15;
 		case "ammo_9mmbox":			return 16;
@@ -325,7 +329,7 @@ float(string item_name) HL_GetItemIndexByName =
 		case "ammo_357":			return 19;
 		case "ammo_rpgclip":		return 20;
 		case "ammo_gaussclip":		return 21;
-		case "ammo_crossbow ":		return 22;
+		case "ammo_crossbow":		return 22;
 		default:					return 0;
 	}
 }
@@ -345,7 +349,6 @@ void(entity item, string item_name) HL_SpawnItem =
 		return;
 	}
 	
-	precache_model3 (my_item.model);
 	setmodel (item, my_item.model);
 	item.netname = my_item.netname;
 	
@@ -353,13 +356,50 @@ void(entity item, string item_name) HL_SpawnItem =
 	{
 		item.weapon = my_item.item_id;
 		item.(ammo_fields[W_GetAmmoField(my_item.ammo)]) = my_item.ammogive;
-		HL_FallInit();
+		HL_FallInit(item);
 	}
 	else if (my_item.type == ITEMTYPE_AMMO)
 	{
 		item.(ammo_fields[W_GetAmmoField(my_item.ammo)]) = my_item.ammogive;
-		HL_AmmoSpawn();
+		HL_AmmoSpawn(item);
 	}
+};
+
+/*
+=============
+HL_SpawnItem
+=============
+*/
+
+entity(string item_name) HL_SpawnItem2 =
+{
+	entity item;
+
+	itemdef_t my_item = all_items[HL_GetItemIndexByName(item_name)];
+	
+	if (!SUB_ShouldSpawn()) 
+	{
+		return item;
+	}
+	
+	item = spawn();
+	setmodel (item, my_item.model);
+	item.netname = my_item.netname;
+	item.classname = item_name;
+	
+	if (my_item.type == ITEMTYPE_WEAPON)
+	{
+		item.weapon = my_item.item_id;
+		item.(ammo_fields[W_GetAmmoField(my_item.ammo)]) = my_item.ammogive;
+		HL_FallInit(item);
+	}
+	else if (my_item.type == ITEMTYPE_AMMO)
+	{
+		item.(ammo_fields[W_GetAmmoField(my_item.ammo)]) = my_item.ammogive;
+		HL_AmmoSpawn(item);
+	}
+	
+	return item;
 };
 
 /*
@@ -368,21 +408,21 @@ HL_FallInit
 =============
 */
 
-void() HL_FallInit =
+void(entity new) HL_FallInit =
 {
-	self.movetype = MOVETYPE_TOSS;
-	self.solid = SOLID_TRIGGER;
-	self.wad = self.model; // Restore on respawn.
+	new.movetype = MOVETYPE_TOSS;
+	new.solid = SOLID_TRIGGER;
+	new.wad = new.model; // Restore on respawn.
 
-	setorigin(self, self.origin);
-	setsize(self, '-4 -4 0', '4 4 4');
+	setorigin(new, new.origin);
+	setsize(new, '-4 -4 0', '4 4 4');
 
-	self.touch = HL_DefaultTouch;
-	self.think = HL_FallThink;
-	self.flags |= FL_ITEM;
+	new.touch = HL_DefaultTouch;
+	new.think = HL_FallThink;
+	new.flags |= FL_ITEM;
 	
 	if (deathmatch == 1)
-		self.wait = 30;
+		new.wait = 30;
 }
 
 /*
@@ -391,22 +431,22 @@ HL_AmmoSpawn
 =============
 */
 
-void() HL_AmmoSpawn =
+void(entity new) HL_AmmoSpawn =
 {
-	self.movetype = MOVETYPE_TOSS;
-	self.solid = SOLID_TRIGGER;
-	setsize(self, '-16 -16 0', '16 16 16');
-	setorigin(self, self.origin);
+	new.movetype = MOVETYPE_TOSS;
+	new.solid = SOLID_TRIGGER;
+	setsize(new, '-16 -16 0', '16 16 16');
+	setorigin(new, new.origin);
 	
 
-	self.wad = self.model; // Restore on respawn.
-	self.touch = HL_AmmoTouch;
-	self.flags |= FL_ITEM;
+	new.wad = new.model; // Restore on respawn.
+	new.touch = HL_AmmoTouch;
+	new.flags |= FL_ITEM;
 	
 	if (deathmatch == 1)
-		self.wait = 30;
+		new.wait = 30;
 	if (deathmatch == 3)
-		self.wait = 15;
+		new.wait = 15;
 }
 
 /*
@@ -666,90 +706,438 @@ void() HL_AmmoTouch =
 	HL_ItemTouched();
 }
 
-void() weapon_crowbar = {HL_SpawnItem(self, "crowbar");};
-void() weapon_9mmhandgun = {HL_SpawnItem(self, "glock");};
-void() weapon_357 = {HL_SpawnItem(self, "357");};
-void() weapon_shotgun = {HL_SpawnItem(self, "shotgun");};
-void() weapon_9mmAR = {HL_SpawnItem(self, "mp5");};
-void() weapon_crossbow = {HL_SpawnItem(self, "crossbow");};
-void() weapon_hornetgun = {HL_SpawnItem(self, "hornetgun");};
-void() weapon_rpg = {HL_SpawnItem(self, "rpg");};
-void() weapon_gauss = {HL_SpawnItem(self, "gauss");};
-void() weapon_egon = {HL_SpawnItem(self, "egon");};
-void() weapon_handgrenade = {HL_SpawnItem(self, "handgrenade");};
-void() weapon_tripmine = {HL_SpawnItem(self, "tripmine");};
-void() weapon_satchel = {HL_SpawnItem(self, "satchel");};
-void() weapon_snark = {HL_SpawnItem(self, "snark");};
+//==================================================================
+//
+//							WEAPON SPAWN FUNCS!!!
+//
+//==================================================================
 
-void() ammo_9mmclip = {HL_SpawnItem(self, "ammo_9mmclip");};
-void() ammo_9mmAR = {HL_SpawnItem(self, "ammo_9mmAR");};
-void() ammo_9mmbox = {HL_SpawnItem(self, "ammo_9mmbox");};
-void() ammo_ARgrenades = {HL_SpawnItem(self, "ammo_ARgrenades");};
-void() ammo_buckshot = {HL_SpawnItem(self, "ammo_buckshot");};
-void() ammo_357 = {HL_SpawnItem(self, "ammo_357");};
-void() ammo_rpgclip = {HL_SpawnItem(self, "ammo_rpgclip");};
-void() ammo_gaussclip = {HL_SpawnItem(self, "ammo_gaussclip");};
-void() ammo_crossbow = {HL_SpawnItem(self, "ammo_crossbow");};
+void() weapon_crowbar = {HL_SpawnItem(self, self.classname);};
+void() weapon_9mmhandgun = {HL_SpawnItem(self, self.classname);};
+void() weapon_357 = {HL_SpawnItem(self, self.classname);};
+void() weapon_shotgun = {HL_SpawnItem(self, self.classname);};
+void() weapon_9mmAR = {HL_SpawnItem(self, self.classname);};
+void() weapon_crossbow = {HL_SpawnItem(self, self.classname);};
+void() weapon_hornetgun = {HL_SpawnItem(self, self.classname);};
+void() weapon_rpg = {HL_SpawnItem(self, self.classname);};
+void() weapon_gauss = {HL_SpawnItem(self, self.classname);};
+void() weapon_egon = {HL_SpawnItem(self, self.classname);};
+void() weapon_handgrenade = {HL_SpawnItem(self, self.classname);};
+void() weapon_tripmine = {HL_SpawnItem(self, self.classname);};
+void() weapon_satchel = {HL_SpawnItem(self, self.classname);};
+void() weapon_snark = {HL_SpawnItem(self, self.classname);};
 
-// Yeah I'm too lazy to figure it out myself
-void() HL_RandomWeapon =
+void() ammo_9mmclip = {HL_SpawnItem(self, self.classname);};
+void() ammo_9mmAR = {HL_SpawnItem(self, self.classname);};
+void() ammo_9mmbox = {HL_SpawnItem(self, self.classname);};
+void() ammo_ARgrenades = {HL_SpawnItem(self, self.classname);};
+void() ammo_buckshot = {HL_SpawnItem(self, self.classname);};
+void() ammo_357 = {HL_SpawnItem(self, self.classname);};
+void() ammo_rpgclip = {HL_SpawnItem(self, self.classname);};
+void() ammo_gaussclip = {HL_SpawnItem(self, self.classname);};
+void() ammo_crossbow = {HL_SpawnItem(self, self.classname);};
+
+
+//==================================================================
+//
+//							CRATE DOOHICKEY!!!
+//
+//==================================================================
+
+/*
+============
+WoodGibs
+============
+*/
+
+entity() WoodGibs =
 {
-	float r = random();
+	entity shrapnel;
+	shrapnel = spawn();
 	
-	if (r < (1/13))
-		weapon_9mmhandgun();
-	else if (r < (2/13))
-		weapon_357();
-	else if (r < (3/13))
-		weapon_shotgun();
-	else if (r < (4/13))
-		weapon_9mmAR();
-	else if (r < (5/13))
-		weapon_crossbow();
-	else if (r < (6/13))
-		weapon_rpg();
-	else if (r < (7/13))
-		weapon_hornetgun();
-	else if (r < (8/13))
-		weapon_gauss();
-	else if (r < (9/13))
-		weapon_egon();
-	else if (r < (10/13))
-		weapon_handgrenade();
-	else if (r < (11/13))
-		weapon_tripmine();
-	else if (r < (12/13))
-		weapon_satchel();
+	shrapnel.movetype = MOVETYPE_BOUNCE;
+	shrapnel.solid = SOLID_TRIGGER;
+	setorigin(shrapnel, shrapnel.origin);
+	setsize (shrapnel, '0 0 0', '0 0 0');
+
+	float r;
+	r = random();
+	if ( r < 0.333 )
+		setmodel( shrapnel, "progs/woodgibs.mdl");
+	else if ( r < 0.666 )
+		setmodel( shrapnel, "progs/woodgibs1.mdl");
 	else
-		weapon_snark();
+		setmodel( shrapnel, "progs/woodgibs2.mdl");
+	
+	shrapnel.velocity_x = random() * 400 * crandom();
+	shrapnel.velocity_y = random() * 400 * crandom();
+	shrapnel.velocity_z = random() * 400;
+
+	shrapnel.avelocity_x = random() * -255 + 255;
+	shrapnel.avelocity_y = random() * -255 + 255;
+	shrapnel.avelocity_z = random() * -255 + 255;
+	
+
+	shrapnel.think = WoodDissolve;
+	shrapnel.touch = WoodSound;
+	shrapnel.nextthink = time + 0.1;
+	
+	return shrapnel;
 }
 
-void() HL_RandomAmmo =
+/*
+============
+WoodDissolve
+============
+*/
+
+void() WoodDissolve =
 {
-	float r = random();
+	self.alpha = min(self.alpha + 0.1, 0.9);
 	
-	if (r < (1/7))
-		ammo_9mmclip();
-	else if (r < (2/12))
-		ammo_9mmAR();
-	else if (r < (3/12))
-		ammo_ARgrenades();
-	else if (r < (4/12))
-		ammo_buckshot();
-	else if (r < (5/12))
-		ammo_357();
-	else if (r < (6/12))
-		ammo_rpgclip();
-	else if (r < (7/12))
-		ammo_gaussclip();
-	else if (r < (8/12))
-		ammo_crossbow();
-	else if (r < (9/12))
-		weapon_handgrenade();
-	else if (r < (10/12))
-		weapon_tripmine();
-	else if (r < (11/12))
-		weapon_satchel();
+	if (self.alpha >= 0.9)
+		self.think = SUB_Remove;
+		
+	self.nextthink = time + 0.1;
+}
+
+/*
+============
+WoodSound
+============
+*/
+
+void() WoodSound =
+{
+	if (vlen(self.velocity) >= 60.0)
+	{
+		float snd;
+		snd = random();
+		if ( snd < 0.33 )
+			sound(self, CHAN_ITEM, "debris/wood1.wav", 0.25, ATTN_NORM);
+		else if ( snd < 0.66 )
+			sound(self, CHAN_ITEM, "debris/wood2.wav", 0.25, ATTN_NORM);
+		else
+			sound(self, CHAN_ITEM, "debris/wood3.wav", 0.25, ATTN_NORM);
+	}
+}
+
+/*
+============
+BecomeCrate
+============
+*/
+
+void(string type, string new_classname) BecomeCrate =
+{
+	self.solid = SOLID_BBOX;
+	self.movetype = MOVETYPE_TOSS;
+	setorigin(self, self.origin);
+	setsize(self, '-4 -4 0', '4 4 4');
+
+	self.noise = new_classname;
+	self.netname = type;
+	self.health = 50;
+	self.takedamage = DAMAGE_AIM;
+	self.skin = random(0, 7);
+	
+	self.classname = "crate";
+	self.th_stand = SUB_Null;
+	self.th_walk = SUB_Null;
+	self.th_run = SUB_Null;
+	self.th_missile = SUB_Null;
+	self.th_pain = Crate_Pain;
+	self.th_die = Crate_Die;
+	self.th_checkattack = SUB_NullFloat;
+	
+	if (self.noise == "weapon_crate")
+	{
+		setmodel(self, "progs/crate.mdl");
+		self.wad = self.model;
+		if (deathmatch == 1)
+			self.wait = 10;
+	}
+	
+	if (self.noise == "ammo_crate")
+	{
+		setmodel(self, "progs/crate1.mdl");
+		self.wad = self.model;
+		if (deathmatch == 1)
+			self.wait = 30;
+		if (deathmatch == 3)
+			self.wait = 15;
+	}
+}
+
+/*
+============
+Crate_Pain
+============
+*/
+
+void(entity attacker, float damage) Crate_Pain =
+{
+	float snd;
+	snd = random();
+	if ( snd < 0.33 )
+		sound(self, CHAN_VOICE, "debris/wood1.wav", 1.0, ATTN_NORM);
+	else if ( snd < 0.66 )
+		sound(self, CHAN_VOICE, "debris/wood2.wav", 1.0, ATTN_NORM);
 	else
-		weapon_snark();	
+		sound(self, CHAN_VOICE, "debris/wood3.wav", 1.0, ATTN_NORM);
+}
+
+/*
+============
+Crate_Weapon_Drop
+
+This is really ugly, but I don't give
+a hoot!!!
+============
+*/
+
+void() Crate_Weapon_Drop =
+{
+	string newitem[6];
+	float arraysize = 4;
+
+	switch (self.netname)
+	{
+		case "weapon_supershotgun":
+		{
+			newitem[0] = "weapon_357";
+			newitem[1] = "weapon_shotgun";
+			arraysize = 2;
+			break;
+		}
+	
+		case "weapon_nailgun":
+		{
+			newitem[0] = "weapon_9mmAR";
+			arraysize = 1;
+			break;
+		}
+	
+		case "weapon_supernailgun":
+		{
+			newitem[0] = "weapon_crossbow";
+			newitem[1] = "weapon_snark";
+			arraysize = 2;
+			break;
+		}
+		
+		case "weapon_grenadelauncher":
+		{
+			newitem[0] = "weapon_handgrenade";
+			newitem[1] = "weapon_satchel";
+			newitem[2] = "weapon_tripmine";
+			arraysize = 3;
+			break;
+		}
+		
+		case "weapon_rocketlauncher":
+		{
+			newitem[0] = "weapon_rpg";
+			newitem[1] = "weapon_hornetgun";
+			arraysize = 2;
+			break;
+		}
+	
+		case "weapon_lightning":
+		{
+			newitem[0] = "weapon_gauss";
+			newitem[1] = "weapon_egon";
+			arraysize = 2;
+			break;
+		}
+	
+		case "item_shells":
+		{
+			newitem[0] = "ammo_buckshot";
+			newitem[1] = "ammo_357";
+			arraysize = 2;
+			break;
+		}
+		
+		case "item_spikes":
+		{
+			newitem[0] = "ammo_9mmclip";
+			newitem[1] = "ammo_9mmAR";
+			newitem[2] = "ammo_crossbow";
+			arraysize = 3;
+			break;
+		}
+		
+		case "item_cells":
+		{
+			newitem[0] = "ammo_gaussclip";
+			newitem[1] = "ammo_gaussclip";
+			newitem[2] = "ammo_gaussclip";
+			arraysize = 3;
+			break;
+		}
+		
+		case "item_rockets": // holy bloat
+		{
+			newitem[0] = "ammo_rpgclip";
+			newitem[1] = "ammo_ARgrenades";
+			newitem[2] = "weapon_satchel";
+			newitem[3] = "weapon_handgrenade";
+			newitem[4] = "weapon_satchel";
+			newitem[5] = "weapon_tripmine";
+			arraysize = 6;
+			break;
+		}
+	}
+	
+	for (float i = 0; i < arraysize; i++)
+	{
+		entity item;
+		item = HL_SpawnItem2(newitem[i]);
+		item.origin = self.origin;
+		setsize(item, '0 0 0', '0 0 0');
+		item.avelocity_y = random(-100.0, 100.0);
+		item.velocity_x = 150 * crandom();
+		item.velocity_y = 150 * crandom();
+		item.velocity_z = 150 + 150 * random();
+		item.wait = -1;
+		item.use = SUB_Null;
+	}
+}
+
+/*
+============
+Crate_Die
+============
+*/
+
+void() Crate_Die =
+{
+	float snd;
+	snd = random();
+	
+	if ( snd < 0.333 )
+		sound(self, CHAN_VOICE, "debris/bustcrate1.wav", 1.0, ATTN_NORM);
+	else if ( snd < 0.666 )
+		sound(self, CHAN_VOICE, "debris/bustcrate2.wav", 1.0, ATTN_NORM);
+	else
+		sound(self, CHAN_VOICE, "debris/bustcrate3.wav", 1.0, ATTN_NORM);
+	
+	self.solid = SOLID_NOT;
+	self.model = "";
+	
+	Crate_Weapon_Drop();
+	
+	for (float j = 0; j < 16; j++) 
+	{
+		entity gibs;
+		gibs = WoodGibs();
+		
+		gibs.origin = self.origin;
+	}
+	
+	CrateRespawn();
+}
+
+/*
+=============
+ReviveCrate
+=============
+*/
+
+void() ReviveCrate =
+{
+	entity ent;
+	ent = findradius(self.origin, 32);
+	
+	// Make sure nothing's standing on us.
+	if ((ent.flags & FL_CLIENT) || (ent.flags & FL_MONSTER))
+	{
+		T_Damage (ent, self, self, 50000, DMGTYPE_TELEFRAG);
+		sound (ent, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+	}
+		
+	self.solid = SOLID_BBOX;
+	self.movetype = MOVETYPE_TOSS;
+	setorigin(self, self.origin);
+	
+	if (self.noise == "weapon_crate")
+		setsize(self, '-4 -4 0', '4 4 8');
+	else
+		setsize (self, '0 0 0', '32 32 24');
+
+	setmodel(self, self.wad);
+
+	self.health = 50;
+	self.takedamage = DAMAGE_AIM;
+	self.th_pain = Crate_Pain;
+	self.th_die = Crate_Die;
+	
+	sound(self, CHAN_WEAPON, "items/suitchargeok1.wav", 1, ATTN_NONE);
+}
+
+/*
+=============
+CrateRespawn
+=============
+*/
+
+void() CrateRespawn =
+{
+	// wait > 0 == item respawns, either from deathmatch rules or entity keyvalue
+	if (self.wait > 0)
+	{
+		self.think = ReviveCrate;
+		self.attack_finished = time + self.wait;
+		self.nextthink = self.attack_finished - 2.45;
+		
+#ifdef DEV
+		bprint("respawn:");
+		bprint(ftos(self.wait));
+		bprint("curtime:");
+		bprint(ftos(time));
+		bprint("\n");
+#endif
+	}
+	else
+	{
+		SUB_RemoveSoon();
+	}
+	
+	playercount_convert(count);
+	if (self.count > 0)		// only respawn 'count' more times
+	{
+		self.count = self.count - 1;
+		if (self.count == 0)
+			SUB_RemoveSoon();	// can't remove during c touch/movement code
+	}
+}
+
+/*
+=============
+HL_PrecacheItems
+=============
+*/
+
+void() HL_PrecacheItems =
+{
+	for (float i = 0; i < 23; i++)
+	{
+		itemdef_t my_item = all_items[i];
+		precache_model(my_item.model);
+	}
+	
+	precache_model("progs/crate.mdl");
+	precache_model("progs/crate1.mdl");
+	precache_model("progs/woodgibs.mdl");
+	precache_model("progs/woodgibs1.mdl");
+	precache_model("progs/woodgibs2.mdl");
+	
+	precache_sound("debris/wood1.wav");
+	precache_sound("debris/wood2.wav");
+	precache_sound("debris/wood3.wav");
+
+	precache_sound("debris/bustcrate1.wav");
+	precache_sound("debris/bustcrate2.wav");
+	precache_sound("debris/bustcrate3.wav");
 }

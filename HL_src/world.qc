@@ -349,6 +349,10 @@ void() worldspawn =
 	precache_sound ("misc/water2.wav");			// swimming
 
 	precache_model ("progs/player.mdl");
+	
+	precache_model ("progs/player_gordon.mdl");	// new - serecky 12.16.25
+	precache_model ("progs/player_hgrunt.mdl");
+	
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
 	precache_model ("progs/gib1.mdl");

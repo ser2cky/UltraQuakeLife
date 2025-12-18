@@ -138,35 +138,36 @@ void() StartWeapon =
 
 void() weapon_supershotgun =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
 void() weapon_nailgun =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
 void() weapon_supernailgun =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
 
 void() weapon_grenadelauncher =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
 void() weapon_rocketlauncher =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
 void() weapon_lightning =
 {
-	HL_RandomWeapon();
+	BecomeCrate(self.classname, "weapon_crate");
 }
 
+// lame!!!!!!!!!!!!!!
 void() weapon_axe =
 {
 	weapon_crowbar();
@@ -250,23 +251,31 @@ void() StartAmmo =
 
 void() item_shells =
 {
-	HL_RandomAmmo();
+	BecomeCrate(self.classname, "ammo_crate");
+	setsize (self, '0 0 0', '32 32 24');
+	setorigin(self, self.origin);
 }
 
 void() item_spikes =
 {
-	HL_RandomAmmo();
+	BecomeCrate(self.classname, "ammo_crate");
+	setsize (self, '0 0 0', '32 32 24');
+	setorigin(self, self.origin);
 }
 
 void() item_rockets =
 {
-	HL_RandomAmmo();
+	BecomeCrate(self.classname, "ammo_crate");
+	setsize (self, '0 0 0', '32 32 24');
+	setorigin(self, self.origin);
 }
 
 
 void() item_cells =
 {
-	HL_RandomAmmo();
+	BecomeCrate(self.classname, "ammo_crate");
+	setsize (self, '0 0 0', '32 32 24');
+	setorigin(self, self.origin);
 }
 
 // ================================

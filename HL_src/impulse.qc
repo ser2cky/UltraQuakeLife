@@ -179,7 +179,7 @@ entity() pool =
 
 void() shit_item =
 {
-	HL_RandomAmmo();
+	//HL_RandomAmmo();
 	self.think = SUB_Null;
 }
 
@@ -241,6 +241,17 @@ void() ImpulseCommands =
 	case 11:
 		ServerflagsCommand();
 		break;
+	case 13:
+		Cheat_Items();
+		break;
+	case 15:	// NEW -serecky 12.17.25
+	{
+		string modelnames[3] = {"Ranger model selected.\n", "Gordon model selected.\n", "Grunt model selected.\n"};
+		
+		self.player_modelnumber = mod(self.player_modelnumber + 1, 3);
+		centerprint(self, modelnames[self.player_modelnumber]);
+		break;
+	}
 	case 16:
 		//W_SelectBestWeapon();
 		W_ChangeWeapon(W_BestWeapon());
@@ -252,20 +263,19 @@ void() ImpulseCommands =
 		self.firemode = 1;
 		break;
 	case 19:
+	{
+		weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
+		float clip = self.(clip_fields[W_GetClipField(weap.name)]);
+		float ammo = self.(ammo_fields[W_GetAmmoField(weap.ammo1)]);
+		
+		if ((ammo > 0) && (clip < weap.clip_size) && (self.attack_finished < time) && 
+		(self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
 		{
-			weaponclass_t weap = weaponsclass[W_GetWeapon(self.weapon)];
-			float clip = self.(clip_fields[W_GetClipField(weap.name)]);
-			float ammo = self.(ammo_fields[W_GetAmmoField(weap.ammo1)]);
-			
-			if ((ammo > 0) && (clip < weap.clip_size) && (self.attack_finished < time) && 
-			(self.weaponstate != WS_RELOAD || self.weaponstate != WS_SPECIAL_RELOAD))
-			{
-				weap.reload();
-				//W_PrintWeaponState(); // dev thing..
-			}
+			weap.reload();
+			//W_PrintWeaponState(); // dev thing..
 		}
 		break;
-
+	}
 	case 40:
 		dev_impulse_list();
 		break;
@@ -313,10 +323,6 @@ void() ImpulseCommands =
 	case 140:
 		sound(self, CHAN_VOICE, "player/tornoff2.wav", 1, ATTN_STATIC);
 		centerprint(self, version_s);
-		break;
-	
-	case 13:
-		Cheat_Items();
 		break;
 	case 99:
 		Cheat_Keys();

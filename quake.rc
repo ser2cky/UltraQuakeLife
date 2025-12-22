@@ -16,5 +16,5 @@ stuffcmds
 // exec half-life script
 exec halflife.cfg
 
-// start demos if not allready running a server
-startdemos demo1 demo2 demo3
+// start demos if not already running a server
+startdemos hldem1 hldem2 hldem3

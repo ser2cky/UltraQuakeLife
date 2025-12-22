@@ -809,6 +809,9 @@ WoodSound
 
 void() WoodSound =
 {
+	if (random() < 0.75)
+		return;
+
 	if (vlen(self.velocity) >= 60.0)
 	{
 		float snd;
@@ -823,50 +826,76 @@ void() WoodSound =
 }
 
 /*
+================================
+CratePlace
+
+Custom itemplace function w/out other item
+specific stuff. Whatever.
+================================
+*/
+
+void() CratePlace =
+{
+	if (self.spawnflags & ITEM_SUSPENDED)
+	{
+		self.movetype = MOVETYPE_NONE;
+	}	
+	else
+	{
+		ItemDrop();
+	}
+	
+	ItemRotateAndSize();	// must do this after item_drop, droptofloor is picky about the weird things we do
+}
+
+/*
 ============
 BecomeCrate
 ============
 */
 
-void(string type, string new_classname) BecomeCrate =
+void(entity new, string n_classname, string type) BecomeCrate =
 {
-	self.solid = SOLID_BBOX;
-	self.movetype = MOVETYPE_TOSS;
-	setorigin(self, self.origin);
-	setsize(self, '-4 -4 0', '4 4 4');
+	new.solid = SOLID_BBOX;
+	new.movetype = MOVETYPE_TOSS;
 
-	self.noise = new_classname;
-	self.netname = type;
-	self.health = 50;
-	self.takedamage = DAMAGE_AIM;
-	self.skin = random(0, 7);
+	new.netname = type;
+	new.classname = n_classname;
 	
-	self.classname = "crate";
-	self.th_stand = SUB_Null;
-	self.th_walk = SUB_Null;
-	self.th_run = SUB_Null;
-	self.th_missile = SUB_Null;
-	self.th_pain = Crate_Pain;
-	self.th_die = Crate_Die;
-	self.th_checkattack = SUB_NullFloat;
+	new.health = 50;
+	new.takedamage = DAMAGE_AIM;
+	new.skin = random(0, 7);
 	
-	if (self.noise == "weapon_crate")
+	new.th_stand = SUB_Null;
+	new.th_walk = SUB_Null;
+	new.th_run = SUB_Null;
+	new.th_missile = SUB_Null;
+	new.th_pain = Crate_Pain;
+	new.th_die = Crate_Die;
+	new.th_checkattack = SUB_NullFloat;
+	
+	setmodel(new, "progs/crate.mdl");
+	new.wad = new.model;
+	
+	if (new.netname == "weapon")
 	{
-		setmodel(self, "progs/crate.mdl");
-		self.wad = self.model;
+		setsize(new, '-16 -16 0', '16 16 24');
+
 		if (deathmatch == 1)
-			self.wait = 10;
+			new.wait = 10;
 	}
 	
-	if (self.noise == "ammo_crate")
+	if (new.netname == "ammo")
 	{
-		setmodel(self, "progs/crate1.mdl");
-		self.wad = self.model;
+		setsize (new, '0 0 0', '32 32 24');
 		if (deathmatch == 1)
-			self.wait = 30;
+			new.wait = 30;
 		if (deathmatch == 3)
-			self.wait = 15;
+			new.wait = 15;
 	}
+	
+	new.think = CratePlace;
+	new.nextthink = time + 0.2 + random() * 0.1;
 }
 
 /*
@@ -901,7 +930,7 @@ void() Crate_Weapon_Drop =
 	string newitem[6];
 	float arraysize = 4;
 
-	switch (self.netname)
+	switch (self.classname)
 	{
 		case "weapon_supershotgun":
 		{
@@ -988,6 +1017,8 @@ void() Crate_Weapon_Drop =
 			arraysize = 6;
 			break;
 		}
+		
+		
 	}
 	
 	for (float i = 0; i < arraysize; i++)
@@ -1023,12 +1054,13 @@ void() Crate_Die =
 	else
 		sound(self, CHAN_VOICE, "debris/bustcrate3.wav", 1.0, ATTN_NORM);
 	
+	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_NOT;
 	self.model = "";
 	
 	Crate_Weapon_Drop();
 	
-	for (float j = 0; j < 16; j++) 
+	for (float j = 0; j < 8; j++) 
 	{
 		entity gibs;
 		gibs = WoodGibs();
@@ -1060,18 +1092,22 @@ void() ReviveCrate =
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_TOSS;
 	setorigin(self, self.origin);
-	
-	if (self.noise == "weapon_crate")
-		setsize(self, '-4 -4 0', '4 4 8');
-	else
-		setsize (self, '0 0 0', '32 32 24');
-
 	setmodel(self, self.wad);
-
+	self.flags = 0;
 	self.health = 50;
+	self.max_health = 50;
 	self.takedamage = DAMAGE_AIM;
 	self.th_pain = Crate_Pain;
 	self.th_die = Crate_Die;
+	
+	if (self.netname == "weapon")
+		setsize(self, '-16 -16 0', '16 16 24');
+	
+	if (self.netname == "ammo")
+		setsize (self, '0 0 0', '32 32 24');
+	
+	self.think = CratePlace;
+	self.nextthink = time;
 	
 	sound(self, CHAN_WEAPON, "items/suitchargeok1.wav", 1, ATTN_NONE);
 }
@@ -1111,6 +1147,163 @@ void() CrateRespawn =
 		if (self.count == 0)
 			SUB_RemoveSoon();	// can't remove during c touch/movement code
 	}
+}
+
+//==================================================================
+//
+//					Cool HL specific items.
+//
+//==================================================================
+
+void(entity new) HL_ItemSpawn =
+{
+	new.movetype = MOVETYPE_TOSS;
+	new.solid = SOLID_TRIGGER;
+	setorigin(new, new.origin);
+	setsize(new, '-16 -16 0', '16 16 16');
+	new.flags |= FL_ITEM;
+
+	if (!droptofloor(0, 0))
+	{
+		bprint("Item ");
+		bprint(new.classname);
+		bprint("fell out of level at ");
+		bprint(vtos(new.origin));
+		bprint("\n");
+		remove(new);
+		return;
+	}
+}
+
+//============================================
+//
+//				Medkit
+//
+//============================================
+
+void() HL_Healthkit_Precache =
+{
+	precache_model("progs/w_medkit.mdl");
+	precache_sound("items/smallmedkit1.wav");
+}
+
+void() item_healthkit =
+{
+	HL_Healthkit_Precache();
+	setmodel(self, "progs/w_medkit.mdl");
+	self.touch = HL_Healthkit_Touch;
+	HL_ItemSpawn(self);
+	
+	if (deathmatch == 1 || deathmatch == 3)
+		self.wait = 20;
+}
+
+
+void() HL_Healthkit_Touch =
+{
+	if (!CheckValidTouch()) 
+		return;
+
+	if (!T_Heal(other, 15, FALSE))
+		return;
+		
+	sound(self, CHAN_VOICE, "items/smallmedkit1.wav", 1.0, ATTN_NORM);
+	
+	HL_ItemTouched();
+}
+
+//============================================
+//
+//				Longjump
+//
+//============================================
+
+void() HL_Longjump_Precache =
+{
+	precache_model("progs/w_longjump.mdl");
+}
+
+void() item_longjump =
+{
+	HL_Longjump_Precache();
+	setmodel(self, "progs/w_longjump.mdl");
+	self.touch = HL_Longjump_Touch;
+	HL_ItemSpawn(self);
+	
+	if (deathmatch == 1 || deathmatch == 3)
+		self.wait = 30;
+}
+
+void() HL_Longjump_Touch =
+{
+	if (!CheckValidTouch()) 
+		return;
+		
+	if (other.can_longjump)
+		return;
+	
+	other.can_longjump = 1;
+	
+	sprint (other, "You got the Long-Jump Module.\n");
+	sound(other, CHAN_ITEM, "items/gunpickup2.wav", 1, ATTN_NORM);
+	stuffcmd (other, "bf\n");
+	
+	HL_ItemTouched();
+}
+
+//============================================
+//
+//				Battery
+//
+//============================================
+
+void() HL_Battery_Precache =
+{
+	precache_model("progs/w_battery.mdl");
+}
+
+void() item_battery =
+{
+	HL_Battery_Precache();
+	setmodel(self, "progs/w_battery.mdl");
+	self.touch = HL_Battery_Touch;
+	HL_ItemSpawn(self);
+	
+	if (deathmatch == 1 || deathmatch == 3)
+		self.wait = 20;
+}
+
+void() HL_Battery_Touch =
+{
+	if (!CheckValidTouch()) 
+		return;
+
+	if (other.armorvalue > 200)
+		return;
+
+	other.armorvalue = min(other.armorvalue + 15, 200);
+	
+	if (other.armorvalue <= 100)
+	{
+		other.items |= IT_ARMOR1;
+		other.armortype = ARMORTYPE_GREEN;
+	}
+	else if (other.armorvalue <= 150)
+	{
+		other.items |= IT_ARMOR2;
+		other.armortype = ARMORTYPE_YELLOW;
+	}
+	else if (other.armorvalue <= 200)
+	{
+		other.items |= IT_ARMOR3;
+		other.armortype = ARMORTYPE_RED;
+	}
+	
+	sprint (other, "You got the Battery.\n");
+	sound(other, CHAN_ITEM, "items/gunpickup2.wav", 1, ATTN_NORM);
+	stuffcmd (other, "bf\n");
+	
+	HL_ItemTouched();
 }
 
 /*

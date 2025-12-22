@@ -23,6 +23,8 @@
 //	11.30.25: finished snarks. thanks to skidmark
 //	for fixes.
 //	12.15.25: new traceattack, fixed exp. code
+//	12.20.25: fuck it. adding alpha shit.
+//	12.21.25: finally fixed rpg hitbox
 //
 //======================================
 
@@ -33,13 +35,12 @@ Based in Half-life
 RadiusDamage code..
 ============
 */
+
 void(vector src, entity inflictor, entity attacker, float damage, float radius, string ignore, float dmgtype = DMGTYPE_EXPLOSION) T_RadiusDamage2 =
 {
-	local entity ent = world;
-	local float adjusteddamage, falloff;
-	local vector spot;
-	local vector endpos;
-	local float frac;
+	entity ent = world;
+	float adjusteddamage, falloff;
+	vector spot;
 	
 	if (radius)
 		falloff = damage / radius;
@@ -79,18 +80,16 @@ void(vector src, entity inflictor, entity attacker, float damage, float radius, 
 			spot = (ent.absmax + ent.absmin) * 0.5;
 			
 			traceline(src, spot, 0, inflictor);
-			endpos = trace_endpos;
-			frac = trace_fraction;
 			
-			if (frac == 1.0 || trace_ent == ent)
+			if (trace_fraction == 1.0 || trace_ent == ent)
 			{
 				if (trace_startsolid)
 				{
-					endpos = src;
-					frac = 0.0;
+					trace_endpos = src;
+					trace_fraction = 0.0;
 				}
 				
-				adjusteddamage = vlen(src - endpos) * falloff;
+				adjusteddamage = vlen(src - trace_endpos) * falloff;
 				adjusteddamage = damage - adjusteddamage;
 				
 				if ( adjusteddamage < 0)
@@ -98,11 +97,14 @@ void(vector src, entity inflictor, entity attacker, float damage, float radius, 
 					adjusteddamage = 0;
 				}
 				
-				if (frac != 1.0)
+				//bprint(ftos(falloff));
+				//bprint("\n");
+				
+				if (trace_fraction != 1.0 && !(ent.flags & FL_CLIENT))
 				{
-					HL_ClearMultiDamage();
-					HL_TraceAttack(inflictor, adjusteddamage, normalize(endpos - src));
-					HL_ApplyMultiDamage(inflictor, attacker);
+					HL_ClearMultiDamage( );
+					HL_TraceAttack( inflictor, adjusteddamage, normalize(trace_endpos - src), dmgtype );
+					HL_ApplyMultiDamage( inflictor, attacker );
 				}
 				else
 				{
@@ -141,7 +143,7 @@ void(entity inflictor, entity attacker, float dmgtype = 0) HL_ApplyMultiDamage =
 	if (!multi_ent)
 		return;
 	
-	if ((dmgtype & DMGTYPE_NEVERGIB))
+	if ((dmgtype & DMGTYPE_NEVERGIB) && multi_ent.model != "progs/crate.mdl")
 	{
 		if ((multi_ent.health - multi_damage) < 0)
 			multi_damage = multi_ent.health;
@@ -369,30 +371,47 @@ BrassSound
 
 void() BrassSound =
 {
-	if ((other != world))
+	if (other != world)
 		return;
 
-	local float r;
-	r = random();
+	float r = random();
 	
-	if (self.model != "progs/shotgunshell.mdl") 
+	switch (self.model)
 	{
-		if (r < 0.333)
-			sound (self, CHAN_WEAPON, "weapons/pl_shell1.wav", 1, ATTN_NORM);
-		else if (r < 0.666)
-			sound (self, CHAN_WEAPON, "weapons/pl_shell2.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_WEAPON, "weapons/pl_shell3.wav", 1, ATTN_NORM);	
+		case "progs/shotgunshell.mdl":
+		{
+			if (r < 0.333)
+				sound (self, CHAN_WEAPON, "weapons/sshell1.wav", 1, ATTN_NORM);
+			else if (r < 0.666)
+				sound (self, CHAN_WEAPON, "weapons/sshell2.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_WEAPON, "weapons/sshell3.wav", 1, ATTN_NORM);	
+			break;
+		}
+		
+		case "progs/shell_alpha.mdl":
+		{
+			if (r < 0.333)
+				sound (self, CHAN_WEAPON, "weapons/alpha/pl_shell1.wav", 1, ATTN_NORM);
+			else if (r < 0.666)
+				sound (self, CHAN_WEAPON, "weapons/alpha/pl_shell2.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_WEAPON, "weapons/alpha/pl_shell3.wav", 1, ATTN_NORM);	
+			break;
+		}
+		
+		default:
+		{
+			if (r < 0.333)
+				sound (self, CHAN_WEAPON, "weapons/pl_shell1.wav", 1, ATTN_NORM);
+			else if (r < 0.666)
+				sound (self, CHAN_WEAPON, "weapons/pl_shell2.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_WEAPON, "weapons/pl_shell3.wav", 1, ATTN_NORM);	
+			break;
+		}
 	}
-	else 
-	{
-		if (r < 0.333)
-			sound (self, CHAN_WEAPON, "weapons/sshell1.wav", 1, ATTN_NORM);
-		else if (r < 0.666)
-			sound (self, CHAN_WEAPON, "weapons/sshell2.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_WEAPON, "weapons/sshell3.wav", 1, ATTN_NORM);	
-	}
+	
 };
 
 /*
@@ -1988,7 +2007,7 @@ entity(vector org, vector myangles, entity myowner, entity launcher) W_CreateRoc
 	rocket.solid = SOLID_BBOX;
 	
 	setmodel(rocket, "progs/rpgrocket.mdl");
-	setsize(rocket, '0 0 0', '0 0 0');
+	setsize(rocket, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(rocket, org);
 	
 	rocket.angles_x -= 30;
@@ -2015,6 +2034,15 @@ void() W_RocketTouch =
 {
 	if (other == self.trueowner)
 		return;
+		
+	if (other == self.owner)
+		return;
+		
+	if (CheckProjectilePassthru()) 
+		return;
+
+	//bprint(other.classname);
+	//bprint("\n");
 
 	if (self.ent1)
 	{
@@ -2036,6 +2064,7 @@ void() W_RocketIgnite =
 	
 	sound(self, CHAN_VOICE, "weapons/rocket1.wav", 1, 0.5);
 	setmodel(self, "progs/rpgrocket1.mdl");
+	setsize(self, VEC_ORIGIN, VEC_ORIGIN); //MUST CALL
 	
 	self.fuser1 = time;
 	self.think = W_RocketFollowLaser;
@@ -4630,8 +4659,8 @@ float(entity ent) Snark_CheckEnemy =
 		
 	if (!FInViewcone(ent, 0))
 	{
-		bprint(ent.classname);
-		bprint("failed on viewcone check\n");
+		//bprint(ent.classname);
+		//bprint("failed on viewcone check\n");
 		return FALSE;
 	}
 		
@@ -4994,4 +5023,184 @@ void() W_SnarkIdle =
 		W_SetWeaponAnim2(133, 213, -1, 16);
 		self.nextidle = time + (80.0/16.0);
 	}
+}
+
+/*
+============
+Alpha Crowbar
+
+Can't be arsed to write
+a comment or two about these.
+============
+*/
+
+void() W_ACrowbar_Precache =
+{
+	precache_model("progs/v_crowbar1.mdl");
+}
+
+float() W_ACrowbar_PrimAttack =
+{
+	if (random() < 0.5)
+		W_SetWeaponAnim2(1, 20, 20, 30);
+	else
+		W_SetWeaponAnim2(21, 37, 37, 30);
+		
+	makevectors(self.v_angle);
+	HL_FireBullets(1, self.origin + self.view_ofs, v_forward, '0 0 0', 64, 2, self);
+
+	self.attack_finished = time + 1.0;
+	return TRUE;
+}
+
+
+/*
+============
+Alpha Glock
+
+0-8 shoot 20 fps
+============
+*/
+
+/*
+============
+W_AGlock_Precache
+============
+*/
+
+void() W_AGlock_Precache =
+{
+	precache_model("progs/v_glock.mdl");
+	precache_sound("weapons/alpha/pl_gun1.wav");
+	precache_sound("weapons/alpha/pl_gun2.wav");
+}
+
+/*
+============
+W_AGlock_PrimAttack
+============
+*/
+
+float() W_AGlock_PrimAttack =
+{
+	self.effects |= EF_MUZZLEFLASH;
+	W_SetWeaponAnim2(1, 9, 9, 20);
+	
+	makevectors(self.v_angle);
+	
+	vector shellvel = self.velocity + v_right * random(50,70) + v_up * random(100,150) + v_forward * 25;
+	EjectBrass("progs/shell_alpha.mdl", self.origin + self.view_ofs + v_up * -12 + v_forward * 32 + v_right * 6, shellvel);
+	
+	vector dir = aim (self, AUTOAIM_DIST);
+	HL_FireBullets(1, self.origin + self.view_ofs, dir, '0.025 0.025 0.025', 2048, 2, self);
+	
+	if (random() < 0.5)
+		sound(self, CHAN_WEAPON, "weapons/alpha/pl_gun1.wav", 1.0, ATTN_NORM);
+	else
+		sound(self, CHAN_WEAPON, "weapons/alpha/pl_gun2.wav", 1.0, ATTN_NORM);
+	
+	self.attack_finished = time + 0.3;
+	return TRUE;
+}
+
+/*
+============
+Alpha MP5
+
+0-51 idle 20 fps
+52-58 shoot 15 fps
+59-99 grenade 20 fps
+============
+*/
+
+/*
+============
+W_AMP5_Precache
+============
+*/
+
+void() W_AMP5_Precache =
+{
+	precache_model("progs/v_mp5.mdl");
+	precache_sound("weapons/alpha/hks1.wav");
+	precache_sound("weapons/alpha/hks2.wav");
+	precache_sound("weapons/alpha/hks3.wav");
+	precache_sound("weapons/alpha/glauncher.wav");
+	precache_sound("weapons/alpha/glauncher2.wav");
+}
+
+/*
+============
+W_AMP5_PrimAttack
+============
+*/
+
+float() W_AMP5_PrimAttack = 
+{
+	self.effects |= EF_MUZZLEFLASH;
+	W_SetWeaponAnim2(52, 58, 58, 15);
+	
+	makevectors(self.v_angle);
+	
+	vector shellvel = self.velocity + v_right * random(50,70) + v_up * random(100,150) + v_forward * 25;
+	EjectBrass("progs/shell_alpha.mdl", self.origin + self.view_ofs + v_up * -12 + v_forward * 32 + v_right * 6, shellvel);
+	
+	vector dir = aim (self, AUTOAIM_DIST);
+	HL_FireBullets(1, self.origin + self.view_ofs, dir, '0.01 0.01 0.01', 2048, 2, self);
+	
+	float r = random();
+	
+	if (r < 0.33)
+		sound(self, CHAN_WEAPON, "weapons/alpha/hks1.wav", 1.0, ATTN_NORM);
+	else if (r < 0.66)
+		sound(self, CHAN_WEAPON, "weapons/alpha/hks2.wav", 1.0, ATTN_NORM);
+	else
+		sound(self, CHAN_WEAPON, "weapons/alpha/hks3.wav", 1.0, ATTN_NORM);
+	
+	self.attack_finished = time + 0.1;
+	self.nextidle = 0;
+	return TRUE;
+}
+
+/*
+============
+W_AMP5_SecAttack
+============
+*/
+
+float() W_AMP5_SecAttack = 
+{
+	W_SetWeaponAnim2(59, 99, 99, 20);
+	
+	makevectors(self.v_angle);
+	
+	if (random() < 0.5)
+		sound(self, CHAN_WEAPON, "weapons/alpha/glauncher.wav", 1.0, ATTN_NORM);
+	else
+		sound(self, CHAN_WEAPON, "weapons/alpha/glauncher2.wav", 1.0, ATTN_NORM);
+	
+	entity gren = W_CreateContactGren(self.origin + self.view_ofs, v_forward * 800);
+	gren.type = "alpha";
+	
+	self.attack2_finished = time + 1.0;
+	self.nextidle = 0;
+	return TRUE;
+}
+
+/*
+============
+W_AMP5_Idle
+============
+*/
+
+void() W_AMP5_Idle =
+{
+	if ((self.nextidle > time))
+		return;
+		
+	if (self.nextidle == 0)
+		return;
+		
+	W_SetWeaponAnim2(0, 51, -1, 20);
+	self.nextidle = time + 2.6;
 }

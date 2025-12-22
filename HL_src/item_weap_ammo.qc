@@ -138,38 +138,51 @@ void() StartWeapon =
 
 void() weapon_supershotgun =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_supershotgun";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 void() weapon_nailgun =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_nailgun";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 void() weapon_supernailgun =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_supernailgun";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 
 void() weapon_grenadelauncher =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_grenadelauncher";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 void() weapon_rocketlauncher =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_rocketlauncher";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 void() weapon_lightning =
 {
-	BecomeCrate(self.classname, "weapon_crate");
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "weapon_lightning";
+	BecomeCrate(self, self.classname, "weapon");
 }
 
 // lame!!!!!!!!!!!!!!
 void() weapon_axe =
 {
+	if (!SUB_ShouldSpawn()) return;
 	weapon_crowbar();
 }
 
@@ -251,31 +264,31 @@ void() StartAmmo =
 
 void() item_shells =
 {
-	BecomeCrate(self.classname, "ammo_crate");
-	setsize (self, '0 0 0', '32 32 24');
-	setorigin(self, self.origin);
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "item_shells";
+	BecomeCrate(self, self.classname, "ammo");
 }
 
 void() item_spikes =
 {
-	BecomeCrate(self.classname, "ammo_crate");
-	setsize (self, '0 0 0', '32 32 24');
-	setorigin(self, self.origin);
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "item_spikes";
+	BecomeCrate(self, self.classname, "ammo");
 }
 
 void() item_rockets =
 {
-	BecomeCrate(self.classname, "ammo_crate");
-	setsize (self, '0 0 0', '32 32 24');
-	setorigin(self, self.origin);
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "item_rockets";
+	BecomeCrate(self, self.classname, "ammo");
 }
 
 
 void() item_cells =
 {
-	BecomeCrate(self.classname, "ammo_crate");
-	setsize (self, '0 0 0', '32 32 24');
-	setorigin(self, self.origin);
+	if (!SUB_ShouldSpawn()) return;
+	self.classname = "item_cells";
+	BecomeCrate(self, self.classname, "ammo");
 }
 
 // ================================

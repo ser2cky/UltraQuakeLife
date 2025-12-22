@@ -70,7 +70,7 @@ typedef struct {
 
 float() W_NullFunc = {return FALSE;};
 float() W_NullTrue = {return TRUE;};
-void() W_DefaultDeploy = {self.weaponstate = WS_DEPLOY; W_SetWeaponAnim(0, 0, 0, -1);};
+void() W_DefaultDeploy = {self.nextidle = time;self.attack_finished = time;W_SetWeaponAnim(0,0,0,0);};
 
 weaponclass_t wpc_none =
 {
@@ -116,6 +116,28 @@ weaponclass_t wpc_crowbar =
 	W_CrowbarPrecache // Precache.
 };
 
+weaponclass_t wpc_alpha_crowbar =
+{
+	1, // Slot
+	1, // Slot pos.
+	"", // Ammo1
+	"", // Ammo2
+	0, // Ammo usage.
+	0, // Clip size.
+	"progs/v_crowbar1.mdl", // V_Model
+	"Crowbar1", // Weapon name.
+	WPN_ALPHA_CROWBAR, // Weapon I.D
+	0, // Weapon flags
+	W_ACrowbar_PrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_DefaultDeploy, // Deploy.
+	W_NullTrue, // Holster.
+	SUB_Null, // Idle.
+	W_ACrowbar_Precache // Precache.
+};
+
 weaponclass_t wpc_glock =
 {
 	2, // Slot
@@ -136,6 +158,28 @@ weaponclass_t wpc_glock =
 	W_NullTrue, // Holster.
 	W_GlockIdle, // Idle.
 	W_GlockPrecache // Precache.
+};
+
+weaponclass_t wpc_alpha_glock =
+{
+	2, // Slot
+	2, // Slot pos.
+	"", // Ammo1
+	"", // Ammo2
+	0, // Ammo usage.
+	0, // Clip size.
+	"progs/v_glock.mdl", // V_Model
+	"Alpha Glock", // Weapon name.
+	WPN_ALPHA_GLOCK, // Weapon I.D
+	0, // Weapon flags
+	W_AGlock_PrimAttack, // Attack1
+	W_NullFunc, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_DefaultDeploy, // Deploy.
+	W_NullTrue, // Holster.
+	SUB_Null, // Idle.
+	W_AGlock_Precache // Precache.
 };
 
 weaponclass_t wpc_python =
@@ -202,6 +246,28 @@ weaponclass_t wpc_mp5 =
 	W_NullTrue, // Holster.
 	W_MP5Idle, // Idle.
 	W_MP5Precache // Precache.
+};
+
+weaponclass_t wpc_alpha_mp5 =
+{
+	4, // Slot
+	1, // Slot pos.
+	"", // Ammo1
+	"", // Ammo2
+	0, // Ammo usage.
+	0, // Clip size.
+	"progs/v_mp5.mdl", // V_Model
+	"Alpha MP5", // Weapon name.
+	WPN_ALPHA_MP5, // Weapon I.D
+	0, // Weapon flags
+	W_AMP5_PrimAttack, // Attack1
+	W_AMP5_SecAttack, // Attack2
+	W_NullFunc, // Reload
+	SUB_Null, // Post-Think function.
+	W_DefaultDeploy, // Deploy.
+	W_NullTrue, // Holster.
+	W_AMP5_Idle, // Idle.
+	W_AMP5_Precache // Precache.
 };
 
 weaponclass_t wpc_crossbow =
@@ -402,7 +468,7 @@ weaponclass_t wpc_snark =
 	W_SnarkPrecache // Precache.
 };
 
-weaponclass_t weaponsclass[15] = {
+weaponclass_t weaponsclass[18] = {
 	wpc_none,
 	wpc_crowbar,
 	wpc_glock,
@@ -418,6 +484,9 @@ weaponclass_t weaponsclass[15] = {
 	wpc_tripmine,
 	wpc_satchel,
 	wpc_snark,
+	wpc_alpha_mp5,
+	wpc_alpha_glock,
+	wpc_alpha_crowbar,
 };
 
 typedef struct {
@@ -427,10 +496,10 @@ typedef struct {
 
 weaponslot_t weaponslots[10] = {
 	{{wpc_none}, 1},
-	{{wpc_crowbar}, 1},
-	{{wpc_glock, wpc_python}, 2},
+	{{wpc_crowbar, wpc_alpha_crowbar}, 2},
+	{{wpc_glock, wpc_python, wpc_alpha_glock}, 3},
 	{{wpc_shotgun}, 1},
-	{{wpc_mp5}, 1},
+	{{wpc_mp5, wpc_alpha_mp5}, 2},
 	{{wpc_crossbow}, 1},
 	{{wpc_rpg}, 1},
 	{{wpc_hornetgun}, 1},
@@ -472,6 +541,9 @@ float(float weap) W_GetWeapon =
 		case WPN_TRIPMINE:			return 12;
 		case WPN_SATCHEL:			return 13;
 		case WPN_SNARK:				return 14;
+		case WPN_ALPHA_MP5:			return 15;
+		case WPN_ALPHA_GLOCK:		return 16;
+		case WPN_ALPHA_CROWBAR:		return 17;
 		default:					return 0;
 	}
 }
@@ -1132,30 +1204,52 @@ void() W_Precache =
 	precache_sound ("weapons/pl_shell1.wav");
 	precache_sound ("weapons/pl_shell2.wav");
 	precache_sound ("weapons/pl_shell3.wav");
+	
+	precache_sound ("weapons/alpha/pl_shell1.wav");
+	precache_sound ("weapons/alpha/pl_shell2.wav");
+	precache_sound ("weapons/alpha/pl_shell3.wav");
+	
 	precache_sound ("weapons/sshell1.wav");
 	precache_sound ("weapons/sshell2.wav");
 	precache_sound ("weapons/sshell3.wav");
+	
 	precache_sound ("weapons/debris1.wav");
 	precache_sound ("weapons/debris2.wav");
 	precache_sound ("weapons/debris3.wav");
+	
 	precache_sound ("weapons/explode3.wav");
 	precache_sound ("weapons/explode4.wav");
 	precache_sound ("weapons/explode5.wav");
+	
+	precache_sound ("weapons/alpha/explode3.wav");
+	precache_sound ("weapons/alpha/explode4.wav");
+	precache_sound ("weapons/alpha/explode5.wav");
+	
 	precache_sound ("weapons/grenade_hit1.wav");
 	precache_sound ("weapons/grenade_hit2.wav");
 	precache_sound ("weapons/grenade_hit3.wav");
+	
 	precache_sound ("weapons/g_bounce1.wav");
 	precache_sound ("weapons/g_bounce2.wav");
 	precache_sound ("weapons/g_bounce3.wav");
+	
 	precache_sound ("player/pl_step1.wav");
 	precache_sound ("player/pl_step2.wav");
 	precache_sound ("player/pl_step3.wav");
 	precache_sound ("player/pl_step4.wav");
+	
 	precache_model ("progs/shell.mdl");
+	precache_model ("progs/shell_alpha.mdl");
+	precache_model ("progs/shotgunshell.mdl");
+	
 	precache_model ("progs/hl_grenade.mdl");
 	precache_model ("progs/hl_explode.spr");
 	precache_model ("progs/hl_explode1.spr");
-	precache_model ("progs/shotgunshell.mdl");
+	
+	precache_model ("progs/shrapnel1.mdl");
+	precache_model ("progs/shrapnel2.mdl");
+	precache_model ("progs/shrapnel3.mdl");
+	
 	precache_sound("items/weapondrop1.wav");
 	precache_sound("items/suitchargeok1.wav");
 	precache_sound("items/gunpickup2.wav");

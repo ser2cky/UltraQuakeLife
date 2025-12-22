@@ -246,9 +246,19 @@ void() ImpulseCommands =
 		break;
 	case 15:	// NEW -serecky 12.17.25
 	{
-		string modelnames[3] = {"Ranger model selected.\n", "Gordon model selected.\n", "Grunt model selected.\n"};
+		string modelnames[9] = {
+		"Ranger selected.\n", 
+		"Gordon selected.\n",
+		"Helmet selected.\n",		
+		"Gina selected.\n",
+		"Scientist selected.\n",
+		"GMan selected.\n",
+		"Grunt selected.\n",
+		"Robot selected.\n",
+		"Zombie selected.\n"
+		};
 		
-		self.player_modelnumber = mod(self.player_modelnumber + 1, 3);
+		self.player_modelnumber = mod(self.player_modelnumber + 1, 9);
 		centerprint(self, modelnames[self.player_modelnumber]);
 		break;
 	}

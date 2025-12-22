@@ -56,7 +56,7 @@ void(string gibname, float dm) ThrowHead =
 	self.frame = 0;
 	self.think = SUB_Null;
 	self.nextthink = 0;
-	
+	self.deadflag = DEAD_DEAD;
 	self.movetype = MOVETYPE_BOUNCE;
 	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_NOT;

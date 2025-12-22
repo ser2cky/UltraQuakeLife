@@ -14,8 +14,16 @@ const float FL_ALMOST_DEAD = 32768;
 .float player_modelindex;
 .float player_modelnumber;
 
-float modelindex_hgrunt;
+.float can_longjump;
+
 float modelindex_gordon;
+float modelindex_helmet;
+float modelindex_gina;
+float modelindex_sci;
+float modelindex_gman;
+float modelindex_hgrunt;
+float modelindex_robot;
+float modelindex_zombie;
 
 /*
 ============
@@ -126,8 +134,8 @@ Weapon bit stuff
 ============
 */
 
-const float MAX_WEAPON_NUM = 14;
-const float NUMBER_OF_WEAPONS = 15;
+const float NUMBER_OF_WEAPONS = 18;
+const float MAX_WEAPON_NUM = NUMBER_OF_WEAPONS - 1;
 
 const float	WPN_CROWBAR				= 4096;
 const float	WPN_GLOCK				= 1;
@@ -143,25 +151,11 @@ const float WPN_HANDGRENADE			= 512;
 const float WPN_TRIPMINE			= 1024;
 const float WPN_SATCHEL				= 2048;
 const float WPN_SNARK				= 8192;
-
-// T.B.D IN THE FUTURE!!!
-// const float WPN_DEAGLE				= 16384;
-// const float WPN_SNIPER				= 32768;
-// const float WPN_M249				= 65536;
-// const float WPN_SPORE				= 131072;
-// const float WPN_SHOCK_ROACH			= 262144;
-// const float WPN_DISPLACER			= 524288;
-// const float WPN_WRENCH				= 1048576;
-// const float WPN_KNIFE				= 2097152;
-// const float WPN_BARNACLE			= 4194304;
-// const float WPN_ASSAULT_CANON		= 8388608; // tfc gun!!!
+const float WPN_ALPHA_MP5			= 16384; // this is a waste of bits.. but idc...
+const float WPN_ALPHA_GLOCK			= 32768; // this too
+const float WPN_ALPHA_CROWBAR		= 65536; // this espc.
 const float WPN_NONE 				= 16777216;
 const float PI 						= 3.14159265358979323846;
-
-// I wanted to add a few more T.F.C weapons like the
-// 12.gauge or Nailguns, but I'd probably have to use
-// the hack where you give the player a .weapons2 field..
-// ehhhhh
 
 
 const float	WPN_WEAPONS				= 127 + 4096;
@@ -171,7 +165,8 @@ const float HUD_WPNS = WPN_CROWBAR + WPN_GLOCK + WPN_SHOTGUN + WPN_MP5 + WPN_CRO
 					
 const float ALL_WPNS = WPN_CROWBAR + WPN_GLOCK + WPN_SHOTGUN + WPN_MP5 + WPN_CROSSBOW
 					+ WPN_RPG + WPN_HORNETGUN + WPN_GAUSS + WPN_PYTHON + WPN_EGON + 
-					WPN_HANDGRENADE + WPN_SATCHEL + WPN_TRIPMINE + WPN_SNARK;
+					WPN_HANDGRENADE + WPN_SATCHEL + WPN_TRIPMINE + WPN_SNARK + 
+					WPN_ALPHA_GLOCK + WPN_ALPHA_MP5 + WPN_ALPHA_CROWBAR;
 
 /*
 ============

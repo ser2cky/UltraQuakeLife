@@ -326,7 +326,6 @@ void() worldspawn =
 	precache_sound ("player/pain4.wav");
 	precache_sound ("player/pain5.wav");
 	precache_sound ("player/pain6.wav");
-	precache_sound ("player/pl_fallpain3.wav");
 
 // player death sounds
 	precache_sound ("player/death1.wav");
@@ -335,6 +334,14 @@ void() worldspawn =
 	precache_sound ("player/death4.wav");
 	precache_sound ("player/death5.wav");
 
+// quake-life
+	precache_sound ("player/pl_fallpain3.wav");
+	
+	precache_sound ("player/pl_pain2.wav");
+	precache_sound ("player/pl_pain4.wav");
+	precache_sound ("player/pl_pain5.wav");
+	precache_sound ("player/pl_pain6.wav");
+	precache_sound ("player/pl_pain7.wav");
 // liquids
 	precache_sound ("player/h2ojump.wav");		// player jumping into water
 	precache_sound ("player/slimbrn2.wav");		// player enter slime
@@ -351,7 +358,13 @@ void() worldspawn =
 	precache_model ("progs/player.mdl");
 	
 	precache_model ("progs/player_gordon.mdl");	// new - serecky 12.16.25
+	precache_model ("progs/player_helmet.mdl");
+	precache_model ("progs/player_gina.mdl");
+	precache_model ("progs/player_sci.mdl");
+	precache_model ("progs/player_gman.mdl");
 	precache_model ("progs/player_hgrunt.mdl");
+	precache_model ("progs/player_rgrunt.mdl");
+	precache_model ("progs/player_zombie.mdl");
 	
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");

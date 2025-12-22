@@ -8,41 +8,45 @@
 //	11.16.25: Started. Contact grenade &
 //	sparks.
 //	11.27.25: satchel, handgrenade
+//	12.20.25: stupid alpha stuff
 //
 //======================================
 
-// void(float count, vector newangles, vector org) HL_CreateSparks = 
-// {
-	// for (float i = 0; i < count; i++)
-	// {
-		// entity spark;
-		// spark = spawn();
-		// spark.velocity_x = random() * 400 * crandom();
-		// spark.velocity_y = random() * 400 * crandom();
-		// spark.velocity_z = random() * 400;
-		// spark.movetype = MOVETYPE_BOUNCE;
-		// //spark.gravity = 0.5;
-		// spark.nextthink = time + 0.1;
-		// spark.solid = SOLID_BBOX;
-		// setsize(spark, VEC_ORIGIN, VEC_ORIGIN);
-		// setorigin(spark, org);
-		// spark.angles = newangles;
-		// spark.think = HL_SparkThink;
-		// spark.touch = HL_SparkTouch;
-	// }
-// }
+void(float number) Shrapnels =
+{
+	for (float i = 0; i < number; i++) 
+	{
+		entity shrapnel;
+		shrapnel = spawn();
 
-// void() HL_SparkThink =
-// {
-	// particle(self.origin, '0 0 -250', 111, 6);
-	// self.nextthink = time + 0.01;
-// }
+		float r;
+		r = random();
+		
+		if ( r < 0.333 )
+			setmodel( shrapnel, "progs/shrapnel1.mdl");
+		else if ( r < 0.666 )
+			setmodel( shrapnel, "progs/shrapnel2.mdl");
+		else
+			setmodel( shrapnel, "progs/shrapnel3.mdl");
 
-// void() HL_SparkTouch =
-// {
-	// self.think = SUB_Remove;
-	// self.nextthink = time;
-// }
+		setsize(shrapnel, '0 0 0', '0 0 0');
+		setorigin(shrapnel, self.origin);
+		
+		shrapnel.velocity_x = random() * 400 * crandom();
+		shrapnel.velocity_y = random() * 400 * crandom();
+		shrapnel.velocity_z = random() * 400;
+
+		shrapnel.avelocity_x = random() * -255 + 255;
+		shrapnel.avelocity_y = random() * -255 + 255;
+		shrapnel.avelocity_z = random() * -255 + 255;
+
+		shrapnel.movetype = MOVETYPE_BOUNCE;
+		shrapnel.solid = SOLID_NOT;
+		shrapnel.think = SUB_Remove;
+		shrapnel.ltime = time;
+		shrapnel.nextthink = time + 1.0;
+	}
+};
 
 /*
 ============
@@ -77,8 +81,37 @@ void() HL_GrenadeExplode =
 	
 	HL_RadiusDamage(self.origin, self, self.trueowner, self.dmg, "", DMGTYPE_EXPLOSION);
 	
-	float r;
-	r = random();
+	float r = random();
+	
+	if (self.type == "alpha")
+	{
+		if (r < 0.333)
+		{
+			sound (self, CHAN_VOICE, "weapons/debris1.wav", 0.55, ATTN_NORM);
+			sound (self, CHAN_BODY, "weapons/alpha/explode3.wav", 1.0, ATTN_NONE);
+		}
+		else if (r < 0.666)
+		{
+			sound (self, CHAN_VOICE, "weapons/debris2.wav", 0.55, ATTN_NORM);
+			sound (self, CHAN_BODY, "weapons/alpha/explode4.wav", 1.0, ATTN_NONE);
+		}
+		else
+		{
+			sound (self, CHAN_VOICE, "weapons/debris3.wav", 0.55, ATTN_NORM);
+			sound (self, CHAN_BODY, "weapons/alpha/explode5.wav", 1.0, ATTN_NONE);
+		}
+	
+		Shrapnels(8);
+	
+		self.movetype = MOVETYPE_NONE;
+		self.solid = SOLID_NOT;
+		setorigin(self, self.origin);
+	
+		self.effects |= EF_MUZZLEFLASH;
+		self.think = SUB_Remove;
+		self.nextthink = time + frametime;
+		return;
+	}
 	
 	if (r < 0.333)
 	{

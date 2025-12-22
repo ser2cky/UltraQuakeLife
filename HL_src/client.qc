@@ -71,6 +71,7 @@ void() SetChangeParms =
 	parm13 = self.ammo_tripmines;
 	parm14 = self.ammo_snarks;
 	parm15 = self.player_modelnumber;
+	parm16 = self.can_longjump;
 }
 
 void() SetNewParms =
@@ -89,7 +90,8 @@ void() SetNewParms =
 	parm12 = 0;
 	parm13 = 0;
 	parm14 = 0;
-	parm15 = 0;
+	parm15 = 1;
+	parm16 = 0;
 }
 
 
@@ -115,6 +117,7 @@ void() SetCoopParms =
 	parm13 = 0;
 	parm14 = 0;
 	parm15 = self.player_modelnumber;
+	parm16 = self.can_longjump;
 }
 
 void() DecodeLevelParms =
@@ -138,6 +141,7 @@ void() DecodeLevelParms =
 	self.ammo_tripmines = parm13;
 	self.ammo_snarks = parm14;
 	self.player_modelnumber = parm15;
+	self.can_longjump = parm16;
 	
 	armor_set_type(self);
 }
@@ -665,11 +669,24 @@ void() PutClientInServer =
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
 
+
 	setmodel (self, "progs/player_gordon.mdl");
 	modelindex_gordon = self.modelindex;
-
+	setmodel (self, "progs/player_helmet.mdl");
+	modelindex_helmet = self.modelindex;
+	setmodel (self, "progs/player_gina.mdl");
+	modelindex_gina = self.modelindex;
+	setmodel (self, "progs/player_sci.mdl");
+	modelindex_sci = self.modelindex;
+	setmodel (self, "progs/player_gman.mdl");
+	modelindex_gman = self.modelindex;
 	setmodel (self, "progs/player_hgrunt.mdl");
 	modelindex_hgrunt = self.modelindex;
+	setmodel (self, "progs/player_rgrunt.mdl");
+	modelindex_robot = self.modelindex;
+	setmodel (self, "progs/player_zombie.mdl");
+	modelindex_zombie = self.modelindex;
+
 
 	setmodel (self, "progs/player.mdl");
 	modelindex_player = self.modelindex;
@@ -1030,13 +1047,33 @@ void() PlayerJump =
 
 	if (self.movetype != MOVETYPE_NOCLIP)
 	{
-		if (!(self.flags & FL_ONGROUND)) return;
-		if ( !(self.flags & FL_JUMPRELEASED) ) return;		// don't pogo stick
-		sound (self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);	// h00rt
+		if (!(self.flags & FL_ONGROUND)) 
+			return;
+
+		if ( !(self.flags & FL_JUMPRELEASED) ) 
+		{
+			if (self.can_longjump && (vlen(self.velocity) > 50))
+			{
+				self.punchangle_x = -5;
+				
+				self.velocity_x = v_forward_x * 350 * 1.6;
+				self.velocity_y = v_forward_y * 350 * 1.6;
+				self.velocity_z = self.velocity_z + 300;
+				
+				if (self.modelindex == modelindex_player)
+					sound (self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);	// h00rt
+				else
+					PlayerUpdateStepSound(1);	
+			}
+			return;
+		}
+		
+		if (self.modelindex == modelindex_player)
+			sound (self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);	// h00rt
+		else
+			PlayerUpdateStepSound(1);	
 	}
 	
-//	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
-//	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 	self.flags = not(self.flags, FL_JUMPRELEASED | FL_ONGROUND);	// don't stairwalk
 	
 	self.button2 = 0;
@@ -1497,7 +1534,7 @@ Step sound.
 ================
 */
 
-void() PlayerUpdateStepSound =
+void(float force = 0) PlayerUpdateStepSound =
 {
 	local float speed, walking, vol, steptime, rsnd;
 	
@@ -1505,11 +1542,14 @@ void() PlayerUpdateStepSound =
 	
 	walking = speed < 210;
 	
-	if ((vlen(self.velocity) > 0.0)) {
-	
+	if ((vlen(self.velocity) > 0.0) || force) 
+	{
 		vol = walking ? 0.2 : 0.5;
 		steptime = walking ? 0.4 : 0.3;
 		rsnd = random();
+		
+		if (self.button2 || force)
+			vol = 1.0;
 		
 		if (rsnd < (1/4))
 			sound (self, CHAN_BODY, "player/pl_step1.wav", vol, ATTN_NONE);
@@ -1535,10 +1575,16 @@ the index order somehow changes.
 
 void() PlayerModelCheck =
 {
-	float modelindexes[3] = 
+	float modelindexes[9] = 
 	{modelindex_player, 
 	modelindex_gordon, 
-	modelindex_hgrunt};
+	modelindex_helmet,
+	modelindex_gina,
+	modelindex_sci,
+	modelindex_gman,
+	modelindex_hgrunt,
+	modelindex_robot,
+	modelindex_zombie};
 	
 	self.player_modelindex = modelindexes[self.player_modelnumber];
 }
@@ -1659,11 +1705,19 @@ void() PlayerPostThink =
 	{
 		if (self.jump_flag < -650 && !(self.customflags & CFL_PLUNGE) && !self.waterlevel)
 		{
-			T_Damage (self, world, world, 5, DMGTYPE_FALLING); 
-			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			T_Damage (self, world, world, 5, DMGTYPE_FALLING);
+			if (self.modelindex == modelindex_player)
+				sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_VOICE, "player/pl_fallpain3.wav", 1, ATTN_NORM);
 		}
 		else if (self.waterlevel < WL_EYES)
-			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+		{
+			if (self.modelindex == modelindex_player)
+				sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+			else
+				PlayerUpdateStepSound(1);
+		}
 		self.punchangle_z = self.jump_flag * 0.013;
 		self.jump_flag = 0;
 	}
@@ -1939,45 +1993,43 @@ void(float dmgtype) ClientObituary =
 				attacker.frags = attacker.frags + 1;
 
 			rnum = attacker.weapon;
-			if (rnum == IT_AXE)
+
+			if (rnum == WPN_CROWBAR || rnum == WPN_ALPHA_CROWBAR)
 			{
-				if (random() < 0.5)
-					deathstring = " was axe-murdered by ";
-				else
-					deathstring = " got the chop from ";
+				deathstring = " gets crowbar'd by ";
 				deathstring2 = "\n";
 			}
-			if (rnum == IT_SHOTGUN)
+			if (rnum == WPN_GLOCK || rnum == WPN_ALPHA_GLOCK)
+			{
+				deathstring = " gets shot up by ";
+				deathstring2 = "'s hood blaster\n";
+			}
+			if (rnum == WPN_PYTHON)
+			{
+				deathstring = " gets shot up western style from ";
+				deathstring2 = "'s 357\n";
+			}
+			if (rnum == WPN_SHOTGUN)
 			{
 				deathstring = " chewed on ";
 				deathstring2 = "'s boomstick\n";
 			}
-			if (rnum == IT_SUPER_SHOTGUN)
+			if (rnum == WPN_MP5 || rnum == WPN_ALPHA_MP5)
 			{
-				deathstring = " ate 2 loads of ";
-				deathstring2 = "'s buckshot\n";
-			}
-			if (rnum == IT_NAILGUN)
-			{
-				deathstring = " was nailed by ";
+				deathstring = " was punctured like swiss cheese by ";
 				deathstring2 = "\n";
-			}
-			if (rnum == IT_SUPER_NAILGUN)
-			{
-				deathstring = " was punctured by ";
-				deathstring2 = "\n";
-			}
-			if (rnum == IT_GRENADE_LAUNCHER)
-			{
-				deathstring = " eats ";
-				deathstring2 = "'s pineapple\n";
-				if (self.health < -40)
+				if (attacker.firemode == 1)
 				{
-					deathstring = " was gibbed by ";
-					deathstring2 = "'s grenade\n";
+					deathstring = " was blown up by ";
+					deathstring2 = "'s m203 grenade\n";
 				}
 			}
-			if (rnum == IT_ROCKET_LAUNCHER)
+			if (rnum == WPN_CROSSBOW)
+			{
+				deathstring = " gets a load of darts from ";
+				deathstring2 = "\n";
+			}
+			if (rnum == WPN_RPG)
 			{
 				deathstring = " rides ";
 				deathstring2 = "'s rocket\n";
@@ -1987,14 +2039,42 @@ void(float dmgtype) ClientObituary =
 					deathstring2 = "'s rocket\n" ;
 				}
 			}
-			if (rnum == IT_LIGHTNING)
+			if (rnum == WPN_HORNETGUN)
 			{
-				deathstring = " accepts ";
-				if (attacker.waterlevel >= WL_WAIST)
-					deathstring2 = "'s discharge\n";
-				else
-					deathstring2 = "'s shaft\n";
+				deathstring = " gets swarmed by ";
+				deathstring2 = "'s army of hornets\n";
 			}
+			if (rnum == WPN_GAUSS)
+			{
+				deathstring = " was railed by ";
+				deathstring2 = "'s tau-canon\n";
+			}
+			if (rnum == WPN_EGON)
+			{
+				deathstring = " was pulverised by ";
+				deathstring2 = "'s gluon-gun\n";
+			}
+			if (rnum == WPN_HANDGRENADE)
+			{
+				deathstring = " was blown up by ";
+				deathstring2 = "'s grenade\n";
+			}
+			if (rnum == WPN_TRIPMINE)
+			{
+				deathstring = " fell for ";
+				deathstring2 = "'s very obvious tripmine\n";
+			}
+			if (rnum == WPN_SATCHEL)
+			{
+				deathstring = " was destroyed by ";
+				deathstring2 = "'s nest of satchels\n";
+			}
+			if (rnum == WPN_SNARK)
+			{
+				deathstring = " was chomped to death ";
+				deathstring2 = "'s army of snarks\n";
+			}
+			
 			bprint (self.netname);
 			bprint (deathstring);
 			bprint (attacker.netname);

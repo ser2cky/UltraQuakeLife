@@ -115,7 +115,7 @@ void()	player_shot5 =	[$shotatt5, player_shot6	] {self.owner.frame = self.frame;
 void()	player_shot6 =	[$shotatt6, player_run		] {self.owner.frame = self.frame;};
 
 void() player_nail1   =[$nailatt1, player_nail2 ] {self.owner.frame = self.frame;};
-void() player_nail2   =[$nailatt2, player_nail1 ] {self.owner.frame = self.frame;};
+void() player_nail2   =[$nailatt2, player_run ] {self.owner.frame = self.frame;};
 
 void() player_rockatt1	=[$rockatt1, player_rockatt2 ] {self.owner.frame = self.frame;};
 void() player_rockatt2	=[$rockatt2, player_rockatt3 ] {self.owner.frame = self.frame;};
@@ -162,61 +162,83 @@ void() PainSound = {
 		return;
 	}
 
-	// water pain sounds
-	if (self.watertype == CONTENT_WATER && self.waterlevel >= 3 && !has_biosuit(self))
+	if (self.modelindex == modelindex_player)
 	{
-		DeathBubbles(1);
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
-		return;
-	}
+		// water pain sounds
+		if (self.watertype == CONTENT_WATER && self.waterlevel >= 3 && !has_biosuit(self))
+		{
+			DeathBubbles(1);
+			if (random() > 0.5)
+				sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
+			return;
+		}
 
-	// slime/lava pain sounds
-	if (( (self.watertype == CONTENT_SLIME || self.watertype == CONTENT_LAVA) && damage_attacker == world) || 
-		damage_attacker.classname == "fireball")
-	{
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
-		return;
-	}
+		// slime/lava pain sounds
+		if (( (self.watertype == CONTENT_SLIME || self.watertype == CONTENT_LAVA) && damage_attacker == world) || 
+			damage_attacker.classname == "fireball")
+		{
+			if (random() > 0.5)
+				sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
+			return;
+		}
 
-	// don't make multiple pain sounds right after each other
-	if (self.pain_finished > time)
-	{
-		self.customflags = not(self.customflags, CFL_AXEHITME );
-		return;
-	}
-	self.pain_finished = time + 0.5;
+		// don't make multiple pain sounds right after each other
+		if (self.pain_finished > time)
+		{
+			self.customflags = not(self.customflags, CFL_AXEHITME );
+			return;
+		}
+		self.pain_finished = time + 0.5;
 
 
-// ax pain sound
-	if (self.customflags & CFL_AXEHITME)
-	{
-		self.customflags = not(self.customflags, CFL_AXEHITME );
-		sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
-		return;
-	}
+	// ax pain sound
+		if (self.customflags & CFL_AXEHITME)
+		{
+			self.customflags = not(self.customflags, CFL_AXEHITME );
+			sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
+			return;
+		}
 	
-
-	rs = rint((random() * 5) + 1);
+	}
 
 	self.noise = string_null;
-	if (rs == 1)
-		self.noise = "player/pain1.wav";
-	else if (rs == 2)
-		self.noise = "player/pain2.wav";
-	else if (rs == 3)
-		self.noise = "player/pain3.wav";
-	else if (rs == 4)
-		self.noise = "player/pain4.wav";
-	else if (rs == 5)
-		self.noise = "player/pain5.wav";
+	
+	if (self.modelindex == modelindex_player)
+	{
+		rs = rint((random() * 5) + 1);
+		
+		if (rs == 1)
+			self.noise = "player/pain1.wav";
+		else if (rs == 2)
+			self.noise = "player/pain2.wav";
+		else if (rs == 3)
+			self.noise = "player/pain3.wav";
+		else if (rs == 4)
+			self.noise = "player/pain4.wav";
+		else if (rs == 5)
+			self.noise = "player/pain5.wav";
+		else
+			self.noise = "player/pain6.wav";
+	}
 	else
-		self.noise = "player/pain6.wav";
+	{
+		rs = rint((random() * 4) + 1);
+	
+		if (rs == 1)
+			self.noise = "player/pl_pain2.wav";
+		else if (rs == 2)
+			self.noise = "player/pl_pain4.wav";
+		else if (rs == 3)
+			self.noise = "player/pl_pain5.wav";
+		else if (rs == 4)
+			self.noise = "player/pl_pain6.wav";
+		else
+			self.noise = "player/pl_pain7.wav";
+	}
 
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	return;
@@ -295,19 +317,23 @@ local float		rs;
 		}
 	}
 	
-	rs = rint ((random() * 4) + 1);
-	if (rs == 1)
-		self.noise = "player/death1.wav";
-	if (rs == 2)
-		self.noise = "player/death2.wav";
-	if (rs == 3)
-		self.noise = "player/death3.wav";
-	if (rs == 4)
-		self.noise = "player/death4.wav";
-	if (rs == 5)
-		self.noise = "player/death5.wav";
-
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NONE);
+	
+	if (self.modelindex == modelindex_player)
+	{
+		rs = rint ((random() * 4) + 1);
+		if (rs == 1)
+			self.noise = "player/death1.wav";
+		if (rs == 2)
+			self.noise = "player/death2.wav";
+		if (rs == 3)
+			self.noise = "player/death3.wav";
+		if (rs == 4)
+			self.noise = "player/death4.wav";
+		if (rs == 5)
+			self.noise = "player/death5.wav";
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NONE);
+	}
+	
 	return;
 }
 
@@ -356,7 +382,7 @@ void() PlayerDie =
 	self.invincible_finished = 0;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
-	self.modelindex = modelindex_player;	// don't use eyes
+	self.modelindex = self.player_modelindex;	// don't use eyes
 
 	self.items = not(self.items, IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD);
 	self.effects = 0;
